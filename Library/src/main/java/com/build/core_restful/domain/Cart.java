@@ -1,7 +1,6 @@
 package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
-import com.build.core_restful.util.enums.OrderStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 

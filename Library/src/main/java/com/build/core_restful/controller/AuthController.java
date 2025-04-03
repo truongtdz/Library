@@ -102,9 +102,6 @@ public class AuthController {
 
         String email = decodeToken.getSubject();
 
-        // Get User By Email And RefreshToken
-        User currentUser = this.userService.getUserByEmailAndRefreshToken(email, refreshToken);
-
         // Create access token
         LoginResponse loginResponse = new LoginResponse();
 
@@ -159,7 +156,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody UserCreateRequest registerUser){
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody UserCreateRequest registerUser){
         if(userService.existUserByEmail(registerUser.getEmail())){
             throw new NewException("Người dùng email : " + registerUser.getEmail() + " đã tồn tại ");
         }

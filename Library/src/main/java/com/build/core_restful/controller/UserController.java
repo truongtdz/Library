@@ -5,6 +5,7 @@ import com.build.core_restful.domain.request.UserUpdateRequest;
 import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.service.UserService;
 import com.build.core_restful.util.exception.NewException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,16 +37,16 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody UserCreateRequest newUser) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserCreateRequest newUser) {
         if(userService.existUserByEmail(newUser.getEmail())){
-            throw new NewException("Người dùng id = " + newUser.getId() + " đã tồn tại ");
+            throw new NewException("Người dùng email: " + newUser.getEmail() + " đã tồn tại ");
         }
 
         return ResponseEntity.ok(userService.createUser(newUser));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest updateUser) {
+    public ResponseEntity<Object> updateUser(@PathVariable Long id,@Valid @RequestBody UserUpdateRequest updateUser) {
         if(!userService.existUserById(id)){
             throw new NewException("Người dùng id = " + id + " không tồn tại ");
         }
