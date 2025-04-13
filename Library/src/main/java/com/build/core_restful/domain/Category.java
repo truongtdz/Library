@@ -25,9 +25,12 @@ public class Category {
     @NotBlank(message = "Name không được để trống ")
     private String name;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @JsonIgnore
-    List<Product> products;
+    List<Book> products;
 
     private Instant createAt;
     private Instant updateAt;

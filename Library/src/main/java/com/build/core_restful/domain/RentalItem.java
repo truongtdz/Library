@@ -1,52 +1,36 @@
 package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.List;
-
 
 @Entity
-@Table(name = "products")
+@Table(name = "rental_items")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class RentalItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name không được để trống ")
-    private String name;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    private Long price;
+    private Long rentalPrice;
+    private Long depositPrice;
     private Long discount;
-    private Long stock;
+    private Long quantity;
+    private Long totalPrice;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "order_id")
+    private RentalOrder order;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @JsonIgnore
-    List<Item> items;
-
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @JsonIgnore
-    List<Image> images;
-
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @JsonIgnore
-    List<Cart> carts;
+    @ManyToOne
+    @JoinColumn(name = "product_detail_id")
+    private Book product;
 
     private Instant createAt;
     private Instant updateAt;

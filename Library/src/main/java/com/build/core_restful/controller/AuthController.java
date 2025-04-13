@@ -2,7 +2,7 @@ package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.LoginRequest;
-import com.build.core_restful.domain.request.UserCreateRequest;
+import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.util.JwtUtil;
 import com.build.core_restful.domain.response.LoginResponse;
 import com.build.core_restful.domain.response.UserResponse;
@@ -156,7 +156,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@Valid @RequestBody UserCreateRequest registerUser){
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRequest registerUser){
         if(userService.existUserByEmail(registerUser.getEmail())){
             throw new NewException("Người dùng email : " + registerUser.getEmail() + " đã tồn tại ");
         }

@@ -22,11 +22,15 @@ public class Address {
     private String district;
     private String ward;
     private String street;
-    private String detail;
+    private String province;
+    private boolean isDefault = true;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne(mappedBy = "address")
+    private RentalOrder rentalOrder;
 
     private Instant createAt;
     private Instant updateAt;

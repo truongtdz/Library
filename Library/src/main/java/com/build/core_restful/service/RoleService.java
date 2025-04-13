@@ -1,25 +1,21 @@
 package com.build.core_restful.service;
 
-import com.build.core_restful.domain.Role;
-import org.springframework.stereotype.Service;
+import com.build.core_restful.domain.request.RoleRequest;
+import com.build.core_restful.domain.response.PageResponse;
+import com.build.core_restful.domain.response.RoleResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-@Service
 public interface RoleService {
-    List<Role> getALlRoles();
+    PageResponse<Object> getAllRoles(Pageable pageable);
 
-    boolean existById(Long id);
+    RoleResponse getRoleById(Long id);
 
-    boolean existByName(String name);
+    RoleResponse createRole(RoleRequest role);
 
-    Role getRoleById(Long id);
+    RoleResponse updateRole(Long id, RoleRequest role);
 
-    Role getRoleByName(String name);
+    boolean deleteRole(Long id);
 
-    Role createRole(Role newRole);
-
-    Role updateRole(Role updateRole);
-
-    void deleteRole(Long id);
 }

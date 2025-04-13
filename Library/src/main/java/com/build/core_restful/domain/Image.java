@@ -8,7 +8,7 @@ import lombok.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "image")
+@Table(name = "images")
 @Getter
 @Setter
 @Builder
@@ -22,9 +22,11 @@ public class Image {
     @NotBlank(message = "Url không được để trống ")
     private String url;
 
+    private boolean isCover = false;
+
     @ManyToOne
-    @JoinColumn(name = "product_detail_id")
-    private Product product;
+    @JoinColumn(name = "book_id")
+    private Book book;
 
     private Instant createAt;
     private Instant updateAt;

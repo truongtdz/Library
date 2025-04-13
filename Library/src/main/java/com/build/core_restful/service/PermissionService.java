@@ -1,25 +1,19 @@
 package com.build.core_restful.service;
 
-import com.build.core_restful.domain.Permission;
-import org.springframework.stereotype.Service;
+import com.build.core_restful.domain.request.PermissionRequest;
+import com.build.core_restful.domain.response.PageResponse;
+import com.build.core_restful.domain.response.PermissionResponse;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
-@Service
 public interface PermissionService {
-    List<Permission> getAllPermissions();
+    PageResponse<Object> getAllPermissions(Pageable pageable);
 
-    boolean existById(Long id);
+    PermissionResponse getPermissionById(Long id);
 
-    boolean existByName(String name);
+    PermissionResponse createPermission(PermissionRequest request);
 
-    Permission getPermissionById(Long id);
+    PermissionResponse updatePermission(Long id, PermissionRequest request);
 
-    Permission getPermissionByName(String name);
+    boolean deletePermission(Long id);
 
-    Permission createPermission(Permission newPermission);
-
-    Permission updatePermission(Permission updatePermission);
-
-    void deletePermission(Long id);
 }

@@ -9,9 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCreateRequest {
-    private Long id;
-
+public class UserRequest {
     @NotBlank(message = "Email k được để trống")
     @Size(min = 8, message = "Email phải nhiều hơn 8 kí tự")
     private String email;

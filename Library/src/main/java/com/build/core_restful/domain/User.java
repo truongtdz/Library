@@ -2,6 +2,7 @@ package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
 import com.build.core_restful.util.enums.GenderEnum;
+import com.build.core_restful.util.enums.UserStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -31,12 +32,18 @@ public class User {
     private String password;
 
     private String fullName;
+    private Long age;
+    private String avatar;
+    private boolean active = true;
 
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
 
     @Column(name = "refresh_token", columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatusEnum status = UserStatusEnum.Active;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -48,7 +55,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
-    List<Order> orders;
+    List<RentalOrder> orders;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
