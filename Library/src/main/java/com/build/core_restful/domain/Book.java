@@ -32,7 +32,7 @@ public class Book {
     private String title;
     private String publisher;
     private Instant publish_date;
-    private int pages;
+    private Long pages;
     private String language;
     private Long totalQuantity;
     private Long stock;
@@ -51,17 +51,17 @@ public class Book {
     @JoinColumn(name = "authors_id")
     private Authors authors;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     @JsonIgnore
-    List<RentalItem> items;
+    private List<RentalItem> items;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     @JsonIgnore
-    List<Image> images;
+    private List<Image> images;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     @JsonIgnore
-    List<Cart> carts;
+    private List<Cart> carts;
 
     private Instant createAt;
     private Instant updateAt;

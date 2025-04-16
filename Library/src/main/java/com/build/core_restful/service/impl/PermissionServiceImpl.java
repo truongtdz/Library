@@ -41,8 +41,8 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public PermissionResponse createPermission(PermissionRequest request) {
-        if (permissionRepository.existsByName(request.getName())) {
-            throw new NewException("Permission with name " + request.getName() + " already exists!");
+        if (permissionRepository.existsByDescription(request.getDescription())) {
+            throw new NewException("Permission with name " + request.getDescription() + " already exists!");
         }
         Permission permission = permissionMapper.toPermission(request);
         return permissionMapper.toPermissionResponse(permissionRepository.save(permission));

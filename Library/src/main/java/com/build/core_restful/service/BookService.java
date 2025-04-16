@@ -22,4 +22,6 @@ public interface BookService {
     boolean uploadImages(Long id, List<MultipartFile> images);
 
     void setImageCover(Long imageId, Long bookId);
+
+    PageResponse<Object> searchBook(String keyword, Pageable pageable);
 }

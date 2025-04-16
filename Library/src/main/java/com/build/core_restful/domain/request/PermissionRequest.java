@@ -12,7 +12,7 @@ public class PermissionRequest {
     private Long id;
 
     @NotBlank(message = "Tên quyền không được để trống")
-    private String name;
+    private String description;
 
     @NotBlank(message = "API path không được để trống")
     private String apiPath;

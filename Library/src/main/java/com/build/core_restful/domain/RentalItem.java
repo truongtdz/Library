@@ -22,15 +22,16 @@ public class RentalItem {
     private Long depositPrice;
     private Long discount;
     private Long quantity;
-    private Long totalPrice;
+    private Long totalRental;
+    private Long totalDeposit;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
     private RentalOrder order;
 
     @ManyToOne
-    @JoinColumn(name = "product_detail_id")
-    private Book product;
+    @JoinColumn(name = "book_id")
+    private Book book;
 
     private Instant createAt;
     private Instant updateAt;

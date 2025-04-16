@@ -34,19 +34,19 @@ public class User {
     private String fullName;
     private Long age;
     private String avatar;
-    private boolean active = true;
 
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
 
-    @Column(name = "refresh_token", columnDefinition = "MEDIUMTEXT")
-    private String refreshToken;
-
     @Enumerated(EnumType.STRING)
     private UserStatusEnum status = UserStatusEnum.Active;
 
+    @Column(name = "refresh_token", columnDefinition = "MEDIUMTEXT")
+    private String refreshToken;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
+    @JsonIgnore
     private Role role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

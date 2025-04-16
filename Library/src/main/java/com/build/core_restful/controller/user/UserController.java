@@ -1,16 +1,18 @@
 package com.build.core_restful.controller.user;
 
-import com.build.core_restful.domain.request.AddressRequest;
+import com.build.core_restful.domain.request.CartRequest;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
-import com.build.core_restful.service.AddressService;
+import com.build.core_restful.service.BookService;
+import com.build.core_restful.service.CartService;
 import com.build.core_restful.service.UserService;
 import com.build.core_restful.util.annotation.AddMessage;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/v1/user")
 public class UserController {
     private final UserService userService;
-    private final AddressService addressService;
+    private final BookService bookService;
+    private final CartService cartService;
 
-    public UserController(UserService userService, AddressService addressService){
+    public UserController(UserService userService, BookService bookService, CartService cartService){
         this.userService = userService;
-        this.addressService = addressService;
+        this.bookService = bookService;
+        this.cartService = cartService;
     }
 
     @GetMapping
@@ -72,36 +76,44 @@ public class UserController {
         return ResponseEntity.ok(userService.updateRoleUser(updateRoleUserRequest));
     }
 
-    @GetMapping("/address/{id}")
-    @AddMessage("Get addresses by user")
-    public ResponseEntity<PageResponse<Object>> getAllByUser(@PathVariable Long id, @RequestParam int page, @RequestParam int size) {
+    @GetMapping("/search")
+    @AddMessage("Get all books")
+    public ResponseEntity<PageResponse<Object>> getAllBooks(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String keyword
+    ) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(bookService.searchBook(keyword, pageable));
+    }
+
+    @GetMapping("/cart/{userId}")
+    @AddMessage("Get book at cart by user")
+    public ResponseEntity<PageResponse<Object>> getCartByUser(
+            @PathVariable Long userId,
+            @RequestParam int page,
+            @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(addressService.getAllAddresses(id, pageable));
+
+        PageResponse<Object> carts = cartService.getByUser(userId, pageable);
+
+        return ResponseEntity.ok(carts);
     }
 
-    @GetMapping("/detail/address/{id}")
-    @AddMessage("Get addresses by id")
-    public ResponseEntity<Object> getAddressById(@PathVariable Long id) {
-        return ResponseEntity.ok(addressService.getAddressById(id));
+    @PostMapping("/cart")
+    @AddMessage("Add book to cart")
+    public ResponseEntity<Object> getCartByUser(
+            @Valid @RequestBody CartRequest cartRequest) {
+        return ResponseEntity.ok(cartService.addBookToCart(cartRequest));
     }
 
-    @PostMapping("/address")
-    @AddMessage("Create address")
-    public ResponseEntity<Object> createAddress(@Valid @RequestBody AddressRequest request) {
-        return ResponseEntity.ok(addressService.createAddress(request));
+    @DeleteMapping("/cart/{id}")
+    @AddMessage("Delete book at cart")
+    public ResponseEntity<Object> deleteBookAtCart(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(cartService.deleteBookAtCart(id));
     }
-
-    @PutMapping("/address/{id}")
-    @AddMessage("Update address")
-    public ResponseEntity<Object> updateAddress(@PathVariable Long id, @Valid @RequestBody AddressRequest request) {
-        return ResponseEntity.ok(addressService.updateAddress(id, request));
-    }
-
-    @DeleteMapping("/address/{id}")
-    @AddMessage("Delete address")
-    public ResponseEntity<Object> deleteAddress(@PathVariable Long id) {
-        return ResponseEntity.ok(addressService.deleteAddress(id));
-    }
-
-
 }

@@ -1,6 +1,7 @@
 package com.build.core_restful.repository;
 
 import com.build.core_restful.domain.User;
+import com.build.core_restful.util.enums.UserStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    Page<User> findByActive(boolean active, Pageable pageable);
+    Page<User> findByStatus(UserStatusEnum statusUser, Pageable pageable);
 
-    User findByIdAndActive(Long id, boolean active);
+    User findByIdAndStatus(Long id, UserStatusEnum statusUser);
 }

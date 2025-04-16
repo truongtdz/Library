@@ -3,6 +3,7 @@ package com.build.core_restful.controller;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.LoginRequest;
 import com.build.core_restful.domain.request.UserRequest;
+import com.build.core_restful.domain.response.RoleResponse;
 import com.build.core_restful.util.JwtUtil;
 import com.build.core_restful.domain.response.LoginResponse;
 import com.build.core_restful.domain.response.UserResponse;
@@ -50,12 +51,19 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         User userDB = this.userService.getUserByEmail(login.getEmail());
+
         LoginResponse loginResponse = LoginResponse.builder()
                 .user(LoginResponse.UserLoginResponse.builder()
                         .id(userDB.getId())
                         .name(userDB.getFullName())
                         .email(userDB.getEmail())
-                        .role(userDB.getRole())
+                        .role(
+                                RoleResponse.builder()
+                                        .id(userDB.getRole().getId())
+                                        .name(userDB.getRole().getName())
+                                        .description(userDB.getRole().getDescription())
+                                        .build()
+                        )
                         .build())
                 .build();
 

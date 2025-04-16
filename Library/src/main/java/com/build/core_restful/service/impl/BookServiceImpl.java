@@ -2,7 +2,6 @@ package com.build.core_restful.service.impl;
 
 import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.Image;
-import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.BookRequest;
 import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
@@ -21,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -42,20 +42,49 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public PageResponse<Object> getAllBooks(Pageable pageable) {
-        Page<BookResponse> page = bookRepository.findAll(pageable).map(bookMapper::toBookResponse);
+        Page<Book> bookPage = bookRepository.findAll(pageable);
+
+        List<BookResponse> bookResponses = bookPage.getContent().stream().map(book -> {
+            BookResponse response = bookMapper.toBookResponse(book);
+
+            List<BookResponse.ImageResponse> imageList = book.getImages().stream()
+                    .map(image -> BookResponse.ImageResponse.builder()
+                            .isCover(image.isCover())
+                            .url(image.getUrl())
+                            .build())
+                    .collect(Collectors.toList());
+
+            response.setImageList(imageList);
+            return response;
+        }).collect(Collectors.toList());
+
         return PageResponse.builder()
-                .page(page.getNumber())
-                .size(page.getSize())
-                .content(page.getContent())
+                .page(bookPage.getNumber())
+                .size(bookPage.getSize())
+                .content(bookResponses)
                 .build();
     }
 
+
     @Override
     public BookResponse getBookById(Long id) {
-        return bookRepository.findById(id)
-                .map(bookMapper::toBookResponse)
+        Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new NewException("Book with id: " + id + " not found"));
+
+        BookResponse bookResponse = bookMapper.toBookResponse(book);
+
+        bookResponse.setImageList(
+                book.getImages().stream()
+                        .map(image -> BookResponse.ImageResponse.builder()
+                                .isCover(image.isCover())
+                                .url(image.getUrl())
+                                .build())
+                        .collect(Collectors.toList())
+        );
+
+        return bookResponse;
     }
+
 
     @Override
     public BookResponse createBook(BookRequest bookRequest) {
@@ -136,5 +165,22 @@ public class BookServiceImpl implements BookService {
         image.setCover(true);
 
         imageRepository.save(image);
+    }
+
+    @Override
+    public PageResponse<Object> searchBook(String keyword, Pageable pageable) {
+        Page<Book> page;
+        if (keyword != null && !keyword.isEmpty()) {
+            page = bookRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+        } else {
+            page = bookRepository.findAll(pageable);
+        }
+
+        page.map(bookMapper::toBookResponse);
+        return PageResponse.builder()
+                .page(page.getNumber())
+                .size(page.getSize())
+                .content(page.getContent())
+                .build();
     }
 }

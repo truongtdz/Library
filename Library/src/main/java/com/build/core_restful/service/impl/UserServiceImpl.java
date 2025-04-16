@@ -8,6 +8,7 @@ import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.repository.RoleRepository;
 import com.build.core_restful.repository.UserRepository;
 import com.build.core_restful.service.UserService;
+import com.build.core_restful.util.enums.UserStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.UserMapper;
 import com.build.core_restful.util.upload.CloudinaryUpload;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageResponse<Object> getAllUsers(Pageable pageable) {
-        Page<User> page = userRepository.findByActive(true, pageable);
+        Page<User> page = userRepository.findByStatus(UserStatusEnum.Active, pageable);
         page.map(userMapper::toUserResponse);
         return PageResponse.builder()
                 .page(page.getNumber())
@@ -75,17 +76,22 @@ public class UserServiceImpl implements UserService {
         if(!userRepository.existsById(id)){
             throw new NewException("User have id: " + id + " not exist!");
         }
-        return userMapper.toUserResponse(userRepository.findByIdAndActive(id, true));
+        return userMapper.toUserResponse(userRepository.findByIdAndStatus(id, UserStatusEnum.Active));
     }
 
     @Override
     public UserResponse createUser(UserRequest newUser) {
-        if(userRepository.existsByEmail(newUser.getEmail())){
+        if(userRepository.existsByEmail(newUser.getEmail())) {
             throw new NewException("User have email: " + newUser.getEmail() + " exist! ");
         }
 
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        return userMapper.toUserResponse(userRepository.save(userMapper.toUser(newUser)));
+        User user = userMapper.toUser(newUser);
+
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        user.setStatus(UserStatusEnum.Active);
+        user.setRole(roleRepository.findById(3L).get());
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
@@ -94,10 +100,13 @@ public class UserServiceImpl implements UserService {
             throw new NewException("User id: " + id + " not exist!");
         }
 
-        User currentUser = userRepository.findByIdAndActive(id, true);
+        User currentUser = userRepository.findByIdAndStatus(id, UserStatusEnum.Active);
 
         updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         userMapper.updateUser(currentUser, updateUser);
+
+        currentUser.setStatus(UserStatusEnum.Active);
+        currentUser.setRole(roleRepository.findById(3L).get());
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
     }
@@ -105,13 +114,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateRoleUser(UpdateRoleUserRequest updateRoleUserRequest) {
 
-        if(!userRepository.existsById(updateRoleUserRequest.getUser_id())){
-            throw new NewException("User have id: " + updateRoleUserRequest.getUser_id() + " not exist!");
+        if(!userRepository.existsById(updateRoleUserRequest.getUserId())){
+            throw new NewException("User have id: " + updateRoleUserRequest.getUserId() + " not exist!");
         }
 
-        User currentUser = userRepository.findById(updateRoleUserRequest.getUser_id()).get();
+        User currentUser = userRepository.findById(updateRoleUserRequest.getUserId()).get();
 
-        currentUser.setRole(roleRepository.findById(updateRoleUserRequest.getRole_id()).get());
+        currentUser.setRole(roleRepository.findById(updateRoleUserRequest.getRoleId()).get());
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
     }
@@ -123,7 +132,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User currentUser = userRepository.findById(id).get();
-        currentUser.setActive(false);
+        currentUser.setStatus(UserStatusEnum.Banned);
 
         try{
             userRepository.save(currentUser);
