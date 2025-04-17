@@ -1,5 +1,6 @@
 package com.build.core_restful.service.impl;
 
+import com.build.core_restful.domain.Role;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
 import com.build.core_restful.domain.request.UserRequest;
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setStatus(UserStatusEnum.Active);
-        user.setRole(roleRepository.findById(3L).get());
+        user.setRole(roleRepository.findByName("USER"));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -106,7 +107,7 @@ public class UserServiceImpl implements UserService {
         userMapper.updateUser(currentUser, updateUser);
 
         currentUser.setStatus(UserStatusEnum.Active);
-        currentUser.setRole(roleRepository.findById(3L).get());
+        currentUser.setRole(roleRepository.findByName("USER"));
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
     }
@@ -114,24 +115,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateRoleUser(UpdateRoleUserRequest updateRoleUserRequest) {
 
-        if(!userRepository.existsById(updateRoleUserRequest.getUserId())){
-            throw new NewException("User have id: " + updateRoleUserRequest.getUserId() + " not exist!");
-        }
+        User currentUser = userRepository.findById(updateRoleUserRequest.getUserId())
+                .orElseThrow(() -> new NewException("User have id: " + updateRoleUserRequest.getUserId() + " not exist!"));
 
-        User currentUser = userRepository.findById(updateRoleUserRequest.getUserId()).get();
-
-        currentUser.setRole(roleRepository.findById(updateRoleUserRequest.getRoleId()).get());
+        currentUser.setRole(
+                roleRepository.findById(updateRoleUserRequest.getRoleId())
+                        .orElseThrow ( () ->new NewException("Role have id: " + updateRoleUserRequest.getRoleId() + " not exist!"))
+        );
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
     }
 
     @Override
     public boolean banUser(Long id) {
-        if(!userRepository.existsById(id)){
-            throw new NewException("User have id: " + id + " not exist!");
-        }
+        User currentUser = userRepository.findById(id)
+                .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
 
-        User currentUser = userRepository.findById(id).get();
         currentUser.setStatus(UserStatusEnum.Banned);
 
         try{
@@ -144,13 +143,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updateAvatarUser(Long id, MultipartFile file) {
-        if(!userRepository.existsById(id)){
-            throw new NewException("User have id: " + id + " not exist!");
-        }
-
         try{
             String avt = cloudinaryUpload.uploadFile(file);
-            User currentUser = userRepository.findById(id).get();
+            User currentUser = userRepository.findById(id)
+                            .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
             currentUser.setAvatar(avt);
             userRepository.save(currentUser);
         } catch (IOException e) {

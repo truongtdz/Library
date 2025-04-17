@@ -53,7 +53,50 @@ public class DatabaseLoader implements CommandLineRunner {
             arr.add(new Permission("USER" , "/api/v1/user", "PUT", "Update role user"));
             arr.add(new Permission("USER" , "/api/v1/user/search/**", "GET", "Search book"));
 
-            // Module Product
+            // Module Role
+            arr.add(new Permission("ROLE" , "/api/v1/role", "POST", "Create a role"));
+            arr.add(new Permission("ROLE" , "/api/v1/role", "PUT", "Update a role"));
+            arr.add(new Permission("ROLE" , "/api/v1/role/{id}", "DELETE", "Ban a role"));
+            arr.add(new Permission("ROLE" , "/api/v1/role/{id}", "GET", "Get a role by id"));
+            arr.add(new Permission("ROLE" , "/api/v1/role", "GET", "Get all role with pagination"));
+
+            // Module Permission
+            arr.add(new Permission("PERMISSION" , "/api/v1/permission", "POST", "Create a permission"));
+            arr.add(new Permission("PERMISSION" , "/api/v1/permission", "PUT", "Update a permission"));
+            arr.add(new Permission("PERMISSION" , "/api/v1/permission/{id}", "DELETE", "Ban a permission"));
+            arr.add(new Permission("PERMISSION" , "/api/v1/permission/{id}", "GET", "Get a permission by id"));
+            arr.add(new Permission("PERMISSION" , "/api/v1/permission", "GET", "Get all permission with pagination"));
+
+            // Module Address
+            arr.add(new Permission("ADDRESS" , "/api/v1/address", "POST", "Create a address"));
+            arr.add(new Permission("ADDRESS" , "/api/v1/address", "PUT", "Update a address"));
+            arr.add(new Permission("ADDRESS" , "/api/v1/address/{id}", "DELETE", "Ban a address"));
+            arr.add(new Permission("ADDRESS" , "/api/v1/address/{id}", "GET", "Get a address by id"));
+            arr.add(new Permission("ADDRESS" , "/api/v1/address/user/{id}", "GET", "Get address by user with pagination"));
+
+            // Module Category
+            arr.add(new Permission("CATEGORY" , "/api/v1/category", "POST", "Create a category"));
+            arr.add(new Permission("CATEGORY" , "/api/v1/category", "PUT", "Update a category"));
+            arr.add(new Permission("CATEGORY" , "/api/v1/category/{id}", "DELETE", "Ban a category"));
+            arr.add(new Permission("CATEGORY" , "/api/v1/category/{id}", "GET", "Get a category by id"));
+            arr.add(new Permission("CATEGORY" , "/api/v1/category", "GET", "Get all category with pagination"));
+
+            // Module Authors
+            arr.add(new Permission("AUTHORS" , "/api/v1/authors", "POST", "Create a authors"));
+            arr.add(new Permission("AUTHORS" , "/api/v1/authors", "PUT", "Update a authors"));
+            arr.add(new Permission("AUTHORS" , "/api/v1/authors/{id}", "DELETE", "Ban a authors"));
+            arr.add(new Permission("AUTHORS" , "/api/v1/authors/{id}", "GET", "Get a authors by id"));
+            arr.add(new Permission("AUTHORS" , "/api/v1/authors", "GET", "Get all authors with pagination"));
+
+            // Module Book
+            arr.add(new Permission("BOOK" , "/api/v1/book", "POST", "Create a book"));
+            arr.add(new Permission("BOOK" , "/api/v1/book", "PUT", "Update a book"));
+            arr.add(new Permission("BOOK" , "/api/v1/book/{id}", "DELETE", "Delete a book"));
+            arr.add(new Permission("BOOK" , "/api/v1/book/{id}", "GET", "Get a book by id"));
+            arr.add(new Permission("BOOK" , "/api/v1/book", "GET", "Get all book with pagination"));
+            arr.add(new Permission("BOOK" , "/api/v1/book/upload/{id}", "POST", "Upload image book"));
+            arr.add(new Permission("BOOK" , "/api/v1/book/cover/{id}", "PUT", "Set cover image book"));
+
             this.permissionRepository.saveAll(arr);
         }
 
@@ -62,14 +105,12 @@ public class DatabaseLoader implements CommandLineRunner {
             Role adminRole = new Role("SUPER_ADMIN","Admin full permissions", adminPermissions);
             this.roleRepository.save(adminRole);
 
-            List<Permission> hrPermissions = this.permissionRepository.findByModule("JOBS");
-            hrPermissions.addAll(this.permissionRepository.findByModule("RESUMES"));
-            Role hrRole = new Role("HR","Hr can management Job and Resumes", hrPermissions);
-            this.roleRepository.save(hrRole);
-
-            List<Permission> userPermissions = this.permissionRepository.findByModuleAndMethod("JOBS", "GET");
-            userPermissions.addAll(this.permissionRepository.findByModule("RESUMES"));
-            Role userRole = new Role("USER","USER can management resumes ", userPermissions);
+            List<Permission> userPermissions = this.permissionRepository.findByModuleAndMethod("USER", "GET");
+            userPermissions.addAll(this.permissionRepository.findByModuleAndMethod("BOOK", "GET"));
+            userPermissions.addAll(this.permissionRepository.findByModule("ADDRESS"));
+            userPermissions.addAll(this.permissionRepository.findByModuleAndMethod("CATEGORY", "GET"));
+            userPermissions.addAll(this.permissionRepository.findByModuleAndMethod("AUTHORS", "GET"));
+            Role userRole = new Role("USER","USER can management address ", userPermissions);
             this.roleRepository.save(userRole);
         }
 
