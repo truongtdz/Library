@@ -14,11 +14,9 @@ public interface AddressMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "rentalOrder", ignore = true)
     Address toAddress(AddressRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "rentalOrder", ignore = true)
     void updateAddress(@MappingTarget Address address, AddressRequest request);
 }

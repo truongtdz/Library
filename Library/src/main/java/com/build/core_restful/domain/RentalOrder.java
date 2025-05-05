@@ -23,12 +23,13 @@ public class RentalOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Instant rentalDate;
-    private Instant dueDate;
-    private Instant returnDate;
     private Long totalPrice;
     private Long depositPrice;
-    private Long lateFee;
+
+    private String city;
+    private String district;
+    private String ward;
+    private String street;
 
     @Column(columnDefinition = "TEXT")
     private String notes;
@@ -49,10 +50,6 @@ public class RentalOrder {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
-    private Address address;
 
     private Instant createAt;
     private Instant updateAt;

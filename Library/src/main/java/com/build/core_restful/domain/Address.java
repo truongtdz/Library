@@ -29,9 +29,6 @@ public class Address {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "address")
-    private RentalOrder rentalOrder;
-
     private Instant createAt;
     private Instant updateAt;
     private String createBy;

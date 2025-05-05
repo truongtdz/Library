@@ -4,7 +4,6 @@ import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.Cart;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.CartRequest;
-import com.build.core_restful.domain.request.CheckoutRequest;
 import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.repository.BookRepository;

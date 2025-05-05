@@ -32,11 +32,11 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public PageResponse<Object> getAllAddresses(Long id, Pageable pageable) {
         Page<Address> page = addressRepository.findByUserId(id, pageable);
-        page.map(addressMapper::toAddressResponse);
+        Page<AddressResponse> pageResponse = page.map(addressMapper::toAddressResponse);
         return PageResponse.builder()
                 .page(page.getNumber())
                 .size(page.getSize())
-                .content(page.getContent())
+                .content(pageResponse.getContent())
                 .build();
     }
 

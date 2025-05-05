@@ -38,6 +38,7 @@ public class Book {
     private Long stock;
     private Long rentalPrice;
     private Long depositPrice;
+    private Long lateFee;
     private Long discount;
 
     @Enumerated(EnumType.STRING)

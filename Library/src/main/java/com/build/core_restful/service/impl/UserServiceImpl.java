@@ -64,11 +64,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageResponse<Object> getAllUsers(Pageable pageable) {
         Page<User> page = userRepository.findByStatus(UserStatusEnum.Active, pageable);
-        page.map(userMapper::toUserResponse);
+        Page<UserResponse> pageResponse = page.map(userMapper::toUserResponse);
         return PageResponse.builder()
                 .page(page.getNumber())
                 .size(page.getSize())
-                .content(page.getContent())
+                .content(pageResponse.getContent())
                 .build();
     }
 

@@ -1,12 +1,10 @@
 package com.build.core_restful.controller.user;
 
-import com.build.core_restful.domain.request.CartRequest;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.service.BookService;
-import com.build.core_restful.service.CartService;
 import com.build.core_restful.service.UserService;
 import com.build.core_restful.util.annotation.AddMessage;
 import jakarta.validation.Valid;
@@ -22,12 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     private final UserService userService;
     private final BookService bookService;
-    private final CartService cartService;
 
-    public UserController(UserService userService, BookService bookService, CartService cartService){
+    public UserController(UserService userService, BookService bookService){
         this.userService = userService;
         this.bookService = bookService;
-        this.cartService = cartService;
     }
 
     @GetMapping
@@ -90,30 +86,4 @@ public class UserController {
         return ResponseEntity.ok(bookService.searchBook(keyword, pageable));
     }
 
-    @GetMapping("/cart/{userId}")
-    @AddMessage("Get book at cart by user")
-    public ResponseEntity<PageResponse<Object>> getCartByUser(
-            @PathVariable Long userId,
-            @RequestParam int page,
-            @RequestParam int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        PageResponse<Object> carts = cartService.getByUser(userId, pageable);
-
-        return ResponseEntity.ok(carts);
-    }
-
-    @PostMapping("/cart")
-    @AddMessage("Add book to cart")
-    public ResponseEntity<Object> getCartByUser(
-            @Valid @RequestBody CartRequest cartRequest) {
-        return ResponseEntity.ok(cartService.addBookToCart(cartRequest));
-    }
-
-    @DeleteMapping("/cart/{id}")
-    @AddMessage("Delete book at cart")
-    public ResponseEntity<Object> deleteBookAtCart(
-            @PathVariable Long id) {
-        return ResponseEntity.ok(cartService.deleteBookAtCart(id));
-    }
 }

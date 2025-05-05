@@ -7,36 +7,23 @@ import lombok.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "rental_items")
+@Table(name = "notification")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RentalItem {
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Instant rentalDate;
-    private Instant returnDate;
-
-    private String bookName;
-    private Long rentalPrice;
-    private Long depositPrice;
-    private Long lateFee;
-    private Long discount;
-    private Long quantity;
-    private Long totalRental;
-    private Long totalDeposit;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private RentalOrder order;
-
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private Instant createAt;
     private Instant updateAt;
