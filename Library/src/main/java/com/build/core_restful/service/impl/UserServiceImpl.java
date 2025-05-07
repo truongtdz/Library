@@ -1,6 +1,5 @@
 package com.build.core_restful.service.impl;
 
-import com.build.core_restful.domain.Role;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
 import com.build.core_restful.domain.request.UserRequest;

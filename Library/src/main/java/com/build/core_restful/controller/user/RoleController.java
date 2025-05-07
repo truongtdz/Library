@@ -4,7 +4,6 @@ import com.build.core_restful.domain.request.RoleRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.service.RoleService;
 import com.build.core_restful.util.annotation.AddMessage;
-import com.build.core_restful.util.exception.NewException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

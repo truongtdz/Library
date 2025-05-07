@@ -35,8 +35,12 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public PageResponse<Object> getByUser(Long userId, Pageable pageable) {
-        Page<Cart> page = cartRepository.findByUserId(userId, pageable);
+    public PageResponse<Object> getByUser(Long id, Pageable pageable) {
+        if(!userRepository.existsById(id)){
+            throw new NewException("User have id: " + id + " not exist!");
+        }
+
+        Page<Cart> page = cartRepository.findByUserId(id, pageable);
 
         List<BookResponse> bookResponses = page.getContent().stream().map(cart -> {
             BookResponse response = bookMapper.toBookResponse(cart.getBook());
@@ -60,11 +64,15 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart addBookToCart(CartRequest cartRequest) {
+    public boolean addBookToCart(CartRequest cartRequest) {
         User user = userRepository.findByIdAndStatus(cartRequest.getUserId(), UserStatusEnum.Active);
 
         if(user == null){
             throw new NewException("User with id: " + cartRequest.getUserId() + " not found");
+        }
+
+        if(cartRepository.existsByUserIdAndBookId(cartRequest.getUserId(), cartRequest.getBookId())){
+            throw new NewException("Book existed at my cart");
         }
 
         Book book = bookRepository.findById(cartRequest.getBookId())
@@ -74,13 +82,19 @@ public class CartServiceImpl implements CartService {
                 .book(book)
                 .user(user)
                 .build();
-        return cartRepository.save(newCart);
+        try {
+            cartRepository.save(newCart);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
     }
 
     @Override
-    public boolean deleteBookAtCart(Long id) {
+    public boolean deleteBookAtCart(CartRequest cartRequest) {
+        Cart cart = cartRepository.findByUserIdAndBookId(cartRequest.getUserId(), cartRequest.getBookId());
         try{
-            cartRepository.deleteById(id);
+            cartRepository.deleteById(cart.getId());
             return true;
         } catch (Exception e) {
             return false;

@@ -13,9 +13,6 @@ public class AddressRequest {
     @NotBlank(message = "Thành phố không được để trống")
     private String city;
 
-    @NotBlank(message = "Tỉnh không được để trống")
-    private String province;
-
     @NotBlank(message = "Quận/Huyện không được để trống")
     private String district;
 
@@ -23,8 +20,6 @@ public class AddressRequest {
     private String ward;
 
     private String street;
-
-    private boolean isDefault = true;
 
     @NotNull(message = "UserId không được để trống")
     private Long userId;

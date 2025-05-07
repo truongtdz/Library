@@ -3,6 +3,7 @@ package com.build.core_restful.controller.user;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
+import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.service.UserService;
@@ -74,7 +75,7 @@ public class UserController {
 
     @GetMapping("/search")
     @AddMessage("Get all books")
-    public ResponseEntity<PageResponse<Object>> getAllBooks(
+    public ResponseEntity<SearchResponse> getAllBooks(
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(required = false) String sortBy,

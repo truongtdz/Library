@@ -19,28 +19,28 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/cart/{userId}")
+    @GetMapping("/{id}")
     @AddMessage("Get book at cart by user")
     public ResponseEntity<PageResponse<Object>> getCartByUser(
-            @PathVariable Long userId,
+            @PathVariable Long id,
             @RequestParam int page,
             @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return ResponseEntity.ok(cartService.getByUser(userId, pageable));
+        return ResponseEntity.ok(cartService.getByUser(id, pageable));
     }
 
-    @PostMapping("/cart")
+    @PostMapping()
     @AddMessage("Add book to cart")
-    public ResponseEntity<Object> getCartByUser(
+    public ResponseEntity<Boolean> getCartByUser(
             @Valid @RequestBody CartRequest cartRequest) {
         return ResponseEntity.ok(cartService.addBookToCart(cartRequest));
     }
 
-    @DeleteMapping("/cart/{id}")
+    @DeleteMapping()
     @AddMessage("Delete book at cart")
     public ResponseEntity<Object> deleteBookAtCart(
-            @PathVariable Long id) {
-        return ResponseEntity.ok(cartService.deleteBookAtCart(id));
+            @Valid @RequestBody CartRequest cartRequest) {
+        return ResponseEntity.ok(cartService.deleteBookAtCart(cartRequest));
     }
 }

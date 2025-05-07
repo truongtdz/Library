@@ -5,8 +5,6 @@ import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RoleResponse;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface RoleService {
     PageResponse<Object> getAllRoles(Pageable pageable);
 

@@ -36,6 +36,15 @@ public class PermissionInterceptor implements HandlerInterceptor {
         System.out.println(">>> httpMethod= " + httpMethod);
         System.out.println(">>> requestURI= " + requestURI);
 
+        // Nếu là GET và nằm trong danh sách public GET URL thì bỏ qua interceptor
+        if (httpMethod.equalsIgnoreCase("GET")) {
+            if (requestURI.matches("/api/v1/book/\\d+") ||
+                    requestURI.matches("/api/v1/author/\\d+") ||
+                    requestURI.matches("/api/v1/category/\\d+")) {
+                return true;
+            }
+        }
+
         // check permission
         String email = JwtUtil.getCurrentUserLogin().isPresent()
                 ? JwtUtil.getCurrentUserLogin().get()

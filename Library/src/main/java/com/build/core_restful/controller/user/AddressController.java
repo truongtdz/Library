@@ -1,6 +1,8 @@
 package com.build.core_restful.controller.user;
 
 import com.build.core_restful.domain.request.AddressRequest;
+import com.build.core_restful.domain.request.SetAddressDefault;
+import com.build.core_restful.domain.response.AddressResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.service.AddressService;
 import com.build.core_restful.util.annotation.AddMessage;
@@ -48,5 +50,11 @@ public class AddressController {
     @AddMessage("Delete address")
     public ResponseEntity<Object> deleteAddress(@PathVariable Long id) {
         return ResponseEntity.ok(addressService.deleteAddress(id));
+    }
+
+    @PutMapping
+    @AddMessage("Set address default")
+    public ResponseEntity<AddressResponse> setAddressDefault(@RequestBody SetAddressDefault addressDefault){
+        return ResponseEntity.ok(addressService.setAddressDefault(addressDefault));
     }
 }

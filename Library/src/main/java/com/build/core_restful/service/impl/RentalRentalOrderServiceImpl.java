@@ -24,20 +24,17 @@ public class RentalRentalOrderServiceImpl implements RentalOrderService {
 
     private final RentalOrderRepository rentalOrderRepository;
     private final UserRepository userRepository;
-    private final AddressRepository addressRepository;
     private final BookRepository bookRepository;
     private final RentalItemRepository rentalItemRepository;
     private final RentalOrderMapper rentalOrderMapper;
 
     public RentalRentalOrderServiceImpl(RentalOrderRepository rentalOrderRepository,
                                         UserRepository userRepository,
-                                        AddressRepository addressRepository,
                                         BookRepository bookRepository,
                                         RentalItemRepository rentalItemRepository,
                                         RentalOrderMapper rentalOrderMapper) {
         this.rentalOrderRepository = rentalOrderRepository;
         this.userRepository = userRepository;
-        this.addressRepository = addressRepository;
         this.bookRepository = bookRepository;
         this.rentalItemRepository = rentalItemRepository;
         this.rentalOrderMapper = rentalOrderMapper;

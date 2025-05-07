@@ -45,7 +45,7 @@ public class DatabaseLoader implements CommandLineRunner {
 
             // Module User
             arr.add(new Permission("USER" , "/api/v1/user", "POST", "Create a user"));
-            arr.add(new Permission("USER" , "/api/v1/user", "PUT", "Update a user"));
+            arr.add(new Permission("USER" , "/api/v1/user/{id}", "PUT", "Update a user"));
             arr.add(new Permission("USER" , "/api/v1/user/{id}", "DELETE", "Ban a user"));
             arr.add(new Permission("USER" , "/api/v1/user/{id}", "GET", "Get a user by id"));
             arr.add(new Permission("USER" , "/api/v1/user", "GET", "Get all user with pagination"));
@@ -69,7 +69,8 @@ public class DatabaseLoader implements CommandLineRunner {
 
             // Module Address
             arr.add(new Permission("ADDRESS" , "/api/v1/address", "POST", "Create a address"));
-            arr.add(new Permission("ADDRESS" , "/api/v1/address", "PUT", "Update a address"));
+            arr.add(new Permission("ADDRESS" , "/api/v1/address/{id}", "PUT", "Update a address"));
+            arr.add(new Permission("ADDRESS" , "/api/v1/address", "PUT", "Set address default"));
             arr.add(new Permission("ADDRESS" , "/api/v1/address/{id}", "DELETE", "Ban a address"));
             arr.add(new Permission("ADDRESS" , "/api/v1/address/{id}", "GET", "Get a address by id"));
             arr.add(new Permission("ADDRESS" , "/api/v1/address/user/{id}", "GET", "Get address by user with pagination"));
@@ -97,6 +98,19 @@ public class DatabaseLoader implements CommandLineRunner {
             arr.add(new Permission("BOOK" , "/api/v1/book/upload/{id}", "POST", "Upload image book"));
             arr.add(new Permission("BOOK" , "/api/v1/book/cover/{id}", "PUT", "Set cover image book"));
 
+            // Module Cart
+            arr.add(new Permission("CART" , "/api/v1/cart/{id}", "GET", "Get cart of user"));
+            arr.add(new Permission("CART" , "/api/v1/cart", "POST", "Add book to cart"));
+            arr.add(new Permission("CART" , "/api/v1/cart/{id}", "DELETE", "Delete book at cart"));
+
+            // Module Order
+            arr.add(new Permission("ORDER" , "/api/v1/order", "GET", "Get all order"));
+            arr.add(new Permission("ORDER" , "/api/v1/order/{id}", "GET", "Get order by id"));
+            arr.add(new Permission("ORDER" , "/api/v1/order/{id}", "PUT", "Update status order"));
+
+            //Module Payment
+            arr.add(new Permission("PAYMENT" , "/api/v1/checkout", "POST", "Payment"));
+
             this.permissionRepository.saveAll(arr);
         }
 
@@ -105,9 +119,19 @@ public class DatabaseLoader implements CommandLineRunner {
             Role adminRole = new Role("SUPER_ADMIN","Admin full permissions", adminPermissions);
             this.roleRepository.save(adminRole);
 
-            List<Permission> userPermissions = this.permissionRepository.findByModuleAndMethod("USER", "GET");
+            List<Permission> staffPermissions = new ArrayList<>();
+            staffPermissions.addAll(this.permissionRepository.findByModule("BOOK"));
+            staffPermissions.addAll(this.permissionRepository.findByModule("CATEGORY"));
+            staffPermissions.addAll(this.permissionRepository.findByModule("AUTHORS"));
+            staffPermissions.addAll(this.permissionRepository.findByModule("ORDER"));
+            Role staffRole = new Role("STAFF","STAFF can management product and order", staffPermissions);
+            this.roleRepository.save(staffRole);
+
+            List<Permission> userPermissions = new ArrayList<>();
             userPermissions.addAll(this.permissionRepository.findByModuleAndMethod("BOOK", "GET"));
             userPermissions.addAll(this.permissionRepository.findByModule("ADDRESS"));
+            userPermissions.addAll(this.permissionRepository.findByModule("CART"));
+            userPermissions.addAll(this.permissionRepository.findByModule("PAYMENT"));
             userPermissions.addAll(this.permissionRepository.findByModuleAndMethod("CATEGORY", "GET"));
             userPermissions.addAll(this.permissionRepository.findByModuleAndMethod("AUTHORS", "GET"));
             Role userRole = new Role("USER","USER can management address ", userPermissions);
@@ -117,7 +141,7 @@ public class DatabaseLoader implements CommandLineRunner {
         if (countUsers == 0) {
             User adminUser = new User();
             adminUser.setEmail("admin@gmail.com");
-            adminUser.setAge(25L);
+            adminUser.setAge(20);
             adminUser.setGender(GenderEnum.Male);
             adminUser.setFullName("I'm super admin");
             adminUser.setPassword(this.passwordEncoder.encode("123456"));

@@ -1,6 +1,5 @@
 package com.build.core_restful.domain.response;
 
-import com.build.core_restful.domain.Role;
 import lombok.*;
 
 @Getter

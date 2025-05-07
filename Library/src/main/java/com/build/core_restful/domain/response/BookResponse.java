@@ -1,6 +1,5 @@
 package com.build.core_restful.domain.response;
 
-import com.build.core_restful.domain.Image;
 import com.build.core_restful.util.enums.BookStatusEnum;
 import lombok.*;
 

@@ -1,6 +1,5 @@
 package com.build.core_restful.controller.order;
 
-import com.build.core_restful.domain.request.RentalOrderRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.service.RentalOrderService;
@@ -22,7 +21,7 @@ public class RentalOrderController {
     }
 
     @PutMapping("/{id}")
-    @AddMessage("Update order")
+    @AddMessage("Update status order")
     public ResponseEntity<RentalOrderResponse> update(@PathVariable Long id, @Valid @RequestBody OrderStatusEnum newStatus) {
         return ResponseEntity.ok(rentalOrderService.update(id, newStatus));
     }

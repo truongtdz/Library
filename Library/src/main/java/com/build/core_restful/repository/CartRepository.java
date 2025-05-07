@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
     Page<Cart> findByUserId(Long userId, Pageable pageable);
+
+    boolean existsByUserIdAndBookId(Long userId, Long bookId);
+
+    Cart findByUserIdAndBookId(Long userId, Long bookId);
 }

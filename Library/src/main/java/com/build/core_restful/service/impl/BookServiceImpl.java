@@ -5,6 +5,7 @@ import com.build.core_restful.domain.Image;
 import com.build.core_restful.domain.request.BookRequest;
 import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
+import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.CategoryRepository;
 import com.build.core_restful.repository.AuthorsRepository;
@@ -168,19 +169,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResponse<Object> searchBook(String keyword, Pageable pageable) {
+    public SearchResponse searchBook(String keyword, Pageable pageable) {
         Page<Book> page;
         if (keyword != null && !keyword.isEmpty()) {
             page = bookRepository.findByTitleContainingIgnoreCase(keyword, pageable);
         } else {
             page = bookRepository.findAll(pageable);
         }
-
-        page.map(bookMapper::toBookResponse);
-        return PageResponse.builder()
-                .page(page.getNumber())
-                .size(page.getSize())
-                .content(page.getContent())
+        Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
+        return SearchResponse.builder()
+                .keyword(keyword)
+                .result(PageResponse.builder()
+                                .page(page.getNumber())
+                                .size(page.getSize())
+                                .content(pageResponse.getContent())
+                                .build())
                 .build();
     }
 }

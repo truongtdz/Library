@@ -14,11 +14,14 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        String[] whiteList = {
-                "/", "/auth/**", "/storage/**", "/subscribers",
-                "/companies/**", "/jobs/**", "/skills/**", "/files"
+        String[] publicUrl = {
+                "/",
+                "/api/v1/auth/login", "/api/v1/auth/register",
+                "/api/v1/auth/refresh", "/api/v1/auth/logout",
+                "/api/v1/auth/account"
         };
+
         registry.addInterceptor(getPermissionInterceptor())
-                .excludePathPatterns(whiteList);
+                .excludePathPatterns(publicUrl);
     }
 }

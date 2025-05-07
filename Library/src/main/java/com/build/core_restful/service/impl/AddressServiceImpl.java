@@ -3,6 +3,7 @@ package com.build.core_restful.service.impl;
 import com.build.core_restful.domain.Address;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.AddressRequest;
+import com.build.core_restful.domain.request.SetAddressDefault;
 import com.build.core_restful.domain.response.AddressResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.repository.AddressRepository;
@@ -13,6 +14,8 @@ import com.build.core_restful.util.mapper.AddressMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -31,6 +34,10 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public PageResponse<Object> getAllAddresses(Long id, Pageable pageable) {
+        if(!userRepository.existsById(id)){
+            throw new NewException("User have id: " + id + " not exist!");
+        }
+
         Page<Address> page = addressRepository.findByUserId(id, pageable);
         Page<AddressResponse> pageResponse = page.map(addressMapper::toAddressResponse);
         return PageResponse.builder()
@@ -73,5 +80,18 @@ public class AddressServiceImpl implements AddressService {
         }
         addressRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public AddressResponse setAddressDefault(SetAddressDefault addressDefault) {
+        List<Address> addressList = addressRepository.findByUserId(addressDefault.getUserId());
+
+        addressList.forEach(address -> address.setIsDefault("false"));
+        addressRepository.saveAll(addressList);
+
+        Address address = addressRepository.findByIdAndUserId(addressDefault.getAddressId(), addressDefault.getUserId());
+        address.setIsDefault("true");
+
+        return addressMapper.toAddressResponse(addressRepository.save(address));
     }
 }

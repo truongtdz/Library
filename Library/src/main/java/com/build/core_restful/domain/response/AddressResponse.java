@@ -1,5 +1,6 @@
 package com.build.core_restful.domain.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.Instant;
@@ -16,11 +17,10 @@ public class AddressResponse {
     private String district;
     private String ward;
     private String street;
-    private String province;
-    private boolean isDefault;
+    private String isDefault;
 
     private Long userId;
-    private String userName; // hoặc email tuỳ bạn chọn trả về cái nào
+    private String userName;
 
     private Instant createAt;
     private Instant updateAt;

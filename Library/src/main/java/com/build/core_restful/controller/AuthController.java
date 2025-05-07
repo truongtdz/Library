@@ -38,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @AddMessage("api login")
+    @AddMessage("Login in to the website")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest login){
 
         // Nạp username and password
@@ -87,6 +87,7 @@ public class AuthController {
     }
 
     @GetMapping("/account")
+    @AddMessage("Get account is logged in")
     public ResponseEntity<Object> account(){
         String email = JwtUtil.getCurrentUserLogin().isPresent()
                 ? JwtUtil.getCurrentUserLogin().get()
@@ -104,6 +105,7 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
+    @AddMessage("Create new refreshToken")
     public ResponseEntity<LoginResponse> getUserByRefreshToken(@CookieValue(name = "refresh_token", defaultValue = "not") String refreshToken){
         // Check Valid
         Jwt decodeToken = this.createToken.checkValidRefreshToken(refreshToken);
@@ -143,6 +145,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @AddMessage("Logout")
     public ResponseEntity<Void> logout(){
         String email = JwtUtil.getCurrentUserLogin().isPresent()
                 ? JwtUtil.getCurrentUserLogin().get()
@@ -164,6 +167,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @AddMessage("Register account")
     public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRequest registerUser){
         if(userService.existUserByEmail(registerUser.getEmail())){
             throw new NewException("Người dùng email : " + registerUser.getEmail() + " đã tồn tại ");

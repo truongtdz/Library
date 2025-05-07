@@ -20,4 +20,5 @@ public class UserRequest {
 
     private String fullName;
     private String gender;
+    private int age;
 }

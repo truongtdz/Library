@@ -3,7 +3,6 @@ package com.build.core_restful.service.impl;
 import com.build.core_restful.domain.Permission;
 import com.build.core_restful.domain.Role;
 import com.build.core_restful.domain.request.RoleRequest;
-import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RoleResponse;
 import com.build.core_restful.repository.PermissionRepository;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RoleServiceImpl implements RoleService {

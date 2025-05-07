@@ -13,4 +13,6 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
     List<Permission> findByModule(String module);
 
     List<Permission> findByModuleAndMethod(String module, String method);
+
+    Permission findByApiPathAndMethod(String api, String method);
 }

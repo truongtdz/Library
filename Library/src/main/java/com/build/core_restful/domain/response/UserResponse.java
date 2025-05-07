@@ -16,6 +16,7 @@ public class UserResponse {
     private String fullName;
     private String email;
     private GenderEnum gender;
+    private int age;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createAt;
