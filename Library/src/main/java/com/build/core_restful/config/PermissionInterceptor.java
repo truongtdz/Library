@@ -38,9 +38,9 @@ public class PermissionInterceptor implements HandlerInterceptor {
 
         // Nếu là GET và nằm trong danh sách public GET URL thì bỏ qua interceptor
         if (httpMethod.equalsIgnoreCase("GET")) {
-            if (requestURI.matches("/api/v1/book/\\d+") ||
-                    requestURI.matches("/api/v1/author/\\d+") ||
-                    requestURI.matches("/api/v1/category/\\d+")) {
+            if (requestURI.matches("/api/v1/book/**") ||
+                    requestURI.matches("/api/v1/author/**") ||
+                    requestURI.matches("/api/v1/category/**")) {
                 return true;
             }
         }

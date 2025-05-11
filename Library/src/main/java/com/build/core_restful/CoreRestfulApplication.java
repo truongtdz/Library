@@ -9,5 +9,4 @@ public class CoreRestfulApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CoreRestfulApplication.class, args);
 	}
-
 }

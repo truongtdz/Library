@@ -19,12 +19,12 @@ public class SecurityConfig {
             "/",
             "/api/v1/auth/login", "/api/v1/auth/register",
             "/api/v1/auth/refresh", "/api/v1/auth/logout",
-            "/api/v1/auth/account"
+            "/api/v1/auth/account",
     };
 
     private final String[] publicUrlMethodGet = {
-            "/api/v1/book/*", "/api/v1/author/*",
-            "/api/v1/category/*",
+            "/api/v1/book/**", "/api/v1/author/**",
+            "/api/v1/category/**",
     };
 
     @Bean
