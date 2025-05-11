@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/authors")
+@RequestMapping("/api/v1/author")
 public class AuthorsController {
     private final AuthorsService authorService;
 

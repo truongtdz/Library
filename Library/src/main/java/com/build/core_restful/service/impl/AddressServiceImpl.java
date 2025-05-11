@@ -84,6 +84,10 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public AddressResponse setAddressDefault(SetAddressDefault addressDefault) {
+        if(!userRepository.existsById(addressDefault.getUserId())){
+            throw new NewException("User have id: " + addressDefault.getUserId() + " not exist!");
+        }
+
         List<Address> addressList = addressRepository.findByUserId(addressDefault.getUserId());
 
         addressList.forEach(address -> address.setIsDefault("false"));

@@ -54,16 +54,23 @@ public class BookController {
         return ResponseEntity.ok(bookService.deleteBook(id));
     }
 
-    @PostMapping("/upload/{id}")
+    @PostMapping("/image/{id}")
     @AddMessage("Upload image of book")
     public ResponseEntity<Boolean> uploadImages(@PathVariable Long id, @RequestParam List<MultipartFile> images){
         return ResponseEntity.ok(bookService.uploadImages(id, images));
     }
 
-    @PutMapping("/cover/{id}")
+    @PutMapping("/image")
     @AddMessage("Set cover image of book")
-    public ResponseEntity<Void> uploadImages(@Valid @RequestParam SetCoverImageBook coverImage){
+    public ResponseEntity<Boolean> setCoverImages(@Valid @RequestBody SetCoverImageBook coverImage){
         bookService.setImageCover(coverImage.getImageId(), coverImage.getBookId());
+        return ResponseEntity.ok(null);
+    }
+
+    @DeleteMapping("/image/{id}")
+    @AddMessage("Delete image")
+    public ResponseEntity<Boolean> deleteImages(@PathVariable Long id){
+        bookService.deleteImage(id);
         return ResponseEntity.ok(null);
     }
 }

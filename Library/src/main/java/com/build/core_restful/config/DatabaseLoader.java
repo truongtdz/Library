@@ -51,7 +51,7 @@ public class DatabaseLoader implements CommandLineRunner {
             arr.add(new Permission("USER" , "/api/v1/user", "GET", "Get all user with pagination"));
             arr.add(new Permission("USER" , "/api/v1/user/upload/{id}", "POST", "Upload avatar user"));
             arr.add(new Permission("USER" , "/api/v1/user", "PUT", "Update role user"));
-            arr.add(new Permission("USER" , "/api/v1/user/search/**", "GET", "Search book"));
+            arr.add(new Permission("USER" , "/api/v1/user/search", "GET", "Search book"));
 
             // Module Role
             arr.add(new Permission("ROLE" , "/api/v1/role", "POST", "Create a role"));
@@ -95,8 +95,9 @@ public class DatabaseLoader implements CommandLineRunner {
             arr.add(new Permission("BOOK" , "/api/v1/book/{id}", "DELETE", "Delete a book"));
             arr.add(new Permission("BOOK" , "/api/v1/book/{id}", "GET", "Get a book by id"));
             arr.add(new Permission("BOOK" , "/api/v1/book", "GET", "Get all book with pagination"));
-            arr.add(new Permission("BOOK" , "/api/v1/book/upload/{id}", "POST", "Upload image book"));
-            arr.add(new Permission("BOOK" , "/api/v1/book/cover/{id}", "PUT", "Set cover image book"));
+            arr.add(new Permission("BOOK" , "/api/v1/book/image/{id}", "POST", "Upload image book"));
+            arr.add(new Permission("BOOK" , "/api/v1/book/image/{id}", "PUT", "Set cover image book"));
+            arr.add(new Permission("BOOK" , "/api/v1/book/image/{id}", "DELETE", "Set cover image book"));
 
             // Module Cart
             arr.add(new Permission("CART" , "/api/v1/cart/{id}", "GET", "Get cart of user"));
