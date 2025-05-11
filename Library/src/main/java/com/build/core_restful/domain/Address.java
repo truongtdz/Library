@@ -22,7 +22,7 @@ public class Address {
     private String district;
     private String ward;
     private String street;
-    private String detail;
+    private String isDefault;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -2,7 +2,8 @@ package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.LoginRequest;
-import com.build.core_restful.domain.request.UserCreateRequest;
+import com.build.core_restful.domain.request.UserRequest;
+import com.build.core_restful.domain.response.RoleResponse;
 import com.build.core_restful.util.JwtUtil;
 import com.build.core_restful.domain.response.LoginResponse;
 import com.build.core_restful.domain.response.UserResponse;
@@ -37,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @AddMessage("api login")
+    @AddMessage("Login in to the website")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest login){
 
         // Nạp username and password
@@ -50,12 +51,19 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         User userDB = this.userService.getUserByEmail(login.getEmail());
+
         LoginResponse loginResponse = LoginResponse.builder()
                 .user(LoginResponse.UserLoginResponse.builder()
                         .id(userDB.getId())
                         .name(userDB.getFullName())
                         .email(userDB.getEmail())
-                        .role(userDB.getRole())
+                        .role(
+                                RoleResponse.builder()
+                                        .id(userDB.getRole().getId())
+                                        .name(userDB.getRole().getName())
+                                        .description(userDB.getRole().getDescription())
+                                        .build()
+                        )
                         .build())
                 .build();
 
@@ -79,6 +87,7 @@ public class AuthController {
     }
 
     @GetMapping("/account")
+    @AddMessage("Get account is logged in")
     public ResponseEntity<Object> account(){
         String email = JwtUtil.getCurrentUserLogin().isPresent()
                 ? JwtUtil.getCurrentUserLogin().get()
@@ -96,14 +105,12 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
+    @AddMessage("Create new refreshToken")
     public ResponseEntity<LoginResponse> getUserByRefreshToken(@CookieValue(name = "refresh_token", defaultValue = "not") String refreshToken){
         // Check Valid
         Jwt decodeToken = this.createToken.checkValidRefreshToken(refreshToken);
 
         String email = decodeToken.getSubject();
-
-        // Get User By Email And RefreshToken
-        User currentUser = this.userService.getUserByEmailAndRefreshToken(email, refreshToken);
 
         // Create access token
         LoginResponse loginResponse = new LoginResponse();
@@ -138,6 +145,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @AddMessage("Logout")
     public ResponseEntity<Void> logout(){
         String email = JwtUtil.getCurrentUserLogin().isPresent()
                 ? JwtUtil.getCurrentUserLogin().get()
@@ -159,7 +167,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody UserCreateRequest registerUser){
+    @AddMessage("Register account")
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRequest registerUser){
         if(userService.existUserByEmail(registerUser.getEmail())){
             throw new NewException("Người dùng email : " + registerUser.getEmail() + " đã tồn tại ");
         }

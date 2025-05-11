@@ -22,7 +22,7 @@ public class Permission {
     private Long id;
 
     @NotBlank(message = " Name không được để trống")
-    private String name;
+    private String description;
 
     @NotBlank(message = " Api không được để trống")
     private String apiPath;
@@ -36,6 +36,13 @@ public class Permission {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
     @JsonIgnore
     private List<Role> roles;
+
+    public Permission(String module, String apiPath, String method, String description) {
+        this.description = description;
+        this.apiPath = apiPath;
+        this.method = method;
+        this.module = module;
+    }
 
     private Instant createAt;
     private Instant updateAt;

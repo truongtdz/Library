@@ -1,38 +1,42 @@
 package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
-import com.build.core_restful.util.enums.OrderStatusEnum;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "rental_items")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class RentalItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long totalPrice;
+    private Instant rentalDate;
+    private Instant returnDate;
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatusEnum status;
-
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    @JsonIgnore
-    List<Item> items;
+    private String bookName;
+    private Long rentalPrice;
+    private Long depositPrice;
+    private Long lateFee;
+    private Long discount;
+    private Long quantity;
+    private Long totalRental;
+    private Long totalDeposit;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "order_id")
+    private RentalOrder order;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 
     private Instant createAt;
     private Instant updateAt;

@@ -35,7 +35,13 @@ public class Role {
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     @JsonIgnore
-    List<User> users;
+    private List<User> users;
+
+    public Role(String name, String description, List<Permission> permissions) {
+        this.name = name;
+        this.description = description;
+        this.permissions = permissions;
+    }
 
     private Instant createAt;
     private Instant updateAt;

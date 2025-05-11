@@ -1,11 +1,13 @@
 package com.build.core_restful.service;
 
 import com.build.core_restful.domain.User;
-import com.build.core_restful.domain.request.UserCreateRequest;
-import com.build.core_restful.domain.request.UserUpdateRequest;
+import com.build.core_restful.domain.request.UpdateRoleUserRequest;
+import com.build.core_restful.domain.request.UserRequest;
+import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface UserService {
@@ -17,15 +19,18 @@ public interface UserService {
 
     void updateUserByEmail(String email, String refreshToken);
 
-    boolean existUserById(Long id);
-
-    List<UserResponse> getAllUsers();
+    PageResponse<Object> getAllUsers(Pageable pageable);
 
     UserResponse getUserById(Long id);
 
-    UserResponse createUser(UserCreateRequest user);
+    UserResponse createUser(UserRequest newUser);
 
-    UserResponse updateUser(UserUpdateRequest updateUser);
+    UserResponse updateUser(Long id, UserRequest updateUser);
 
-    void deleteUser(Long id);
+    UserResponse updateRoleUser(UpdateRoleUserRequest updateRoleUserRequest);
+
+    boolean banUser(Long id);
+
+    boolean updateAvatarUser(Long id, MultipartFile file);
+
 }

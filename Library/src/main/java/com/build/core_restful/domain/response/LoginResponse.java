@@ -1,6 +1,5 @@
 package com.build.core_restful.domain.response;
 
-import com.build.core_restful.domain.Role;
 import lombok.*;
 
 @Getter
@@ -20,6 +19,6 @@ public class LoginResponse {
         private Long id;
         private String email;
         private String name;
-        private Role role;
+        private RoleResponse role;
     }
 }

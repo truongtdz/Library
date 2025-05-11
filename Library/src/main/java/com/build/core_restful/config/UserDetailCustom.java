@@ -1,6 +1,7 @@
 package com.build.core_restful.config;
 
 import com.build.core_restful.service.UserService;
+import com.build.core_restful.util.exception.NewException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,10 @@ public class UserDetailCustom implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         com.build.core_restful.domain.User user = userService.getUserByEmail(username);
+
+        if (user == null) {
+            throw new NewException("User not found with email: " + username);
+        }
 
         return new User(
                 user.getEmail(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("USER"))

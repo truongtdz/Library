@@ -1,7 +1,6 @@
 package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
-import com.build.core_restful.util.enums.OrderStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,11 +18,9 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long quantity;
-
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "book_id")
+    private Book book;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
