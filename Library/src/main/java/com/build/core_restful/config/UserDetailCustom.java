@@ -2,6 +2,7 @@ package com.build.core_restful.config;
 
 import com.build.core_restful.service.UserService;
 import com.build.core_restful.util.exception.NewException;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

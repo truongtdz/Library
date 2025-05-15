@@ -1,4 +1,4 @@
-package com.build.core_restful.controller.product;
+package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.AuthorsRequest;
 import com.build.core_restful.domain.response.PageResponse;
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/authors")
+@RequestMapping("/api/v1/author")
 public class AuthorsController {
     private final AuthorsService authorService;
 

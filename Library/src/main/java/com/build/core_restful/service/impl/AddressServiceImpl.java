@@ -11,6 +11,7 @@ import com.build.core_restful.repository.UserRepository;
 import com.build.core_restful.service.AddressService;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.AddressMapper;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -84,6 +85,10 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public AddressResponse setAddressDefault(SetAddressDefault addressDefault) {
+        if(!userRepository.existsById(addressDefault.getUserId())){
+            throw new NewException("User have id: " + addressDefault.getUserId() + " not exist!");
+        }
+
         List<Address> addressList = addressRepository.findByUserId(addressDefault.getUserId());
 
         addressList.forEach(address -> address.setIsDefault("false"));

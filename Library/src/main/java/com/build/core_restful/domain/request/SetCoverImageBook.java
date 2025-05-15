@@ -1,6 +1,6 @@
 package com.build.core_restful.domain.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -9,8 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SetCoverImageBook {
-    @NotBlank(message = "Image id k được để trống")
+    @NotNull(message = "Image id k được để trống")
     private Long imageId;
-    @NotBlank(message = "Book id k được để trống")
+    @NotNull(message = "Book id k được để trống")
     private Long bookId;
 }

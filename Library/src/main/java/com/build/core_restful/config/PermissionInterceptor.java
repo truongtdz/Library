@@ -8,8 +8,10 @@ import com.build.core_restful.domain.User;
 import com.build.core_restful.service.UserService;
 import com.build.core_restful.util.JwtUtil;
 import com.build.core_restful.util.exception.NewException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -20,6 +22,8 @@ public class PermissionInterceptor implements HandlerInterceptor {
 
     @Autowired
     UserService userService;
+
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     @Transactional
@@ -36,11 +40,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
         System.out.println(">>> httpMethod= " + httpMethod);
         System.out.println(">>> requestURI= " + requestURI);
 
-        // Nếu là GET và nằm trong danh sách public GET URL thì bỏ qua interceptor
         if (httpMethod.equalsIgnoreCase("GET")) {
-            if (requestURI.matches("/api/v1/book/**") ||
-                    requestURI.matches("/api/v1/author/**") ||
-                    requestURI.matches("/api/v1/category/**")) {
+            if (pathMatcher.match("/api/v1/book/**", requestURI) ||
+                pathMatcher.match("/api/v1/author/**", requestURI) ||
+                pathMatcher.match("/api/v1/category/**", requestURI)) {
                 return true;
             }
         }

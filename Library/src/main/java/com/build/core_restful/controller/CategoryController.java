@@ -1,4 +1,4 @@
-package com.build.core_restful.controller.product;
+package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.CategoryRequest;
 import com.build.core_restful.domain.response.CategoryResponse;

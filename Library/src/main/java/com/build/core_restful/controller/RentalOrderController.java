@@ -1,4 +1,4 @@
-package com.build.core_restful.controller.order;
+package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RentalOrderResponse;

@@ -156,16 +156,34 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void setImageCover(Long imageId, Long bookId) {
+    public boolean setImageCover(Long imageId, Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new NewException("Book with id: " + bookId + " not found");
         }
 
+        List<Image> images = imageRepository.findByBookId(bookId);
+        images.forEach(image -> image.setCover(false));
+        imageRepository.saveAll(images);
+
         Image image = imageRepository.findByIdAndBookId(imageId, bookId);
-
         image.setCover(true);
+        try {
+            imageRepository.save(image);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+       
+    }
 
-        imageRepository.save(image);
+    @Override
+    public boolean deleteImage(Long imageId) {
+        try {
+            imageRepository.deleteById(imageId);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

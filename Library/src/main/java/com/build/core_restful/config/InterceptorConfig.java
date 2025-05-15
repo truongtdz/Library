@@ -3,6 +3,7 @@ package com.build.core_restful.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -18,10 +19,17 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 "/",
                 "/api/v1/auth/login", "/api/v1/auth/register",
                 "/api/v1/auth/refresh", "/api/v1/auth/logout",
-                "/api/v1/auth/account", "/api/v1/book/**"
+                "/api/v1/auth/account",
         };
 
         registry.addInterceptor(getPermissionInterceptor())
                 .excludePathPatterns(publicUrl);
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Giả sử bạn lưu file vào thư mục D:/6-DoAn/BackEnd/uploads
+        registry.addResourceHandler("/upload/**")
+                .addResourceLocations("file:D:/6-DoAn/BackEnd/uploads/");
     }
 }

@@ -1,4 +1,4 @@
-package com.build.core_restful.controller.user;
+package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.RoleRequest;
 import com.build.core_restful.domain.response.PageResponse;
