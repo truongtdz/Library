@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(publicUrl).permitAll()
                         .requestMatchers(HttpMethod.GET, publicUrlMethodGet).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .logout(logout -> logout.disable())
                 .exceptionHandling(exception -> exception

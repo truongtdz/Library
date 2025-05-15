@@ -1,6 +1,7 @@
-package com.build.core_restful.controller.user;
+package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
+import com.build.core_restful.domain.request.UploadAvatarUser;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -61,10 +61,10 @@ public class UserController {
         return ResponseEntity.ok(userService.banUser(id));
     }
 
-    @PostMapping("/upload/{id}")
+    @PostMapping("/upload")
     @AddMessage("Update avatar user")
-    public ResponseEntity<Boolean> uploadAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file){
-        return ResponseEntity.ok(userService.updateAvatarUser(id, file));
+    public ResponseEntity<UserResponse> uploadAvatar(@RequestBody UploadAvatarUser uploadAvatarUser){
+        return ResponseEntity.ok(userService.updateAvatarUser(uploadAvatarUser));
     }
 
     @PutMapping("/update/role")

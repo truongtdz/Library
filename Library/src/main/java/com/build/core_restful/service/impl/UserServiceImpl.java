@@ -2,6 +2,7 @@ package com.build.core_restful.service.impl;
 
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
+import com.build.core_restful.domain.request.UploadAvatarUser;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
@@ -141,17 +142,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateAvatarUser(Long id, MultipartFile file) {
-        try{
-            String avt = cloudinaryUpload.uploadFile(file);
-            User currentUser = userRepository.findById(id)
-                            .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
-            currentUser.setAvatar(avt);
-            userRepository.save(currentUser);
-        } catch (IOException e) {
-            throw new NewException("Upload file fail");
-        }
+    public UserResponse updateAvatarUser(UploadAvatarUser uploadAvatarUser) {
+        User currentUser = userRepository.findByIdAndStatus(uploadAvatarUser.getUserId(), UserStatusEnum.Active);
 
-        return true;
+        currentUser.setAvatar(uploadAvatarUser.getAvtUrl());
+
+        return userMapper.toUserResponse(userRepository.save(currentUser));
     }
 }

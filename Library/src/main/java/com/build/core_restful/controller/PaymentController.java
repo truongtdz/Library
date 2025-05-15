@@ -1,4 +1,4 @@
-package com.build.core_restful.controller.order;
+package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.RentalOrderRequest;
 import com.build.core_restful.service.RentalOrderService;

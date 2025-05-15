@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,5 +22,19 @@ public class CloudinaryUpload {
         return this.cloudinary.uploader()
                 .upload(file.getBytes(), Map.of("public_id", UUID.randomUUID().toString()))
                 .get("url").toString();
+    }
+
+    public List<String> uploadMultipartFile(List<MultipartFile> files) throws IOException {
+        List<String> fileNames = new ArrayList<>();
+
+        for(MultipartFile file: files){
+            String fileName = this.cloudinary.uploader()
+                    .upload(file.getBytes(), Map.of("public_id", UUID.randomUUID().toString()))
+                    .get("url").toString();
+
+            fileNames.add(fileName);
+        }
+
+        return fileNames;
     }
 }
