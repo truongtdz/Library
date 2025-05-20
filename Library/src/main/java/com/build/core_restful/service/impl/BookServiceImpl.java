@@ -132,59 +132,6 @@ public class BookServiceImpl implements BookService {
         return true;
     }
 
-    @Override
-    public boolean uploadImages(Long id, List<MultipartFile> images) {
-        if (!bookRepository.existsById(id)) {
-            throw new NewException("Book with id: " + id + " not found");
-        }
-
-        Book currentBook = bookRepository.findById(id).get();
-
-        for (MultipartFile item : images){
-            try{
-                String url = cloudinaryUpload.uploadFile(item);
-                Image image = Image.builder()
-                        .url(url)
-                        .book(currentBook)
-                        .build();
-                imageRepository.save(image);
-            } catch (IOException e) {
-                throw new NewException("Upload file fail");
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean setImageCover(Long imageId, Long bookId) {
-        if (!bookRepository.existsById(bookId)) {
-            throw new NewException("Book with id: " + bookId + " not found");
-        }
-
-        List<Image> images = imageRepository.findByBookId(bookId);
-        images.forEach(image -> image.setCover(false));
-        imageRepository.saveAll(images);
-
-        Image image = imageRepository.findByIdAndBookId(imageId, bookId);
-        image.setCover(true);
-        try {
-            imageRepository.save(image);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-       
-    }
-
-    @Override
-    public boolean deleteImage(Long imageId) {
-        try {
-            imageRepository.deleteById(imageId);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     @Override
     public SearchResponse searchBook(String keyword, Pageable pageable) {
@@ -202,6 +149,56 @@ public class BookServiceImpl implements BookService {
                                 .size(page.getSize())
                                 .content(pageResponse.getContent())
                                 .build())
+                .build();
+    }
+
+    @Override
+    public PageResponse<Object> getBooksByCategory(Long id, Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findByCategoryId(id, pageable);
+
+        List<BookResponse> bookResponses = bookPage.getContent().stream().map(book -> {
+            BookResponse response = bookMapper.toBookResponse(book);
+
+            List<BookResponse.ImageResponse> imageList = book.getImages().stream()
+                    .map(image -> BookResponse.ImageResponse.builder()
+                            .isCover(image.isCover())
+                            .url(image.getUrl())
+                            .build())
+                    .collect(Collectors.toList());
+
+            response.setImageList(imageList);
+            return response;
+        }).collect(Collectors.toList());
+
+        return PageResponse.builder()
+                .page(bookPage.getNumber())
+                .size(bookPage.getSize())
+                .content(bookResponses)
+                .build();
+    }
+
+    @Override
+    public PageResponse<Object> getBooksByAuthor(Long id, Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findByAuthorsId(id, pageable);
+
+        List<BookResponse> bookResponses = bookPage.getContent().stream().map(book -> {
+            BookResponse response = bookMapper.toBookResponse(book);
+
+            List<BookResponse.ImageResponse> imageList = book.getImages().stream()
+                    .map(image -> BookResponse.ImageResponse.builder()
+                            .isCover(image.isCover())
+                            .url(image.getUrl())
+                            .build())
+                    .collect(Collectors.toList());
+
+            response.setImageList(imageList);
+            return response;
+        }).collect(Collectors.toList());
+
+        return PageResponse.builder()
+                .page(bookPage.getNumber())
+                .size(bookPage.getSize())
+                .content(bookResponses)
                 .build();
     }
 }

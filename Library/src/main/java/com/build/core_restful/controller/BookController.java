@@ -1,6 +1,7 @@
 package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.BookRequest;
+import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.util.annotation.AddMessage;
@@ -22,7 +23,9 @@ public class BookController {
 
     @GetMapping
     @AddMessage("Get all books")
-    public ResponseEntity<PageResponse<Object>> getAllBooks(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<PageResponse<Object>> getAllBooks(
+            @RequestParam int page,
+            @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(bookService.getAllBooks(pageable));
     }
@@ -49,5 +52,25 @@ public class BookController {
     @AddMessage("Delete book")
     public ResponseEntity<Boolean> deleteBook(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.deleteBook(id));
+    }
+
+    @GetMapping("/category/{id}")
+    @AddMessage("Get books by category")
+    public ResponseEntity<PageResponse<Object>> getBookByCategory(
+            @PathVariable Long id,
+            @RequestParam int page,
+            @RequestParam int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(bookService.getBooksByCategory(id, pageable));
+    }
+
+    @GetMapping("/author/{id}")
+    @AddMessage("Get books by author")
+    public ResponseEntity<PageResponse<Object>> getBookByAuthor(
+            @PathVariable Long id,
+            @RequestParam int page,
+            @RequestParam int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(bookService.getBooksByAuthor(id, pageable));
     }
 }
