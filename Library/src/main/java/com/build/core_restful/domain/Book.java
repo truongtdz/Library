@@ -10,7 +10,6 @@ import lombok.*;
 import java.time.Instant;
 import java.util.List;
 
-
 @Entity
 @Table(name = "books")
 @Getter
@@ -31,7 +30,7 @@ public class Book {
 
     private String title;
     private String publisher;
-    private Instant publish_date;
+    private Instant publishDate;
     private Long pages;
     private String language;
     private Long totalQuantity;
@@ -39,7 +38,10 @@ public class Book {
     private Long rentalPrice;
     private Long depositPrice;
     private Long lateFee;
-    private Long discount;
+
+    private Long quantityView;
+    private Long quantitySell;
+    private Long quantityLike;
 
     @Enumerated(EnumType.STRING)
     private BookStatusEnum status;

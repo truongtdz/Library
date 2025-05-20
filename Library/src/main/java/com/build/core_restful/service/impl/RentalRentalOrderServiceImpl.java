@@ -70,7 +70,6 @@ public class RentalRentalOrderServiceImpl implements RentalOrderService {
                     .rentalPrice(book.getRentalPrice())
                     .depositPrice(book.getDepositPrice())
                     .lateFee(book.getLateFee())
-                    .discount(book.getDiscount())
                     .totalRental(itemRental)
                     .totalDeposit(itemDeposit)
                     .order(order)

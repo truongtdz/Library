@@ -20,11 +20,9 @@ public interface BookService {
 
     boolean deleteBook(Long id);
 
-    boolean uploadImages(Long id, List<MultipartFile> images);
-
-    boolean setImageCover(Long imageId, Long bookId);
-
-    boolean deleteImage(Long imageId);
-
     SearchResponse searchBook(String keyword, Pageable pageable);
+
+    PageResponse<Object> getBooksByCategory(Long id, Pageable pageable);
+
+    PageResponse<Object> getBooksByAuthor(Long id, Pageable pageable);
 }
