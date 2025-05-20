@@ -10,16 +10,19 @@ import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.CategoryRepository;
 import com.build.core_restful.repository.AuthorsRepository;
 import com.build.core_restful.repository.ImageRepository;
+import com.build.core_restful.repository.specification.BookSpecification;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.BookMapper;
 import com.build.core_restful.util.upload.CloudinaryUpload;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,17 +31,13 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
     private final AuthorsRepository authorsRepository;
-    private final ImageRepository imageRepository;
     private final BookMapper bookMapper;
-    private final CloudinaryUpload cloudinaryUpload;
 
     public BookServiceImpl(BookRepository bookRepository, CategoryRepository categoryRepository, AuthorsRepository authorsRepository, ImageRepository imageRepository, BookMapper bookMapper, CloudinaryUpload cloudinaryUpload) {
         this.bookRepository = bookRepository;
         this.categoryRepository = categoryRepository;
         this.authorsRepository = authorsRepository;
-        this.imageRepository = imageRepository;
         this.bookMapper = bookMapper;
-        this.cloudinaryUpload = cloudinaryUpload;
     }
 
     @Override
@@ -134,71 +133,37 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public SearchResponse searchBook(String keyword, Pageable pageable) {
-        Page<Book> page;
-        if (keyword != null && !keyword.isEmpty()) {
-            page = bookRepository.findByTitleContainingIgnoreCase(keyword, pageable);
-        } else {
-            page = bookRepository.findAll(pageable);
-        }
+    public SearchResponse searchBook(
+            String keyword,
+            Long categoryId,
+            Long authorId,
+            String language,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Pageable pageable
+    ) {
+
+        Specification<Book> spec = BookSpecification.filterBooks(
+                keyword,
+                categoryId,
+                authorId,
+                language,
+                minPrice,
+                maxPrice
+        );
+
+        Page<Book> page = bookRepository.findAll(spec, pageable);
         Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
+
         return SearchResponse.builder()
                 .keyword(keyword)
                 .result(PageResponse.builder()
-                                .page(page.getNumber())
-                                .size(page.getSize())
-                                .content(pageResponse.getContent())
-                                .build())
+                        .page(page.getNumber())
+                        .size(page.getSize())
+                        .totalElements(page.getTotalElements())
+                        .totalPages(page.getTotalPages())
+                        .content(pageResponse.getContent())
+                        .build())
                 .build();
-    }
-
-    @Override
-    public PageResponse<Object> getBooksByCategory(Long id, Pageable pageable) {
-        Page<Book> bookPage = bookRepository.findByCategoryId(id, pageable);
-
-        List<BookResponse> bookResponses = bookPage.getContent().stream().map(book -> {
-            BookResponse response = bookMapper.toBookResponse(book);
-
-            List<BookResponse.ImageResponse> imageList = book.getImages().stream()
-                    .map(image -> BookResponse.ImageResponse.builder()
-                            .isCover(image.isCover())
-                            .url(image.getUrl())
-                            .build())
-                    .collect(Collectors.toList());
-
-            response.setImageList(imageList);
-            return response;
-        }).collect(Collectors.toList());
-
-        return PageResponse.builder()
-                .page(bookPage.getNumber())
-                .size(bookPage.getSize())
-                .content(bookResponses)
-                .build();
-    }
-
-    @Override
-    public PageResponse<Object> getBooksByAuthor(Long id, Pageable pageable) {
-        Page<Book> bookPage = bookRepository.findByAuthorsId(id, pageable);
-
-        List<BookResponse> bookResponses = bookPage.getContent().stream().map(book -> {
-            BookResponse response = bookMapper.toBookResponse(book);
-
-            List<BookResponse.ImageResponse> imageList = book.getImages().stream()
-                    .map(image -> BookResponse.ImageResponse.builder()
-                            .isCover(image.isCover())
-                            .url(image.getUrl())
-                            .build())
-                    .collect(Collectors.toList());
-
-            response.setImageList(imageList);
-            return response;
-        }).collect(Collectors.toList());
-
-        return PageResponse.builder()
-                .page(bookPage.getNumber())
-                .size(bookPage.getSize())
-                .content(bookResponses)
-                .build();
-    }
+    };
 }

@@ -7,6 +7,7 @@ import com.build.core_restful.domain.response.SearchResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface BookService {
@@ -20,9 +21,13 @@ public interface BookService {
 
     boolean deleteBook(Long id);
 
-    SearchResponse searchBook(String keyword, Pageable pageable);
-
-    PageResponse<Object> getBooksByCategory(Long id, Pageable pageable);
-
-    PageResponse<Object> getBooksByAuthor(Long id, Pageable pageable);
+    SearchResponse searchBook(
+            String keyword,
+            Long categoryId,
+            Long authorId,
+            String language,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Pageable pageable
+    );
 }

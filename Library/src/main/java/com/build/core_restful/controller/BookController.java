@@ -53,24 +53,4 @@ public class BookController {
     public ResponseEntity<Boolean> deleteBook(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.deleteBook(id));
     }
-
-    @GetMapping("/category/{id}")
-    @AddMessage("Get books by category")
-    public ResponseEntity<PageResponse<Object>> getBookByCategory(
-            @PathVariable Long id,
-            @RequestParam int page,
-            @RequestParam int size){
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(bookService.getBooksByCategory(id, pageable));
-    }
-
-    @GetMapping("/author/{id}")
-    @AddMessage("Get books by author")
-    public ResponseEntity<PageResponse<Object>> getBookByAuthor(
-            @PathVariable Long id,
-            @RequestParam int page,
-            @RequestParam int size){
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(bookService.getBooksByAuthor(id, pageable));
-    }
 }
