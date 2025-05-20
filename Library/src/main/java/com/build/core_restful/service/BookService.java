@@ -21,6 +21,8 @@ public interface BookService {
 
     boolean deleteBook(Long id);
 
+    List<BookResponse> getTop10BookBy(String getBookBy);
+
     SearchResponse searchBook(
             String keyword,
             Long categoryId,

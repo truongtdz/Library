@@ -8,12 +8,12 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface BookMapper {
     @Mapping(source = "category.name", target = "categoryName")
-    @Mapping(source = "authors.name", target = "authorName")
+    @Mapping(source = "author.name", target = "authorName")
     BookResponse toBookResponse(Book book);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", ignore = true)
-    @Mapping(target = "authors", ignore = true)
+    @Mapping(target = "author", ignore = true)
     @Mapping(target = "items", ignore = true)
     @Mapping(target = "images", ignore = true)
     @Mapping(target = "carts", ignore = true)
@@ -21,6 +21,6 @@ public interface BookMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "category", ignore = true)
-    @Mapping(target = "authors", ignore = true)
+    @Mapping(target = "author", ignore = true)
     void updateBook(@MappingTarget Book book, BookRequest bookRequest);
 }

@@ -1,6 +1,6 @@
 package com.build.core_restful.service.impl;
 
-import com.build.core_restful.domain.Authors;
+import com.build.core_restful.domain.Author;
 import com.build.core_restful.domain.request.AuthorsRequest;
 import com.build.core_restful.domain.response.AuthorsResponse;
 import com.build.core_restful.domain.response.PageResponse;
@@ -29,6 +29,8 @@ public class AuthorsServiceImpl implements AuthorsService {
         return PageResponse.builder()
                 .page(page.getNumber())
                 .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
                 .content(page.getContent())
                 .build();
     }
@@ -45,13 +47,13 @@ public class AuthorsServiceImpl implements AuthorsService {
         if (authorRepository.existsByName(authorRequest.getName())) {
             throw new NewException("Author with name " + authorRequest.getName() + " already exists!");
         }
-        Authors author = authorMapper.toAuthor(authorRequest);
+        Author author = authorMapper.toAuthor(authorRequest);
         return authorMapper.toAuthorResponse(authorRepository.save(author));
     }
 
     @Override
     public AuthorsResponse updateAuthor(Long id, AuthorsRequest authorRequest) {
-        Authors author = authorRepository.findById(id)
+        Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new NewException("Author with id " + id + " not found!"));
         authorMapper.updateAuthor(author, authorRequest);
         return authorMapper.toAuthorResponse(authorRepository.save(author));

@@ -51,8 +51,8 @@ public class Book {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "authors_id")
-    private Authors authors;
+    @JoinColumn(name = "author_id")
+    private Author author;
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     @JsonIgnore

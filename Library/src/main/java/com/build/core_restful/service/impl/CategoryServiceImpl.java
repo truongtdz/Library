@@ -31,6 +31,8 @@ public class CategoryServiceImpl implements CategoryService {
         return PageResponse.builder()
                 .page(page.getNumber())
                 .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
                 .content(page.getContent())
                 .build();
     }

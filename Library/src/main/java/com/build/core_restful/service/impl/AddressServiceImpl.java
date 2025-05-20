@@ -44,6 +44,8 @@ public class AddressServiceImpl implements AddressService {
         return PageResponse.builder()
                 .page(page.getNumber())
                 .size(page.getSize())
+                .totalPages(pageResponse.getTotalPages())
+                .totalElements(pageResponse.getTotalElements())
                 .content(pageResponse.getContent())
                 .build();
     }

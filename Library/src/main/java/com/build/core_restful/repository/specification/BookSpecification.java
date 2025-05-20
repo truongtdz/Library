@@ -22,7 +22,7 @@ public class BookSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             if (keyword != null && !keyword.trim().isEmpty()) {
-                predicates.add(cb.like(cb.lower(root.get("title")), "%" + keyword.toLowerCase() + "%"));
+                predicates.add(cb.like(cb.lower(root.get("name")), "%" + keyword.toLowerCase() + "%"));
             }
 
             if (categoryId != null) {

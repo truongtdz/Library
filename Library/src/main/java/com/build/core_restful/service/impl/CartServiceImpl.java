@@ -60,6 +60,8 @@ public class CartServiceImpl implements CartService {
         return PageResponse.builder()
                 .page(page.getNumber())
                 .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
                 .content(bookResponses)
                 .build();
     }

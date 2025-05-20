@@ -61,6 +61,8 @@ public class BookServiceImpl implements BookService {
         return PageResponse.builder()
                 .page(bookPage.getNumber())
                 .size(bookPage.getSize())
+                .totalElements(bookPage.getTotalElements())
+                .totalPages(bookPage.getTotalPages())
                 .content(bookResponses)
                 .build();
     }
@@ -99,7 +101,7 @@ public class BookServiceImpl implements BookService {
         }
 
         book.setCategory(categoryRepository.findById(bookRequest.getCategoryId()).get());
-        book.setAuthors(authorsRepository.findById(bookRequest.getAuthorsId()).get());
+        book.setAuthor(authorsRepository.findById(bookRequest.getAuthorsId()).get());
 
         return bookMapper.toBookResponse(bookRepository.save(book));
     }
@@ -116,7 +118,7 @@ public class BookServiceImpl implements BookService {
         }
 
         if (authorsRepository.existsById(bookRequest.getAuthorsId())) {
-            book.setAuthors(authorsRepository.findById(bookRequest.getAuthorsId()).get());
+            book.setAuthor(authorsRepository.findById(bookRequest.getAuthorsId()).get());
         }
 
         return bookMapper.toBookResponse(bookRepository.save(book));
@@ -130,6 +132,22 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
         return true;
     }
+
+    @Override
+    public List<BookResponse> getTop10BookBy(String getBookBy) {
+        return switch (getBookBy) {
+            case "sell" -> bookRepository.findTop10ByOrderByQuantitySellDesc().stream()
+                    .map(bookMapper::toBookResponse)
+                    .collect(Collectors.toList());
+            case "view" -> bookRepository.findTop10ByOrderByQuantityViewDesc().stream()
+                    .map(bookMapper::toBookResponse)
+                    .collect(Collectors.toList());
+            case "like" -> bookRepository.findTop10ByOrderByQuantityLikeDesc().stream()
+                    .map(bookMapper::toBookResponse)
+                    .collect(Collectors.toList());
+            default -> null;
+        };
+    };
 
 
     @Override

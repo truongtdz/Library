@@ -115,6 +115,8 @@ public class RentalRentalOrderServiceImpl implements RentalOrderService {
         return PageResponse.builder()
                 .page(mappedPage.getNumber())
                 .size(mappedPage.getSize())
+                .totalPages(mappedPage.getTotalPages())
+                .totalElements(mappedPage.getTotalElements())
                 .content(mappedPage.getContent())
                 .build();
     }

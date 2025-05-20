@@ -26,14 +26,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
-    private final CloudinaryUpload cloudinaryUpload;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper, CloudinaryUpload cloudinaryUpload, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+                           UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
-        this.cloudinaryUpload = cloudinaryUpload;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -68,6 +67,8 @@ public class UserServiceImpl implements UserService {
         return PageResponse.builder()
                 .page(page.getNumber())
                 .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
                 .content(pageResponse.getContent())
                 .build();
     }

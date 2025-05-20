@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Authors {
+public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +27,7 @@ public class Authors {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @OneToMany(mappedBy = "authors", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     @JsonIgnore
     List<Book> products;
 
