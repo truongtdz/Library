@@ -22,7 +22,7 @@ public class Image {
     @NotBlank(message = "Url không được để trống ")
     private String url;
 
-    private boolean isCover = false;
+    private boolean isCover;
 
     @ManyToOne
     @JoinColumn(name = "book_id")

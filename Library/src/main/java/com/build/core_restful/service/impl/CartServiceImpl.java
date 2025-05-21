@@ -18,9 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
@@ -43,26 +40,14 @@ public class CartServiceImpl implements CartService {
 
         Page<Cart> page = cartRepository.findByUserId(id, pageable);
 
-        List<BookResponse> bookResponses = page.getContent().stream().map(cart -> {
-            BookResponse response = bookMapper.toBookResponse(cart.getBook());
-
-            List<BookResponse.ImageResponse> imageList = cart.getBook().getImages().stream()
-                    .map(image -> BookResponse.ImageResponse.builder()
-                            .isCover(image.isCover())
-                            .url(image.getUrl())
-                            .build())
-                    .collect(Collectors.toList());
-
-            response.setImageList(imageList);
-            return response;
-        }).collect(Collectors.toList());
+        Page<BookResponse> pageResponse = page.map(cart -> bookMapper.toBookResponse(cart.getBook()));
 
         return PageResponse.builder()
-                .page(page.getNumber())
-                .size(page.getSize())
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
-                .content(bookResponses)
+                .page(pageResponse.getNumber())
+                .size(pageResponse.getSize())
+                .totalPages(pageResponse.getTotalPages())
+                .totalElements(pageResponse.getTotalElements())
+                .content(pageResponse.getContent())
                 .build();
     }
 

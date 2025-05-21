@@ -1,7 +1,6 @@
 package com.build.core_restful.service.impl;
 
 import com.build.core_restful.domain.Book;
-import com.build.core_restful.domain.Image;
 import com.build.core_restful.domain.request.BookRequest;
 import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
@@ -19,9 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,28 +39,15 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public PageResponse<Object> getAllBooks(Pageable pageable) {
-        Page<Book> bookPage = bookRepository.findAll(pageable);
-
-        List<BookResponse> bookResponses = bookPage.getContent().stream().map(book -> {
-            BookResponse response = bookMapper.toBookResponse(book);
-
-            List<BookResponse.ImageResponse> imageList = book.getImages().stream()
-                    .map(image -> BookResponse.ImageResponse.builder()
-                            .isCover(image.isCover())
-                            .url(image.getUrl())
-                            .build())
-                    .collect(Collectors.toList());
-
-            response.setImageList(imageList);
-            return response;
-        }).collect(Collectors.toList());
+        Page<Book> page = bookRepository.findAll(pageable);
+        Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
 
         return PageResponse.builder()
-                .page(bookPage.getNumber())
-                .size(bookPage.getSize())
-                .totalElements(bookPage.getTotalElements())
-                .totalPages(bookPage.getTotalPages())
-                .content(bookResponses)
+                .page(pageResponse.getNumber())
+                .size(pageResponse.getSize())
+                .totalElements(pageResponse.getTotalElements())
+                .totalPages(pageResponse.getTotalPages())
+                .content(pageResponse.getContent())
                 .build();
     }
 
@@ -71,20 +55,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponse getBookById(Long id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new NewException("Book with id: " + id + " not found"));
+                .orElseThrow(() -> new NewException("Book with id: " + id + " not found")); 
 
-        BookResponse bookResponse = bookMapper.toBookResponse(book);
-
-        bookResponse.setImageList(
-                book.getImages().stream()
-                        .map(image -> BookResponse.ImageResponse.builder()
-                                .isCover(image.isCover())
-                                .url(image.getUrl())
-                                .build())
-                        .collect(Collectors.toList())
-        );
-
-        return bookResponse;
+        return bookMapper.toBookResponse(book);
     }
 
 
@@ -103,7 +76,7 @@ public class BookServiceImpl implements BookService {
         book.setCategory(categoryRepository.findById(bookRequest.getCategoryId()).get());
         book.setAuthor(authorsRepository.findById(bookRequest.getAuthorsId()).get());
 
-        return bookMapper.toBookResponse(bookRepository.save(book));
+        return  bookMapper.toBookResponse(bookRepository.save(book));
     }
 
     @Override

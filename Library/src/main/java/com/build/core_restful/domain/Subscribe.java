@@ -19,6 +19,4 @@ public class Subscribe {
     private String email;
     private String nameAuthors;
     private String nameCategory;
-    private boolean hotBooks = false;
-    private boolean promotions = false;
 }

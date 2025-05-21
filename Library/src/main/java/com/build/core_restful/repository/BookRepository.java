@@ -1,7 +1,6 @@
 package com.build.core_restful.repository;
 
 import com.build.core_restful.domain.Book;
-import com.build.core_restful.repository.specification.BookSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

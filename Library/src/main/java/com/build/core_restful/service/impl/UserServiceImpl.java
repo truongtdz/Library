@@ -12,14 +12,10 @@ import com.build.core_restful.service.UserService;
 import com.build.core_restful.util.enums.UserStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.UserMapper;
-import com.build.core_restful.util.upload.CloudinaryUpload;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Service
 public class UserServiceImpl implements UserService {

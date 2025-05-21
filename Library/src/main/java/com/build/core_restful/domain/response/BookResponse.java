@@ -27,10 +27,10 @@ public class BookResponse {
     private Long discount;
     private BookStatusEnum status;
 
-    private String categoryName;
-    private String authorName;
+    private CategoryRes category;
+    private AuthorRes author;
 
-    private List<ImageResponse> imageList;
+    private List<ImageRes> imageList;
 
     private Instant createAt;
     private Instant updateAt;
@@ -42,8 +42,28 @@ public class BookResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class ImageResponse{
+    public static class ImageRes{
         private boolean isCover;
         private String url;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class AuthorRes{
+        private Long id;
+        private String name;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class CategoryRes{
+        private Long id;
+        private String name;
     }
 }

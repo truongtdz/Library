@@ -39,7 +39,7 @@ public class User {
     private GenderEnum gender;
 
     @Enumerated(EnumType.STRING)
-    private UserStatusEnum status = UserStatusEnum.Active;
+    private UserStatusEnum status;
 
     @Column(name = "refresh_token", columnDefinition = "MEDIUMTEXT")
     private String refreshToken;

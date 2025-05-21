@@ -5,7 +5,6 @@ import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
