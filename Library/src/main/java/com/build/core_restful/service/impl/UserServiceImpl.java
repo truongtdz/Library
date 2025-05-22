@@ -1,6 +1,7 @@
 package com.build.core_restful.service.impl;
 
 import com.build.core_restful.domain.User;
+import com.build.core_restful.domain.request.UpdatePasswordUserRequest;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
 import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.request.UserRequest;
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService {
         if(!userRepository.existsById(id)){
             throw new NewException("User have id: " + id + " not exist!");
         }
-        return userMapper.toUserResponse(userRepository.findByIdAndStatus(id, UserStatusEnum.Active));
+        return userMapper.toUserResponse(userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString()));
     }
 
     @Override
@@ -96,7 +97,6 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toUser(newUser);
 
-        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setStatus(UserStatusEnum.Active.toString());
         user.setRole(roleRepository.findByName("USER"));
 
@@ -109,9 +109,8 @@ public class UserServiceImpl implements UserService {
             throw new NewException("User id: " + id + " not exist!");
         }
 
-        User currentUser = userRepository.findByIdAndStatus(id, UserStatusEnum.Active);
+        User currentUser = userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString());
 
-        updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         userMapper.updateUser(currentUser, updateUser);
 
         currentUser.setStatus(UserStatusEnum.Active.toString());
@@ -151,10 +150,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateAvatarUser(UploadAvatar uploadAvatar) {
-        User currentUser = userRepository.findByIdAndStatus(uploadAvatar.getId(), UserStatusEnum.Active);
+        User currentUser = userRepository.findByIdAndStatus(uploadAvatar.getId(), UserStatusEnum.Active.toString());
 
         currentUser.setAvatar(uploadAvatar.getAvtUrl());
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
+    }
+
+    @Override
+    public boolean updatePasswordUser(UpdatePasswordUserRequest userRequest) {
+        User currentUser = userRepository.findByIdAndStatus(userRequest.getUserId(), UserStatusEnum.Active.toString());
+
+        if(!passwordEncoder.matches(userRequest.getCurrentPassword(), currentUser.getPassword())){
+            throw new NewException("Current password is false");
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(userRequest.getNewPassword()));
+
+        userRepository.save(currentUser);
+        return true;
     }
 }

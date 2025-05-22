@@ -1,5 +1,6 @@
 package com.build.core_restful.controller;
 
+import com.build.core_restful.domain.request.UpdatePasswordUserRequest;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
 import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.request.UserRequest;
@@ -71,10 +72,16 @@ public class UserController {
         return ResponseEntity.ok(userService.banUser(id));
     }
 
-    @PostMapping("/upload")
+    @PutMapping("/upload")
     @AddMessage("Update avatar user")
     public ResponseEntity<UserResponse> uploadAvatar(@RequestBody UploadAvatar uploadAvatarUser){
         return ResponseEntity.ok(userService.updateAvatarUser(uploadAvatarUser));
+    }
+
+    @PutMapping("/upload")
+    @AddMessage("Update avatar user")
+    public ResponseEntity<Boolean> updatePasswordUser(@RequestBody UpdatePasswordUserRequest userRequest){
+        return ResponseEntity.ok(userService.updatePasswordUser(userRequest));
     }
 
     @PutMapping("/update/role")

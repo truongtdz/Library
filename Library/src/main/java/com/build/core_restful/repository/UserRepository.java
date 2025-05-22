@@ -1,7 +1,6 @@
 package com.build.core_restful.repository;
 
 import com.build.core_restful.domain.User;
-import com.build.core_restful.util.enums.UserStatusEnum;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,5 +17,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    User findByIdAndStatus(Long id, UserStatusEnum statusUser);
+    User findByIdAndStatus(Long id, String statusUser);
 }

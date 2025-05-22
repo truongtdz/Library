@@ -53,7 +53,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public boolean addBookToCart(CartRequest cartRequest) {
-        User user = userRepository.findByIdAndStatus(cartRequest.getUserId(), UserStatusEnum.Active);
+        User user = userRepository.findByIdAndStatus(cartRequest.getUserId(), UserStatusEnum.Active.toString());
 
         if(user == null){
             throw new NewException("User with id: " + cartRequest.getUserId() + " not found");
