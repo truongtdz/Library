@@ -78,8 +78,8 @@ public class UserController {
         return ResponseEntity.ok(userService.updateAvatarUser(uploadAvatarUser));
     }
 
-    @PutMapping("/upload")
-    @AddMessage("Update avatar user")
+    @PutMapping("/password")
+    @AddMessage("Update password user")
     public ResponseEntity<Boolean> updatePasswordUser(@RequestBody UpdatePasswordUserRequest userRequest){
         return ResponseEntity.ok(userService.updatePasswordUser(userRequest));
     }
