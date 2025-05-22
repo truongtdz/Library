@@ -21,11 +21,11 @@ public class UserDetailCustom implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.build.core_restful.domain.User user = userService.getUserByEmail(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        com.build.core_restful.domain.User user = userService.getUserByEmail(email);
 
         if (user == null) {
-            throw new NewException("User not found with email: " + username);
+            throw new NewException("User not found with email: " + email);
         }
 
         return new User(

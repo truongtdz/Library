@@ -97,6 +97,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toUser(newUser);
 
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setStatus(UserStatusEnum.Active.toString());
         user.setRole(roleRepository.findByName("USER"));
 
@@ -112,9 +113,6 @@ public class UserServiceImpl implements UserService {
         User currentUser = userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString());
 
         userMapper.updateUser(currentUser, updateUser);
-
-        currentUser.setStatus(UserStatusEnum.Active.toString());
-        currentUser.setRole(roleRepository.findByName("USER"));
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
     }
