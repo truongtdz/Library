@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthorsRequest {
+public class AuthorRequest {
     private Long id;
 
     @NotBlank(message = "Name không được để trống")

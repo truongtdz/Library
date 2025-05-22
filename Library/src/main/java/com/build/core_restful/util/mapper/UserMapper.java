@@ -3,14 +3,29 @@ package com.build.core_restful.util.mapper;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.UserResponse;
+
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    User toUser(UserRequest userRequest);
-
+    
+    @Mapping(target = "role", ignore = true)
     UserResponse toUserResponse(User user);
+
+    @AfterMapping
+    default void mapNestedFields(User user, @MappingTarget UserResponse.UserResponseBuilder response) {
+        if (user.getRole() != null) {
+            response.role(UserResponse.RoleRes.builder()
+                    .roleId(user.getRole().getId())
+                    .roleName(user.getRole().getName())
+                    .build());
+        }
+    }
+
+    User toUser(UserRequest userRequest);
 
     void updateUser(@MappingTarget User user, UserRequest userRequest);
 }

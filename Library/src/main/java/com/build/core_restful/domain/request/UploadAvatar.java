@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UploadAvatarUser {
-    private Long userId;
+public class UploadAvatar {
+    private Long id;
     private String avtUrl;
 }

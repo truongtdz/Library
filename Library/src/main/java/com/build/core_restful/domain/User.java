@@ -1,8 +1,6 @@
 package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
-import com.build.core_restful.util.enums.GenderEnum;
-import com.build.core_restful.util.enums.UserStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -34,12 +32,8 @@ public class User {
     private String fullName;
     private int age;
     private String avatar;
-
-    @Enumerated(EnumType.STRING)
-    private GenderEnum gender;
-
-    @Enumerated(EnumType.STRING)
-    private UserStatusEnum status;
+    private String gender;
+    private String status;
 
     @Column(name = "refresh_token", columnDefinition = "MEDIUMTEXT")
     private String refreshToken;

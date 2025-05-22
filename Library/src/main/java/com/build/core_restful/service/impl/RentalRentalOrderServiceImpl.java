@@ -95,7 +95,7 @@ public class RentalRentalOrderServiceImpl implements RentalOrderService {
     public RentalOrderResponse update(Long id, OrderStatusEnum newStatus) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new NewException("Order not found"));
-        order.setOrderStatus(newStatus);
+        order.setOrderStatus(newStatus.toString());
         return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));
     }
 

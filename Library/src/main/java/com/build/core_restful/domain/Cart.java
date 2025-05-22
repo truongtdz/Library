@@ -26,6 +26,9 @@ public class Cart {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private Long quantity;
+    private Long rentedDay;
+
     private Instant createAt;
     private Instant updateAt;
     private String createBy;

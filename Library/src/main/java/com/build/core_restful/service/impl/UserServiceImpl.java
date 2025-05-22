@@ -2,18 +2,21 @@ package com.build.core_restful.service.impl;
 
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
-import com.build.core_restful.domain.request.UploadAvatarUser;
+import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.repository.RoleRepository;
 import com.build.core_restful.repository.UserRepository;
+import com.build.core_restful.repository.specification.UserSpecification;
 import com.build.core_restful.service.UserService;
+import com.build.core_restful.util.enums.GenderEnum;
 import com.build.core_restful.util.enums.UserStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.UserMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,9 +60,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageResponse<Object> getAllUsers(Pageable pageable) {
-        Page<User> page = userRepository.findByStatus(UserStatusEnum.Active, pageable);
+    public PageResponse<Object> getAllUsers(
+        String keyword,
+        GenderEnum gender,
+        Long roleId,
+        UserStatusEnum userStatus,
+        Pageable pageable   
+    ){
+        Specification<User> spec = UserSpecification.filterUsers(keyword, gender, roleId, userStatus);
+        Page<User> page = userRepository.findAll(spec, pageable);
         Page<UserResponse> pageResponse = page.map(userMapper::toUserResponse);
+        
         return PageResponse.builder()
                 .page(page.getNumber())
                 .size(page.getSize())
@@ -86,7 +97,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toUser(newUser);
 
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        user.setStatus(UserStatusEnum.Active);
+        user.setStatus(UserStatusEnum.Active.toString());
         user.setRole(roleRepository.findByName("USER"));
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -103,7 +114,7 @@ public class UserServiceImpl implements UserService {
         updateUser.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         userMapper.updateUser(currentUser, updateUser);
 
-        currentUser.setStatus(UserStatusEnum.Active);
+        currentUser.setStatus(UserStatusEnum.Active.toString());
         currentUser.setRole(roleRepository.findByName("USER"));
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
@@ -128,7 +139,7 @@ public class UserServiceImpl implements UserService {
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
 
-        currentUser.setStatus(UserStatusEnum.Banned);
+        currentUser.setStatus(UserStatusEnum.Banned.toString());
 
         try{
             userRepository.save(currentUser);
@@ -139,10 +150,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateAvatarUser(UploadAvatarUser uploadAvatarUser) {
-        User currentUser = userRepository.findByIdAndStatus(uploadAvatarUser.getUserId(), UserStatusEnum.Active);
+    public UserResponse updateAvatarUser(UploadAvatar uploadAvatar) {
+        User currentUser = userRepository.findByIdAndStatus(uploadAvatar.getId(), UserStatusEnum.Active);
 
-        currentUser.setAvatar(uploadAvatarUser.getAvtUrl());
+        currentUser.setAvatar(uploadAvatar.getAvtUrl());
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
     }

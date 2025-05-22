@@ -9,5 +9,7 @@ public interface CartService {
 
     boolean addBookToCart(CartRequest cartRequest);
 
+    boolean changeQuantityBook(CartRequest cartRequest);
+
     boolean deleteBookAtCart(CartRequest cartRequest);
 }

@@ -24,6 +24,8 @@ public class Author {
     @NotBlank(message = "Name không được để trống ")
     private String name;
 
+    private String avatar;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 

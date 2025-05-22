@@ -25,15 +25,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public PageResponse<Object> getAllCategories(Pageable pageable) {
-        Page<CategoryResponse> page = categoryRepository.findAll(pageable)
-                .map(categoryMapper::toCategoryResponse);
+    public PageResponse<Object> getAllCategories(String name, Pageable pageable) {
+        Page<Category> page = name.isEmpty() ? 
+            categoryRepository.findAll(pageable) : categoryRepository.findByName(name, pageable);
+
+        Page<CategoryResponse> pageResponse = page.map(categoryMapper::toCategoryResponse);
+        
         return PageResponse.builder()
-                .page(page.getNumber())
-                .size(page.getSize())
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
-                .content(page.getContent())
+                .page(pageResponse.getNumber())
+                .size(pageResponse.getSize())
+                .totalPages(pageResponse.getTotalPages())
+                .totalElements(pageResponse.getTotalElements())
+                .content(pageResponse.getContent())
                 .build();
     }
 

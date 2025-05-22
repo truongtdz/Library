@@ -9,9 +9,10 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthorsResponse {
+public class AuthorResponse {
     private Long id;
     private String name;
+    private String avatar;
     private String description;
     private Instant createAt;
     private Instant updateAt;

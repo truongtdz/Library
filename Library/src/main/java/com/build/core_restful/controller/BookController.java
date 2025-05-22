@@ -75,11 +75,10 @@ public class BookController {
     ) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
         Pageable pageable = PageRequest.of(page, size, sort);
-
-        SearchResponse response = bookService.searchBook(
+        
+        return ResponseEntity.ok(bookService.searchBook(
                 keyword, categoryId, authorId, language, minPrice, maxPrice, pageable
-        );
-        return ResponseEntity.ok(response);
+        ));
     }
 
     @GetMapping("/top10/{type}")

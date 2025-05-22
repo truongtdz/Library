@@ -1,6 +1,5 @@
 package com.build.core_restful.domain;
 
-import com.build.core_restful.util.enums.GenderEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,11 +16,7 @@ public class TrainBook {
     private Long id;
 
     private Long age;
-
-    @Enumerated(EnumType.STRING)
-    private GenderEnum gender;
-
+    private String gender;
     private String category;
-
     private String authors;
 }

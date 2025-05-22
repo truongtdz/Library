@@ -2,10 +2,13 @@ package com.build.core_restful.service;
 
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
-import com.build.core_restful.domain.request.UploadAvatarUser;
+import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
+import com.build.core_restful.util.enums.GenderEnum;
+import com.build.core_restful.util.enums.UserStatusEnum;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +22,13 @@ public interface UserService {
 
     void updateUserByEmail(String email, String refreshToken);
 
-    PageResponse<Object> getAllUsers(Pageable pageable);
+    PageResponse<Object> getAllUsers(
+        String keyword,
+        GenderEnum gender,
+        Long roleId,
+        UserStatusEnum userStatus,
+        Pageable pageable        
+    );
 
     UserResponse getUserById(Long id);
 
@@ -31,6 +40,6 @@ public interface UserService {
 
     boolean banUser(Long id);
 
-    UserResponse updateAvatarUser(UploadAvatarUser uploadAvatarUser);
+    UserResponse updateAvatarUser(UploadAvatar uploadAvatar);
 
 }

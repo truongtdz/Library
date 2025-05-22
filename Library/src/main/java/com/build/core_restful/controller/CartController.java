@@ -37,6 +37,13 @@ public class CartController {
         return ResponseEntity.ok(cartService.addBookToCart(cartRequest));
     }
 
+    @PutMapping()
+    @AddMessage("Change quantity book at cart")
+    public ResponseEntity<Boolean> changeQuantityBookAtCart(
+            @Valid @RequestBody CartRequest cartRequest){
+        return ResponseEntity.ok(cartService.changeQuantityBook(cartRequest));
+    }
+
     @DeleteMapping()
     @AddMessage("Delete book at cart")
     public ResponseEntity<Object> deleteBookAtCart(

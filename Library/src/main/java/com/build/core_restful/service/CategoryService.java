@@ -6,7 +6,7 @@ import com.build.core_restful.domain.response.PageResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface CategoryService {
-    PageResponse<Object> getAllCategories(Pageable pageable);
+    PageResponse<Object> getAllCategories(String name, Pageable pageable);
 
     CategoryResponse getCategoryById(Long id);
 

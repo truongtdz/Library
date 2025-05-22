@@ -10,7 +10,6 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface BookMapper {
-
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "imageList", ignore = true)
@@ -33,25 +32,16 @@ public interface BookMapper {
         if (book.getImages() != null) {
         List<BookResponse.ImageRes> imageResponses = book.getImages().stream()
             .map(image -> BookResponse.ImageRes.builder()
-                .isCover(image.isCover())
+                .isDefault(image.getIsDefault())
                 .url(image.getUrl())
                 .build())
             .toList();
         response.imageList(imageResponses);
+        }
     }
 
-    }
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "category", ignore = true)
-    @Mapping(target = "author", ignore = true)
-    @Mapping(target = "items", ignore = true)
-    @Mapping(target = "images", ignore = true)
-    @Mapping(target = "carts", ignore = true)
     Book toBook(BookRequest bookRequest);
-
+    
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "category", ignore = true)
-    @Mapping(target = "author", ignore = true)
     void updateBook(@MappingTarget Book book, BookRequest bookRequest);
 }

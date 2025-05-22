@@ -1,16 +1,20 @@
 package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
-import com.build.core_restful.domain.request.UploadAvatarUser;
+import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.service.UserService;
 import com.build.core_restful.util.annotation.AddMessage;
+import com.build.core_restful.util.enums.GenderEnum;
+import com.build.core_restful.util.enums.UserStatusEnum;
+
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +29,22 @@ public class UserController {
 
     @GetMapping
     @AddMessage("Get all user")
-    public ResponseEntity<PageResponse<Object>> getAllUsers(@RequestParam int page, @RequestParam int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public ResponseEntity<PageResponse<Object>> getAllUsers(
+        @RequestParam int page, 
+        @RequestParam int size,
+        @RequestParam(required = false) String sortBy,
+        @RequestParam(required = false, defaultValue = "asc") String sortDir,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) GenderEnum gender,
+        @RequestParam(required = false) Long roleId,
+        @RequestParam(defaultValue = "Active") UserStatusEnum userStatus
+    ) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        PageResponse<Object> users = userService.getAllUsers(pageable);
-
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userService.getAllUsers(
+            keyword, gender, roleId, userStatus, pageable
+        ));
     }
 
     @GetMapping("/{id}")
@@ -59,7 +73,7 @@ public class UserController {
 
     @PostMapping("/upload")
     @AddMessage("Update avatar user")
-    public ResponseEntity<UserResponse> uploadAvatar(@RequestBody UploadAvatarUser uploadAvatarUser){
+    public ResponseEntity<UserResponse> uploadAvatar(@RequestBody UploadAvatar uploadAvatarUser){
         return ResponseEntity.ok(userService.updateAvatarUser(uploadAvatarUser));
     }
 

@@ -1,9 +1,6 @@
 package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
-import com.build.core_restful.util.enums.OrderStatusEnum;
-import com.build.core_restful.util.enums.PaymentMethodEnum;
-import com.build.core_restful.util.enums.PaymentStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,14 +31,9 @@ public class RentalOrder {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatusEnum orderStatus;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentStatusEnum paymentStatus;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethod;
+    private String orderStatus;
+    private String paymentStatus;
+    private String paymentMethod;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     @JsonIgnore

@@ -27,5 +27,15 @@ public class UserResponse {
     private String createBy;
     private String updateBy;
 
-    private RoleResponse roleResponse;
+    private RoleRes role;
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RoleRes {
+        private Long roleId;
+        private String roleName;        
+    }
 }

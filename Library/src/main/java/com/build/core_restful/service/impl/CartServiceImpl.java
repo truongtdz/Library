@@ -88,4 +88,19 @@ public class CartServiceImpl implements CartService {
             return false;
         }
     }
+
+    @Override
+    public boolean changeQuantityBook(CartRequest cartRequest) {
+        Cart currentCart = cartRepository.findByUserIdAndBookId(cartRequest.getUserId(), cartRequest.getBookId());
+
+        currentCart.setQuantity(cartRequest.getQuantity());
+        currentCart.setQuantity(cartRequest.getRentedDay());
+
+        try {
+            cartRepository.save(currentCart);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

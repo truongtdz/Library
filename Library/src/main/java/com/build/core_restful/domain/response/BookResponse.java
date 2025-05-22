@@ -1,6 +1,5 @@
 package com.build.core_restful.domain.response;
 
-import com.build.core_restful.util.enums.BookStatusEnum;
 import lombok.*;
 
 import java.time.Instant;
@@ -24,8 +23,7 @@ public class BookResponse {
     private Long stock;
     private Long rentalPrice;
     private Long depositPrice;
-    private Long discount;
-    private BookStatusEnum status;
+    private String status;
 
     private CategoryRes category;
     private AuthorRes author;
@@ -43,7 +41,7 @@ public class BookResponse {
     @NoArgsConstructor
     @Builder
     public static class ImageRes{
-        private boolean isCover;
+        private String isDefault;
         private String url;
     }
 

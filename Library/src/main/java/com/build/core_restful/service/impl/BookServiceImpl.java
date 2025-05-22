@@ -7,7 +7,7 @@ import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.CategoryRepository;
-import com.build.core_restful.repository.AuthorsRepository;
+import com.build.core_restful.repository.AuthorRepository;
 import com.build.core_restful.repository.ImageRepository;
 import com.build.core_restful.repository.specification.BookSpecification;
 import com.build.core_restful.service.BookService;
@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
-    private final AuthorsRepository authorsRepository;
+    private final AuthorRepository authorsRepository;
     private final BookMapper bookMapper;
 
-    public BookServiceImpl(BookRepository bookRepository, CategoryRepository categoryRepository, AuthorsRepository authorsRepository, ImageRepository imageRepository, BookMapper bookMapper, CloudinaryUpload cloudinaryUpload) {
+    public BookServiceImpl(BookRepository bookRepository, CategoryRepository categoryRepository, AuthorRepository authorsRepository, ImageRepository imageRepository, BookMapper bookMapper, CloudinaryUpload cloudinaryUpload) {
         this.bookRepository = bookRepository;
         this.categoryRepository = categoryRepository;
         this.authorsRepository = authorsRepository;
@@ -51,15 +51,15 @@ public class BookServiceImpl implements BookService {
                 .build();
     }
 
-
     @Override
     public BookResponse getBookById(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new NewException("Book with id: " + id + " not found")); 
+            
+        book.setQuantityView(book.getQuantityView() + 1);
 
-        return bookMapper.toBookResponse(book);
+        return bookMapper.toBookResponse(bookRepository.save(book));
     }
-
 
     @Override
     public BookResponse createBook(BookRequest bookRequest) {
@@ -121,7 +121,6 @@ public class BookServiceImpl implements BookService {
             default -> null;
         };
     };
-
 
     @Override
     public SearchResponse searchBook(

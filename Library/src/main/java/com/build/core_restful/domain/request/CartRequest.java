@@ -12,4 +12,7 @@ public class CartRequest {
 
     @NotNull(message = "Book ID cannot be null")
     private Long bookId;
+
+    private Long quantity;
+    private Long rentedDay;
 }

@@ -139,7 +139,7 @@ public class DatabaseLoader implements CommandLineRunner {
             User adminUser = new User();
             adminUser.setEmail("admin@gmail.com");
             adminUser.setAge(20);
-            adminUser.setGender(GenderEnum.Male);
+            adminUser.setGender(GenderEnum.Male.toString());
             adminUser.setFullName("I'm super admin");
             adminUser.setPassword(this.passwordEncoder.encode("123456"));
 

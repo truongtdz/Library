@@ -26,7 +26,6 @@ public class BookRequest {
     private Long stock;
     private Long rentalPrice;
     private Long depositPrice;
-    private Long discount;
 
     @NotNull(message = "Trạng thái sách không được để trống")
     private BookStatusEnum status;

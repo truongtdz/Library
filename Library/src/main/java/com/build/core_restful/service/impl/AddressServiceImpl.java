@@ -8,12 +8,14 @@ import com.build.core_restful.domain.response.AddressResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.repository.AddressRepository;
 import com.build.core_restful.repository.UserRepository;
+import com.build.core_restful.repository.specification.AddressSpecification;
 import com.build.core_restful.service.AddressService;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.AddressMapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +36,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public PageResponse<Object> getAllAddresses(Long id, Pageable pageable) {
+    public PageResponse<Object> getAddressByUser(Long id, Pageable pageable) {
         if(!userRepository.existsById(id)){
             throw new NewException("User have id: " + id + " not exist!");
         }
@@ -101,4 +103,28 @@ public class AddressServiceImpl implements AddressService {
 
         return addressMapper.toAddressResponse(addressRepository.save(address));
     }
+
+    @Override
+    public PageResponse<Object> getAllAddresses(
+        String city, 
+        String district, 
+        String ward, 
+        String street, 
+        String isDefault,
+        Pageable pageable
+    ) {
+        Specification<Address> spec = AddressSpecification.filterAddresses(city, district, ward, street, isDefault);
+
+        Page<Address> page = addressRepository.findAll(spec, pageable);
+        Page<AddressResponse> pageResponse = page.map(addressMapper::toAddressResponse);
+
+        return PageResponse.builder()
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .content(pageResponse.getContent())
+                .build();
+    }
+
 }

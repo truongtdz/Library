@@ -1,5 +1,6 @@
 package com.build.core_restful.controller;
 
+import com.build.core_restful.domain.request.RentalOrderRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.service.RentalOrderService;
@@ -18,6 +19,11 @@ public class RentalOrderController {
 
     public RentalOrderController(RentalOrderService rentalOrderService) {
         this.rentalOrderService = rentalOrderService;
+    }
+
+    @PostMapping()
+    public ResponseEntity<Object> checkoutOneProduct(@RequestBody RentalOrderRequest request){
+        return ResponseEntity.ok(rentalOrderService.create(request));
     }
 
     @PutMapping("/{id}")

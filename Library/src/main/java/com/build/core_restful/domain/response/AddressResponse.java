@@ -18,11 +18,20 @@ public class AddressResponse {
     private String street;
     private String isDefault;
 
-    private Long userId;
-    private String userName;
+    private UserRes user;
 
     private Instant createAt;
     private Instant updateAt;
     private String createBy;
     private String updateBy;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UserRes {
+        private Long userId;
+        private String userName;
+    }
 }
