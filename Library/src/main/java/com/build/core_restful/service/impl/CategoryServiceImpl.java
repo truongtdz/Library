@@ -12,6 +12,7 @@ import com.build.core_restful.util.mapper.CategoryMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -26,8 +27,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public PageResponse<Object> getAllCategories(String name, Pageable pageable) {
-        Page<Category> page = name.isEmpty() ? 
-            categoryRepository.findAll(pageable) : categoryRepository.findByName(name, pageable);
+        Page<Category> page = StringUtils.hasText(name) ? 
+            categoryRepository.findByName(name, pageable) : categoryRepository.findAll(pageable);
 
         Page<CategoryResponse> pageResponse = page.map(categoryMapper::toCategoryResponse);
         

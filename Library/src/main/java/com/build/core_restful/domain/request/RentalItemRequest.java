@@ -9,9 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RentalItemRequest {
-    private Long timeRental;
-    private Long quantity;
-
     @NotNull
     private Long bookId;
+
+    private Long rentedDay;
+    private Long quantity;
 }

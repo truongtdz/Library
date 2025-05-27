@@ -15,10 +15,11 @@ public class UserRequest {
     private String email;
 
     @NotBlank(message = "Password k được để trống")
-    @Size(min = 4, message = "Password phải nhiều hơn 4 kí tự")
+    @Size(min = 6, message = "Password phải nhiều hơn 6 kí tự")
     private String password;
 
     private String fullName;
     private String gender;
     private int age;
+    private String avatar;
 }

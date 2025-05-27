@@ -1,7 +1,6 @@
 package com.build.core_restful.service;
 
 import com.build.core_restful.domain.request.AuthorRequest;
-import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.response.AuthorResponse;
 import com.build.core_restful.domain.response.PageResponse;
 
@@ -17,6 +16,4 @@ public interface AuthorService {
     AuthorResponse updateAuthor(Long id, AuthorRequest authorRequest);
 
     boolean deleteAuthor(Long id);
-
-    AuthorResponse updateAvatar(UploadAvatar uploadAvatar);
 }

@@ -8,7 +8,19 @@ import org.springframework.data.domain.Pageable;
 
 public interface RentalOrderService {
     RentalOrderResponse create(RentalOrderRequest request);
+    
     RentalOrderResponse update(Long id, OrderStatusEnum newStatus);
+    
     RentalOrderResponse getById(Long id);
-    PageResponse<Object> getAll(Pageable pageable);
+    
+    PageResponse<Object> getAllOrder(
+        Long fromTotalPrice,
+        Long toTotalPrice,
+        Long fromDepositPrice,
+        Long toDepositPrice,
+        Long userId,
+        String orderStatus,
+        Pageable pageable
+    );
+    
 }

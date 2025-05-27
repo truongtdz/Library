@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,4 +36,16 @@ public class BookRequest {
 
     @NotNull(message = "Author ID không được để trống")
     private Long authorsId;
+
+    private List<ImageReq> imageList;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ImageReq{
+        private String isDefault;
+        private String url;
+    }
 }

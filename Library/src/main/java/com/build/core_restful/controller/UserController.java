@@ -2,7 +2,6 @@ package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.UpdatePasswordUserRequest;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
-import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
@@ -12,6 +11,8 @@ import com.build.core_restful.util.annotation.AddMessage;
 import com.build.core_restful.util.enums.GenderEnum;
 import com.build.core_restful.util.enums.UserStatusEnum;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name ="User api")
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
@@ -28,6 +30,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Lấy danh sách người dùng", description = "API này trả về danh sách tất cả người dùng, có hỗ trợ phân trang.")
     @GetMapping
     @AddMessage("Get all user")
     public ResponseEntity<PageResponse<Object>> getAllUsers(
@@ -70,12 +73,6 @@ public class UserController {
     @AddMessage("Ban user")
     public ResponseEntity<Boolean> banUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.banUser(id));
-    }
-
-    @PutMapping("/upload")
-    @AddMessage("Update avatar user")
-    public ResponseEntity<UserResponse> uploadAvatar(@RequestBody UploadAvatar uploadAvatarUser){
-        return ResponseEntity.ok(userService.updateAvatarUser(uploadAvatarUser));
     }
 
     @PutMapping("/password")

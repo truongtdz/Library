@@ -55,6 +55,10 @@ public class User {
     @JsonIgnore
     List<Cart> carts;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<Review> reviews;
+
     private Instant createAt;
     private Instant updateAt;
     private String createBy;

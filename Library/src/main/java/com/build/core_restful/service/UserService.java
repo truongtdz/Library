@@ -3,7 +3,6 @@ package com.build.core_restful.service;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UpdatePasswordUserRequest;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
-import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
@@ -40,8 +39,6 @@ public interface UserService {
     UserResponse updateRoleUser(UpdateRoleUserRequest updateRoleUserRequest);
 
     boolean banUser(Long id);
-
-    UserResponse updateAvatarUser(UploadAvatar uploadAvatar);
 
     boolean updatePasswordUser(UpdatePasswordUserRequest userRequest);
 

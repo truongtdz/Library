@@ -2,7 +2,6 @@ package com.build.core_restful.service.impl;
 
 import com.build.core_restful.domain.Author;
 import com.build.core_restful.domain.request.AuthorRequest;
-import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.response.AuthorResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.repository.AuthorRepository;
@@ -13,6 +12,7 @@ import com.build.core_restful.util.mapper.AuthorMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -26,7 +26,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public PageResponse<Object> getAllAuthor(String name, Pageable pageable) {
-        Page<Author> page = name.isEmpty() ? 
+        Page<Author> page = !StringUtils.hasText(name) ? 
             authorRepository.findAll(pageable) : authorRepository.findByName(name, pageable);
 
         Page<AuthorResponse> pageResponse = page.map(authorMapper::toAuthorResponse);
@@ -71,14 +71,5 @@ public class AuthorServiceImpl implements AuthorService {
         }
         authorRepository.deleteById(id);
         return true;
-    }
-
-    @Override
-    public AuthorResponse updateAvatar(UploadAvatar uploadAvatar) {
-        Author currentAuthor = authorRepository.findById(uploadAvatar.getId()).get();
-
-        currentAuthor.setAvatar(uploadAvatar.getAvtUrl());
-
-        return authorMapper.toAuthorResponse(authorRepository.save(currentAuthor));
     }
 }

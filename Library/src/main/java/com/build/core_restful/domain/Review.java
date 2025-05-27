@@ -2,41 +2,42 @@ package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
-@Table(name = "rental_items")
+@Table(name = "reviews")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RentalItem {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Instant rentalDate;
-    private Long rentedDay;
-    private Instant returnDate;
+    private int rate;
 
-    private String bookName;
-    private Long rentalPrice;
-    private Long depositPrice;
-    private Long lateFee;
-    private Long quantity;
-    private Long totalRental;
-    private Long totalDeposit;
+    private String image;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private RentalOrder order;
+    @JoinColumn(name = "parent_id")
+    private Review parentReview;
+
+    @OneToMany(mappedBy = "parentReview", cascade = CascadeType.ALL)
+    private List<Review> replies;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private Instant createAt;
     private Instant updateAt;
@@ -57,6 +58,7 @@ public class RentalItem {
         this.setUpdateBy(JwtUtil.getCurrentUserLogin().isPresent()
                 ? JwtUtil.getCurrentUserLogin().get()
                 : "");
+
         this.setUpdateAt(Instant.now());
     }
 }

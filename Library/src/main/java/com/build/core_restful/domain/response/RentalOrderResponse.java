@@ -18,7 +18,6 @@ public class RentalOrderResponse {
 
     private Long totalPrice;
     private Long depositPrice;
-    private Long lateFee;
 
     private String city;
     private String district;

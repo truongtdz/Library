@@ -12,14 +12,12 @@ import java.time.Instant;
 public class RentalItemResponse {
     private Long id;
     private Instant rentalDate;
-    private Instant dueDate;
     private Instant returnDate;
 
     private String bookName;
     private Long rentalPrice;
     private Long depositPrice;
     private Long lateFee;
-    private Long discount;
     private Long quantity;
     private Long totalRental;
     private Long totalDeposit;

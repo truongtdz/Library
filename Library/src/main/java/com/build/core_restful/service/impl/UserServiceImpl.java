@@ -3,7 +3,6 @@ package com.build.core_restful.service.impl;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UpdatePasswordUserRequest;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
-import com.build.core_restful.domain.request.UploadAvatar;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
@@ -144,15 +143,6 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e){
             return false;
         }
-    }
-
-    @Override
-    public UserResponse updateAvatarUser(UploadAvatar uploadAvatar) {
-        User currentUser = userRepository.findByIdAndStatus(uploadAvatar.getId(), UserStatusEnum.Active.toString());
-
-        currentUser.setAvatar(uploadAvatar.getAvtUrl());
-
-        return userMapper.toUserResponse(userRepository.save(currentUser));
     }
 
     @Override

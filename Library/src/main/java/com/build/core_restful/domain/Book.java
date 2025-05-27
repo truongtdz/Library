@@ -38,9 +38,17 @@ public class Book {
     private Long depositPrice;
     private Long lateFee;
 
-    private Long quantityView;
-    private Long quantitySell;
-    private Long quantityLike;
+    @Column(nullable = false)
+    @Builder.Default
+    private Long quantityView = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Long quantitySell = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Long quantityLike = 0L;
 
     private String bookStatus;
 
@@ -56,13 +64,17 @@ public class Book {
     @JsonIgnore
     private List<RentalItem> items;
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Image> images;
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Cart> carts;
+
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Review> reviews;
 
     private Instant createAt;
     private Instant updateAt;

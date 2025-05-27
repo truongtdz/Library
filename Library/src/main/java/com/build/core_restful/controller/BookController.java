@@ -6,6 +6,8 @@ import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.util.annotation.AddMessage;
+import com.build.core_restful.util.enums.TypeQuantityBook;
+
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -60,8 +65,8 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    @AddMessage("Get all books")
-    public ResponseEntity<SearchResponse> getAllBooks(
+    @AddMessage("search book")
+    public ResponseEntity<SearchResponse> searchBook(
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(required = false) String sortBy,
@@ -84,5 +89,10 @@ public class BookController {
     @GetMapping("/top10/{type}")
     public ResponseEntity<List<BookResponse>> getTop10BookBy(@PathVariable String type){
         return ResponseEntity.ok(bookService.getTop10BookBy(type));
+    }
+
+    @GetMapping("/quantity/{type}")
+    public ResponseEntity<Integer> getQuantityBook(@PathVariable TypeQuantityBook type){
+        return ResponseEntity.ok(bookService.getQuantityBook(type));
     }
 }
