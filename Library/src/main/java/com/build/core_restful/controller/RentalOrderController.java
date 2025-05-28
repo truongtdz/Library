@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/v1/order")
+@RequestMapping("/api/v1/order/rental")
 public class RentalOrderController {
     private final RentalOrderService rentalOrderService;
 

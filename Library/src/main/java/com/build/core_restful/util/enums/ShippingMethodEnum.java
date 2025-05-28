@@ -1,5 +1,5 @@
 package com.build.core_restful.util.enums;
 
-public enum ShippingMethod {
+public enum ShippingMethodEnum {
     Express , Standard;
 }

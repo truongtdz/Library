@@ -36,7 +36,6 @@ public class Book {
     private Long stock;
     private Long rentalPrice;
     private Long depositPrice;
-    private Long lateFee;
 
     @Column(nullable = false)
     @Builder.Default

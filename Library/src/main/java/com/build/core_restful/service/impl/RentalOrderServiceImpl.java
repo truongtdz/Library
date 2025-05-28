@@ -8,8 +8,9 @@ import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.repository.*;
 import com.build.core_restful.repository.specification.RentalOrderSpecification;
 import com.build.core_restful.service.RentalOrderService;
+import com.build.core_restful.util.enums.ItemStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
-import com.build.core_restful.util.enums.ShippingMethod;
+import com.build.core_restful.util.enums.ShippingMethodEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.RentalOrderMapper;
 
@@ -29,33 +30,28 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     private final RentalOrderRepository rentalOrderRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-    private final RentalItemRepository rentalItemRepository;
     private final RentalOrderMapper rentalOrderMapper;
 
     public RentalOrderServiceImpl(RentalOrderRepository rentalOrderRepository,
                                     UserRepository userRepository,
                                     BookRepository bookRepository,
-                                    RentalItemRepository rentalItemRepository,
                                     RentalOrderMapper rentalOrderMapper) {
         this.rentalOrderRepository = rentalOrderRepository;
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
-        this.rentalItemRepository = rentalItemRepository;
         this.rentalOrderMapper = rentalOrderMapper;
     }
 
     @Override
     public RentalOrderResponse create(RentalOrderRequest request) {
-        RentalOrder order = rentalOrderRepository.save(rentalOrderMapper.toEntity(request));
+        RentalOrder order = rentalOrderMapper.toEntity(request);
 
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new NewException("User not found"));
         order.setUser(user);
 
-        Long timeDelivery = request.getShippingMethod().equals(ShippingMethod.Express) ? 3L : 1L;
+        Long timeDelivery = request.getShippingMethod().equals(ShippingMethodEnum.Express) ? 3L : 1L;
         Instant now = Instant.now();
-        Long totalRental = 0L;
-        Long totalDeposit = 0L;
         List<RentalItem> items = new ArrayList<>();
 
         for (RentalItemRequest item : request.getItems()) {
@@ -67,16 +63,15 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
             RentalItem rentalItem = RentalItem.builder()
                     .quantity(item.getQuantity())
-                    .rentalDate(now)
-                    .rentedDay(item.getRentedDay())
-                    .returnDate(now.plus(item.getRentedDay(), ChronoUnit.DAYS))
                     .bookName(book.getName())
+                    .rentalDate(now)
+                    .rentedDate(now.plus(item.getRentedDay(), ChronoUnit.DAYS))
                     .rentalPrice(book.getRentalPrice())
                     .depositPrice(book.getDepositPrice())
-                    .lateFee(book.getLateFee())
                     .totalRental(itemRental)
                     .totalDeposit(itemDeposit)
-                    .order(order)
+                    .itemStatus(ItemStatusEnum.Pending.toString())
+                    .rentalOrder(order)
                     .book(book)
                     .build();
 
@@ -84,16 +79,11 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             book.setQuantityRented(book.getQuantityRented() + item.getQuantity());
             bookRepository.save(book);
 
-            rentalItemRepository.save(rentalItem);
             items.add(rentalItem);
-
-            totalRental += itemRental;
-            totalDeposit += itemDeposit;
         }
 
         order.setItems(items);
-        order.setTotalPrice(totalRental);
-        order.setDepositPrice(totalDeposit);
+        order.setReceiveDay(now.plus(timeDelivery, ChronoUnit.DAYS));
         order.setOrderStatus(OrderStatusEnum.Processing.toString());
 
         return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));

@@ -12,6 +12,6 @@ public class RentalItemRequest {
     @NotNull
     private Long bookId;
 
-    private Long rentedDay;
     private Long quantity;
+    private Long rentedDay;    
 }

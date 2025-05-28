@@ -1,5 +1,7 @@
 package com.build.core_restful.domain.request;
 
+import java.util.List;
+
 import com.build.core_restful.util.enums.PaymentMethodEnum;
 import com.build.core_restful.util.enums.PaymentStatusEnum;
 import com.build.core_restful.util.enums.ShippingMethodEnum;
@@ -7,14 +9,12 @@ import com.build.core_restful.util.enums.ShippingMethodEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RentalOrderRequest {
+public class RentedOrderRequest {
     @NotNull
     private Long userId;
 
@@ -24,12 +24,9 @@ public class RentalOrderRequest {
     private String street;
     private String notes;
 
-    private Long totalPrice;
-    private Long depositPrice;
-
     private PaymentStatusEnum paymentStatus;
     private PaymentMethodEnum paymentMethod;
     private ShippingMethodEnum shippingMethod;
 
-    private List<RentalItemRequest> items;
+    private List<Long> itemIdLists;
 }

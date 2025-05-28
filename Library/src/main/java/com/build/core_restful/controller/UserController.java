@@ -86,4 +86,10 @@ public class UserController {
     public ResponseEntity<UserResponse> updateRole(@Valid @RequestBody UpdateRoleUserRequest updateRoleUserRequest){
         return ResponseEntity.ok(userService.updateRoleUser(updateRoleUserRequest));
     }
+
+    @GetMapping("/quantity")
+    @AddMessage("Get user by id")
+    public ResponseEntity<Long> getQuantityUser(){
+        return ResponseEntity.ok(userService.getQuantityUser());
+    }
 }

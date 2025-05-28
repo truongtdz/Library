@@ -11,13 +11,13 @@ import java.time.Instant;
 @AllArgsConstructor
 public class RentalItemResponse {
     private Long id;
+
     private Instant rentalDate;
-    private Instant returnDate;
+    private Instant rentedDate;
 
     private String bookName;
     private Long rentalPrice;
     private Long depositPrice;
-    private Long lateFee;
     private Long quantity;
     private Long totalRental;
     private Long totalDeposit;

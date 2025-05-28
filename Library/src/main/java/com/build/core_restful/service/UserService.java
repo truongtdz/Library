@@ -38,6 +38,8 @@ public interface UserService {
 
     UserResponse updateRoleUser(UpdateRoleUserRequest updateRoleUserRequest);
 
+    Long getQuantityUser();
+
     boolean banUser(Long id);
 
     boolean updatePasswordUser(UpdatePasswordUserRequest userRequest);

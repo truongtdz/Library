@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
@@ -128,6 +129,11 @@ public class UserServiceImpl implements UserService {
         );
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
+    }
+
+    @Override
+    public Long getQuantityUser(){
+        return userRepository.count();
     }
 
     @Override

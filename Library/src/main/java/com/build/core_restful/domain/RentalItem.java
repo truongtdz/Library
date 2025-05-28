@@ -19,20 +19,25 @@ public class RentalItem {
     private Long id;
 
     private Instant rentalDate;
-    private Long rentedDay;
-    private Instant returnDate;
+    private Instant rentedDate;
+    private Long lateFee;
 
     private String bookName;
     private Long rentalPrice;
     private Long depositPrice;
-    private Long lateFee;
     private Long quantity;
     private Long totalRental;
     private Long totalDeposit;
 
+    private String itemStatus;
+
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private RentalOrder order;
+    @JoinColumn(name = "rental_order_id")
+    private RentalOrder rentalOrder;
+
+    @ManyToOne
+    @JoinColumn(name = "rented_order_id")
+    private RentedOrder rentedOrder;
 
     @ManyToOne
     @JoinColumn(name = "book_id")

@@ -9,19 +9,18 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
-@Table(name = "rental_orders")
+@Table(name = "rented_orders")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RentalOrder {
+public class RentedOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long totalPrice;
-    private Long depositPrice;
+    private Long lateFee;
 
     private String city;
     private String district;
@@ -35,11 +34,10 @@ public class RentalOrder {
     private String paymentStatus;
     private String paymentMethod;
     private String shippingMethod;
-    private Instant receiveDay;
 
-    @OneToMany(mappedBy = "rentalOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
-    List<RentalItem> items;
+    @OneToMany(mappedBy = "rentedOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RentalItem> items;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
