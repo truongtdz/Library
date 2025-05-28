@@ -13,7 +13,6 @@ import com.build.core_restful.repository.CategoryRepository;
 import com.build.core_restful.repository.AuthorRepository;
 import com.build.core_restful.repository.specification.BookSpecification;
 import com.build.core_restful.service.BookService;
-import com.build.core_restful.util.enums.TypeQuantityBook;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.BookMapper;
 import org.springframework.data.domain.Page;
@@ -64,7 +63,7 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new NewException("Book with id: " + id + " not found")); 
             
-        book.setQuantityView(book.getQuantityView() + 1);
+        book.setQuantityViewed(book.getQuantityViewed() + 1);
 
         return bookMapper.toBookResponse(bookRepository.save(book));
     }
@@ -141,13 +140,13 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookResponse> getTop10BookBy(String getBookBy) {
         return switch (getBookBy) {
-            case "sell" -> bookRepository.findTop10ByOrderByQuantitySellDesc().stream()
+            case "rented" -> bookRepository.findTop10ByOrderByQuantityRentedDesc().stream()
                     .map(bookMapper::toBookResponse)
                     .collect(Collectors.toList());
-            case "view" -> bookRepository.findTop10ByOrderByQuantityViewDesc().stream()
+            case "view" -> bookRepository.findTop10ByOrderByQuantityViewedDesc().stream()
                     .map(bookMapper::toBookResponse)
                     .collect(Collectors.toList());
-            case "like" -> bookRepository.findTop10ByOrderByQuantityLikeDesc().stream()
+            case "like" -> bookRepository.findTop10ByOrderByQuantityLikedDesc().stream()
                     .map(bookMapper::toBookResponse)
                     .collect(Collectors.toList());
             default -> null;
@@ -155,13 +154,8 @@ public class BookServiceImpl implements BookService {
     };
 
     @Override
-    public Integer getQuantityBook(TypeQuantityBook quantityBook) {
-        return switch (quantityBook.toString()) {
-            case "All" -> bookRepository.getTotalBooks();
-            case "Retailing" -> bookRepository.getQuantityBookLated();
-            case "Lated" -> bookRepository.getQuantityBookLated();
-            default -> null;
-        };
+    public long getQuantityBook() {
+        return bookRepository.count();
     };
 
     @Override

@@ -4,7 +4,6 @@ import com.build.core_restful.domain.request.BookRequest;
 import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
-import com.build.core_restful.util.enums.TypeQuantityBook;
 
 import org.springframework.data.domain.Pageable;
 
@@ -24,7 +23,7 @@ public interface BookService {
 
     List<BookResponse> getTop10BookBy(String getBookBy);
 
-    Integer getQuantityBook(TypeQuantityBook quantityBook);
+    long getQuantityBook();
 
     SearchResponse searchBook(
             String keyword,

@@ -2,7 +2,6 @@ package com.build.core_restful.domain;
 
 import com.build.core_restful.util.JwtUtil;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.Instant;
@@ -21,7 +20,6 @@ public class Review {
     private Long id;
 
     private int rate;
-
     private String image;
 
     @ManyToOne

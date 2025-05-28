@@ -81,6 +81,9 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                     .build();
 
             book.setStock(book.getStock() - item.getQuantity());
+            book.setQuantityRented(book.getQuantityRented() + item.getQuantity());
+            bookRepository.save(book);
+
             rentalItemRepository.save(rentalItem);
             items.add(rentalItem);
 
@@ -135,6 +138,21 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 .totalElements(mappedPage.getTotalElements())
                 .content(mappedPage.getContent())
                 .build();
+    }
+
+    @Override
+    public Integer getQuantityByOrderStatus(Instant startDate, Instant endDate, OrderStatusEnum orderStatus) {
+        return rentalOrderRepository.countRentalOrdersByStatusBetween(startDate, endDate, orderStatus.toString());
+    }
+
+    @Override
+    public Integer getRevenueRentalOrder(Instant startDate, Instant endDate) {
+        return rentalOrderRepository.getRevenueRentalOrder(startDate, endDate);
+    }
+
+    @Override
+    public Integer getTotalDepositOrder(Instant startDate, Instant endDate) {
+        return rentalOrderRepository.getTotalDepositOrder(startDate, endDate);
     }
 
 }

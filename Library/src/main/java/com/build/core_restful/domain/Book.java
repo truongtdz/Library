@@ -40,15 +40,15 @@ public class Book {
 
     @Column(nullable = false)
     @Builder.Default
-    private Long quantityView = 0L;
+    private Long quantityViewed = 0L;
 
     @Column(nullable = false)
     @Builder.Default
-    private Long quantitySell = 0L;
+    private Long quantityRented = 0L;
 
     @Column(nullable = false)
     @Builder.Default
-    private Long quantityLike = 0L;
+    private Long quantityLiked = 0L;
 
     private String bookStatus;
 

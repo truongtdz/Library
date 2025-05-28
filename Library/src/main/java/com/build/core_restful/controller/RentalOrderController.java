@@ -8,14 +8,14 @@ import com.build.core_restful.util.annotation.AddMessage;
 import com.build.core_restful.util.enums.OrderStatusEnum;
 
 import jakarta.validation.Valid;
+
+import java.time.Instant;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
@@ -74,5 +74,30 @@ public class RentalOrderController {
         return ResponseEntity.ok(rentalOrderService.getAllOrder(
             fromTotalPrice, toTotalPrice, fromDepositPrice, toDepositPrice, userId, orderStatus, pageable
         ));
+    }
+
+    @GetMapping("/quantity")
+    public ResponseEntity<Integer> getQuantityByOrderStatus(
+        @RequestParam(required = false) Instant startDate,
+        @RequestParam(required = false) Instant endDate,
+        @RequestParam(required = false) OrderStatusEnum orderStatus
+    ){
+        return ResponseEntity.ok(rentalOrderService.getQuantityByOrderStatus(startDate, endDate, orderStatus));
+    }
+
+    @GetMapping("/revenue")
+    public ResponseEntity<Integer> getRevenueRentalOrder(
+        @RequestParam(required = false) Instant startDate,
+        @RequestParam(required = false) Instant endDate
+    ){
+        return ResponseEntity.ok(rentalOrderService.getRevenueRentalOrder(startDate, endDate));
+    }
+
+    @GetMapping("/deposit")
+    public ResponseEntity<Integer> getTotalDepositOrder(
+        @RequestParam(required = false) Instant startDate,
+        @RequestParam(required = false) Instant endDate
+    ){
+        return ResponseEntity.ok(rentalOrderService.getTotalDepositOrder(startDate, endDate));
     }
 }

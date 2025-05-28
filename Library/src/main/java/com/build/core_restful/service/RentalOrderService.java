@@ -4,6 +4,9 @@ import com.build.core_restful.domain.request.RentalOrderRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.util.enums.OrderStatusEnum;
+
+import java.time.Instant;
+
 import org.springframework.data.domain.Pageable;
 
 public interface RentalOrderService {
@@ -22,5 +25,11 @@ public interface RentalOrderService {
         String orderStatus,
         Pageable pageable
     );
+
+    Integer getQuantityByOrderStatus(Instant startDate, Instant endDate, OrderStatusEnum orderStatus);
+    
+    Integer getRevenueRentalOrder(Instant startDate, Instant endDate);
+    
+    Integer getTotalDepositOrder(Instant startDate, Instant endDate);
     
 }

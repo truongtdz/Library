@@ -6,7 +6,6 @@ import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.util.annotation.AddMessage;
-import com.build.core_restful.util.enums.TypeQuantityBook;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -91,8 +90,8 @@ public class BookController {
         return ResponseEntity.ok(bookService.getTop10BookBy(type));
     }
 
-    @GetMapping("/quantity/{type}")
-    public ResponseEntity<Integer> getQuantityBook(@PathVariable TypeQuantityBook type){
-        return ResponseEntity.ok(bookService.getQuantityBook(type));
+    @GetMapping("/quantity")
+    public ResponseEntity<Long> getQuantityBook(){
+        return ResponseEntity.ok(bookService.getQuantityBook());
     }
 }
