@@ -3,11 +3,13 @@ package com.build.core_restful.service;
 import java.time.Instant;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import com.build.core_restful.domain.request.BranchRequest;
 import com.build.core_restful.domain.response.BranchResponse;
 import com.build.core_restful.domain.response.PageResponse;
 
+@Service
 public interface BranchService {
     PageResponse<Object> getAllBranch(
         String city, 

@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import com.build.core_restful.domain.Branch;
 import com.build.core_restful.domain.request.BranchRequest;
@@ -16,6 +17,7 @@ import com.build.core_restful.service.BranchService;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.BranchMapper;
 
+@Service
 public class BranchServiceImpl implements BranchService{
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;

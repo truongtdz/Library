@@ -22,6 +22,9 @@ public class Review {
     private int rate;
     private String image;
 
+    @Column(columnDefinition = "TEXT")
+    private String comment;
+
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Review parentReview;
