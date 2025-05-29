@@ -17,6 +17,5 @@ public class Subscribe {
 
     private String fullName;
     private String email;
-    private String nameAuthors;
-    private String nameCategory;
+    private int age;
 }
