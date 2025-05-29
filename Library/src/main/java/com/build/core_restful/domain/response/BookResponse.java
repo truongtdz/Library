@@ -16,7 +16,7 @@ public class BookResponse {
     private String description;
     private String title;
     private String publisher;
-    private Instant publish_date;
+    private Instant publishDate;
     private int pages;
     private String language;
     private Long totalQuantity;
