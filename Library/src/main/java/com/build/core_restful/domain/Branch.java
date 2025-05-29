@@ -5,41 +5,25 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.List;
 
 @Entity
-@Table(name = "rented_orders")
+@Table(name = "branches")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RentedOrder {
+public class Branch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long lateFee;
 
     private String city;
     private String district;
     private String ward;
     private String street;
-
-    @Column(columnDefinition = "TEXT")
-    private String notes;
-
-    private String orderStatus;
-    private String paymentStatus;
-    private String paymentMethod;
-    private String shippingMethod;
-
-    @OneToMany(mappedBy = "rentedOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RentalItem> items;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Instant openTime;
+    private Instant closeTime;  
 
     private Instant createAt;
     private Instant updateAt;
