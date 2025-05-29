@@ -6,8 +6,8 @@ import com.build.core_restful.domain.Permission;
 import com.build.core_restful.domain.Role;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.service.UserService;
-import com.build.core_restful.util.JwtUtil;
 import com.build.core_restful.util.exception.NewException;
+import com.build.core_restful.util.system.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

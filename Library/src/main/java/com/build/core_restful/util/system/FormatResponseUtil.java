@@ -1,7 +1,9 @@
-package com.build.core_restful.util;
+package com.build.core_restful.util.system;
 
 import com.build.core_restful.domain.response.FormatResponse;
 import com.build.core_restful.util.annotation.AddMessage;
+import com.nimbusds.jose.util.Resource;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -33,10 +35,10 @@ public class FormatResponseUtil implements ResponseBodyAdvice {
         FormatResponse<Object> res = new FormatResponse<Object>();
         res.setCode(status);
 
-//        if (body instanceof String || body instanceof Resource) {
-//            return body;
-//        }
-//
+       if (body instanceof String || body instanceof Resource) {
+           return body;
+       }
+
         String path = request.getURI().getPath();
         if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
             return body;

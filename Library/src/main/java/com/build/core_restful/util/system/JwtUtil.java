@@ -1,4 +1,4 @@
-package com.build.core_restful.util;
+package com.build.core_restful.util.system;
 
 import com.build.core_restful.domain.response.LoginResponse;
 import com.nimbusds.jose.util.Base64;
@@ -16,6 +16,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+
 
 @Service
 public class JwtUtil {

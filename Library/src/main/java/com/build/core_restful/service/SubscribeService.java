@@ -9,4 +9,6 @@ public interface SubscribeService {
     boolean createSubscribe(SubscribeRequest request);
 
     boolean deleteSubscribe(String email);
+
+    void sendEmailToUser();
 }

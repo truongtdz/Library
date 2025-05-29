@@ -1,10 +1,11 @@
 package com.build.core_restful.domain;
 
-import com.build.core_restful.util.JwtUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+
+import com.build.core_restful.util.system.JwtUtil;
 
 @Entity
 @Table(name = "address")

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sách mới</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .book-card {
+            width: 180px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+        }
+
+        .book-card img {
+            max-height: 150px;
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+
+        .book-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .book-author {
+            color: #555;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .book-price {
+            color: #e91e63;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h3 th:text="'Sách mới ngày: ' + ${now}">Sách mới ngày: </h3>
+
+    <div class="book-list">
+        <div class="book-card" th:each="book : ${books}">
+            <img th:if="${book.imageList != null and !book.imageList.isEmpty()}"
+                 th:src="${book.imageList[0].url}" alt="Ảnh bìa"/>
+            <div class="book-name" th:text="${book.name}">Tên sách</div>
+            <div class="book-author" th:text="'Tác giả: ' + ${book.author.name}">Tác giả</div>
+            <div class="book-price" th:text="${book.rentalPrice}">Giá thuê</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 package com.build.core_restful.domain;
 
-import com.build.core_restful.util.JwtUtil;
+import com.build.core_restful.util.system.JwtUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -27,7 +27,6 @@ public class Book {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String title;
     private String publisher;
     private Instant publishDate;
     private Long pages;

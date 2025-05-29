@@ -10,10 +10,10 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
+import static com.build.core_restful.util.system.JwtUtil.JWT_ALGORITHM;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import static com.build.core_restful.util.JwtUtil.JWT_ALGORITHM;
 
 @Configuration
 public class JwtConfig {
