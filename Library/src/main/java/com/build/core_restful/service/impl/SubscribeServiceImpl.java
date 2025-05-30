@@ -1,6 +1,7 @@
 package com.build.core_restful.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -10,9 +11,11 @@ import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.Subscribe;
 import com.build.core_restful.domain.request.SubscribeRequest;
 import com.build.core_restful.domain.response.BookResponse;
+import com.build.core_restful.domain.response.BookSendEmailResponse;
 import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.SubscribeRepository;
 import com.build.core_restful.service.SubscribeService;
+import com.build.core_restful.service.TrainService;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.BookMapper;
 import com.build.core_restful.util.system.EmailUtil;
@@ -20,20 +23,17 @@ import com.build.core_restful.util.system.EmailUtil;
 @Service
 public class SubscribeServiceImpl implements SubscribeService{
     private final SubscribeRepository subscribeRepository;
-    private final BookRepository bookRepository;
     private final EmailUtil emailUtil;
-    private final BookMapper bookMapper;
+    private final TrainService trainService;
 
     public SubscribeServiceImpl (
         SubscribeRepository subscribeRepository,
-        BookRepository bookRepository,
-        BookMapper bookMapper,
-        EmailUtil emailUtil
+        EmailUtil emailUtil,
+        TrainService trainService
     ){
         this.subscribeRepository = subscribeRepository;
-        this.bookRepository = bookRepository;
-        this.bookMapper = bookMapper;
         this.emailUtil = emailUtil;
+        this.trainService = trainService;
     };
 
     @Override
@@ -67,14 +67,12 @@ public class SubscribeServiceImpl implements SubscribeService{
     public void sendEmailToUser() {
         List<Subscribe> subscribes = subscribeRepository.findAll();
 
-        List<Book> topBooks = bookRepository.findTop10ByOrderByQuantityRentedDesc();
-
-        List<BookResponse> responseList = topBooks.stream()
-        .map(bookMapper::toBookResponse)
-        .collect(Collectors.toList());
-
         for(Subscribe subscribe: subscribes){
-            emailUtil.sendEmailTemplate(subscribe.getEmail(), subscribe.getFullName(), responseList);
+            String city = Optional.ofNullable(subscribe.getCity())
+                      .orElse(null);
+
+            List<BookSendEmailResponse> books = trainService.predictCategory(subscribe.getAge(), subscribe.getGender(), city);
+            emailUtil.sendEmailTemplate(subscribe.getEmail(), subscribe.getFullName(), books);
         }
     }
     

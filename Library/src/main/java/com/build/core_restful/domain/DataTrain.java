@@ -4,19 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "trains")
+@Table(name = "data_trains")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrainBook {
+public class DataTrain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long age;
     private String gender;
-    private String category;
-    private String authors;
+    private String city;
+    private String categoryId;
 }

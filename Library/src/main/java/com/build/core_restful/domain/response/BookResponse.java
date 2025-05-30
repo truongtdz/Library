@@ -14,7 +14,6 @@ public class BookResponse {
     private Long id;
     private String name;
     private String description;
-    private String title;
     private String publisher;
     private Instant publishDate;
     private int pages;

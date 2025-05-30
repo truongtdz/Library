@@ -15,7 +15,7 @@ public class DailySchedulerUtil {
         this.subscribeService = subscribeService;
     };
     
-    @Scheduled(cron = "0 * * * * *", zone = "Asia/Ho_Chi_Minh")
+    @Scheduled(cron = "0 0 7 * * *", zone = "Asia/Ho_Chi_Minh")
     public void sendEmailScheduler() {
         subscribeService.sendEmailToUser();
     }

@@ -30,6 +30,7 @@
 
         .book-card img {
             max-height: 150px;
+            width: 100%;
             object-fit: cover;
             margin-bottom: 8px;
         }
@@ -40,16 +41,17 @@
             margin-bottom: 4px;
         }
 
-        .book-author {
-            color: #555;
+        .book-author,
+        .book-category,
+        .book-stock,
+        .book-price {
             font-size: 13px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .book-price {
             color: #e91e63;
             font-weight: bold;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -58,11 +60,12 @@
 
     <div class="book-list">
         <div class="book-card" th:each="book : ${books}">
-            <img th:if="${book.imageList != null and !book.imageList.isEmpty()}"
-                 th:src="${book.imageList[0].url}" alt="Ảnh bìa"/>
+            <img th:src="${book.imageUrl}" alt="Ảnh bìa"/>
             <div class="book-name" th:text="${book.name}">Tên sách</div>
-            <div class="book-author" th:text="'Tác giả: ' + ${book.author.name}">Tác giả</div>
-            <div class="book-price" th:text="${book.rentalPrice}">Giá thuê</div>
+            <div class="book-author" th:text="'Tác giả: ' + ${book.authorName}">Tác giả</div>
+            <div class="book-category" th:text="'Thể loại: ' + ${book.categoryName}">Thể loại</div>
+            <div class="book-stock" th:text="'Kho: ' + ${book.stock}">Kho</div>
+            <div class="book-price" th:text="'Giá thuê: ' + ${book.rentalPrice} + ' đ'">Giá thuê</div>
         </div>
     </div>
 </body>

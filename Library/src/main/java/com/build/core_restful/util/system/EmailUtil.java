@@ -9,6 +9,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import com.build.core_restful.domain.response.BookResponse;
+import com.build.core_restful.domain.response.BookSendEmailResponse;
 
 import java.time.Instant;
 import java.util.List;
@@ -26,7 +27,7 @@ public class EmailUtil {
         this.templateEngine = templateEngine;
     };
 
-    public void sendEmailTemplate(String to, String name, List<BookResponse> books) {
+    public void sendEmailTemplate(String to, String name, List<BookSendEmailResponse> books) {
         Context context = new Context();
         context.setVariable("now", Instant.now());
         context.setVariable("books", books);

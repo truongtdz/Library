@@ -17,5 +17,8 @@ public class Subscribe {
 
     private String fullName;
     private String email;
-    private int age;
+    
+    private Long age;
+    private String gender;
+    private String city;
 }
