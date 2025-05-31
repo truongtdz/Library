@@ -10,6 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class BranchRequest {
+    private String name;
+    
     private String city;
     private String district;
     private String ward;

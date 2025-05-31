@@ -21,6 +21,8 @@ public class Branch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     private String city;
     private String district;
     private String ward;

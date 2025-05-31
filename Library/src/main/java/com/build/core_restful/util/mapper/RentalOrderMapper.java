@@ -10,6 +10,7 @@ public interface RentalOrderMapper {
     RentalOrder toEntity(RentalOrderRequest request);
 
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "branch.id", target = "branchId")
     RentalOrderResponse toResponse(RentalOrder order);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

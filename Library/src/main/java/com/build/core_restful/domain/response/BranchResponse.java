@@ -12,6 +12,8 @@ import java.time.Instant;
 public class BranchResponse {
     private Long id;
 
+    private String name;
+
     private String city;
     private String district;
     private String ward;
