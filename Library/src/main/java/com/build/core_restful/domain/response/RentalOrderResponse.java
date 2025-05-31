@@ -25,6 +25,8 @@ public class RentalOrderResponse {
     private String ward;
     private String street;
     private String notes;
+    private String fullName;
+    private String phone;
 
     private DeliveryMethodEnum deliveryMethod;
     private OrderStatusEnum orderStatus;

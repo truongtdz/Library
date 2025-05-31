@@ -26,6 +26,8 @@ public class RentedOrder {
     private String district;
     private String ward;
     private String street;
+    private String fullName;
+    private String phone;
 
     @Column(columnDefinition = "TEXT")
     private String notes;

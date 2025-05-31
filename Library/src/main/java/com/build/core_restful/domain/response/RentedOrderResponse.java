@@ -21,6 +21,8 @@ public class RentedOrderResponse {
     private String ward;
     private String street;
     private String notes;
+    private String fullName;
+    private String phone;
 
     private OrderStatusEnum orderStatus;
     private PaymentStatusEnum paymentStatus;

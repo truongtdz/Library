@@ -25,6 +25,8 @@ public class RentedOrderRequest {
     private String ward;
     private String street;
     private String notes;
+    private String fullName;
+    private String phone;
 
     private Long branchId;
     private Instant rentedDay;

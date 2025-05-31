@@ -25,6 +25,8 @@ public class RentalOrderRequest {
     private String ward;
     private String street;
     private String notes;
+    private String fullName;
+    private String phone;
 
     private Long totalPrice;
     private Long depositPrice;
