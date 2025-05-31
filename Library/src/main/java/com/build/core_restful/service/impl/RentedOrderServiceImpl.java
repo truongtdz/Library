@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 public class RentedOrderServiceImpl implements RentedOrderService {
@@ -79,13 +80,11 @@ public class RentedOrderServiceImpl implements RentedOrderService {
 
     private void validateDeliveryMethod(RentedOrderRequest request) {
         if (DeliveryMethodEnum.Online.equals(request.getDeliveryMethod())) {
-            if (request.getCity().isEmpty() || 
-                request.getDistrict().isEmpty() || 
-                request.getStreet().isEmpty()
-            ) {
+            if (StringUtils.isEmpty(request.getCity()) || 
+                StringUtils.isEmpty(request.getDistrict()) || 
+                StringUtils.isEmpty(request.getStreet())) {
                 throw new NewException("Address is required for online return");
-            }
-
+            } 
             if (request.getShippingMethod() == null) {
                 throw new NewException("Shipping method is required for online return");
             }

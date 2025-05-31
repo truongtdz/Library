@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -74,11 +75,11 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     }
 
     private void validateDeliveryMethod(RentalOrderRequest request) {
-        if (request.getDeliveryMethod().equals(request.getDeliveryMethod())) {
-            if (request.getCity().isEmpty() || 
-                request.getDistrict().isEmpty() || 
-                request.getStreet().isEmpty()) {
-                throw new NewException("Address is required for online delivery");
+        if (DeliveryMethodEnum.Online.equals(request.getDeliveryMethod())) {
+            if (StringUtils.isEmpty(request.getCity()) || 
+                StringUtils.isEmpty(request.getDistrict()) || 
+                StringUtils.isEmpty(request.getStreet())) {
+                throw new NewException("Address is required for online return");
             }
         } else {
             if (request.getBranchId() == null) {
@@ -96,6 +97,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         );
         
         order.setReceiveDay(request.getReceiveDay()); 
+
         order.setCity(null);
         order.setDistrict(null);
         order.setWard(null);
@@ -111,7 +113,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         order.setStreet(request.getStreet());
         order.setNotes(request.getNotes());
         
-        Long timeDelivery = ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 3L : 7L;
+        Long timeDelivery = ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 1L : 3L;
         order.setReceiveDay(Instant.now().plus(timeDelivery, ChronoUnit.DAYS));
         order.setShippingMethod(request.getShippingMethod().toString());
         
