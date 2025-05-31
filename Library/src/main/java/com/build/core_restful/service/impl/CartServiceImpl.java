@@ -72,12 +72,7 @@ public class CartServiceImpl implements CartService {
         }
 
         List<Cart> newCarts = new ArrayList<>();
-
         for(CartRequest.BookReq cart : cartRequest.getBooks()){
-                if(cartRepository.existsByUserIdAndBookId(cartRequest.getUserId(), cart.getBookId())){
-                throw new NewException("Book existed at my cart");
-            }
-
             Book book = bookRepository.findById(cart.getBookId())
                     .orElseThrow(() -> new NewException("Book with id: " + cart.getBookId() + " not found"));
 

@@ -1,6 +1,5 @@
 package com.build.core_restful.domain;
 
-import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.system.JwtUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
