@@ -31,23 +31,9 @@ public class CartController {
     }
 
     @PostMapping()
-    @AddMessage("Add book to cart")
+    @AddMessage("Change book to cart")
     public ResponseEntity<Boolean> getCartByUser(
             @Valid @RequestBody CartRequest cartRequest) {
-        return ResponseEntity.ok(cartService.addBookToCart(cartRequest));
-    }
-
-    @PutMapping()
-    @AddMessage("Change quantity book at cart")
-    public ResponseEntity<Boolean> changeQuantityBookAtCart(
-            @Valid @RequestBody CartRequest cartRequest){
-        return ResponseEntity.ok(cartService.changeQuantityBook(cartRequest));
-    }
-
-    @DeleteMapping()
-    @AddMessage("Delete book at cart")
-    public ResponseEntity<Object> deleteBookAtCart(
-            @Valid @RequestBody CartRequest cartRequest) {
-        return ResponseEntity.ok(cartService.deleteBookAtCart(cartRequest));
+        return ResponseEntity.ok(cartService.updateCartByUser(cartRequest));
     }
 }

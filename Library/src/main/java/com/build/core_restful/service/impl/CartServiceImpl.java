@@ -4,7 +4,6 @@ import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.Cart;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.CartRequest;
-import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.CartResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.repository.BookRepository;
@@ -15,9 +14,13 @@ import com.build.core_restful.util.enums.UserStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.BookMapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -60,56 +63,39 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public boolean addBookToCart(CartRequest cartRequest) {
+    @Transactional
+    public boolean updateCartByUser(CartRequest cartRequest) {
         User user = userRepository.findByIdAndStatus(cartRequest.getUserId(), UserStatusEnum.Active.toString());
 
         if(user == null){
             throw new NewException("User with id: " + cartRequest.getUserId() + " not found");
         }
 
-        if(cartRepository.existsByUserIdAndBookId(cartRequest.getUserId(), cartRequest.getBookId())){
-            throw new NewException("Book existed at my cart");
+        List<Cart> newCarts = new ArrayList<>();
+
+        for(CartRequest.BookReq cart : cartRequest.getBooks()){
+                if(cartRepository.existsByUserIdAndBookId(cartRequest.getUserId(), cart.getBookId())){
+                throw new NewException("Book existed at my cart");
+            }
+
+            Book book = bookRepository.findById(cart.getBookId())
+                    .orElseThrow(() -> new NewException("Book with id: " + cart.getBookId() + " not found"));
+
+            Cart newCart = Cart.builder()
+                    .book(book)
+                    .user(user)
+                    .rentedDay(cart.getRentedDay())
+                    .quantity(cart.getQuantity())
+                    .build();
+
+            newCarts.add(newCart);
         }
 
-        Book book = bookRepository.findById(cartRequest.getBookId())
-                .orElseThrow(() -> new NewException("Book with id: " + cartRequest.getBookId() + " not found"));
-
-        Cart newCart = Cart.builder()
-                .book(book)
-                .user(user)
-                .rentedDay(cartRequest.getRentedDay())
-                .quantity(cartRequest.getQuantity())
-                .build();
         try {
-            cartRepository.save(newCart);
+            cartRepository.deleteByUserId(cartRequest.getUserId());
+            cartRepository.saveAll(newCarts);
             return true;
         } catch (Exception e){
-            return false;
-        }
-    }
-
-    @Override
-    public boolean deleteBookAtCart(CartRequest cartRequest) {
-        Cart cart = cartRepository.findByUserIdAndBookId(cartRequest.getUserId(), cartRequest.getBookId());
-        try{
-            cartRepository.deleteById(cart.getId());
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean changeQuantityBook(CartRequest cartRequest) {
-        Cart currentCart = cartRepository.findByUserIdAndBookId(cartRequest.getUserId(), cartRequest.getBookId());
-
-        currentCart.setQuantity(cartRequest.getQuantity());
-        currentCart.setQuantity(cartRequest.getRentedDay());
-
-        try {
-            cartRepository.save(currentCart);
-            return true;
-        } catch (Exception e) {
             return false;
         }
     }

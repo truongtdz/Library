@@ -1,5 +1,7 @@
 package com.build.core_restful.domain.request;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -12,9 +14,18 @@ public class CartRequest {
     @NotNull(message = "User ID cannot be null")
     private Long userId;
 
-    @NotNull(message = "Book ID cannot be null")
-    private Long bookId;
+    private List<BookReq> books;
 
-    private Long quantity;
-    private Long rentedDay;
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class BookReq {
+        @NotNull(message = "Book ID cannot be null")
+        private Long bookId;
+        private Long quantity;
+        private Long rentedDay;
+    }
+    
 }

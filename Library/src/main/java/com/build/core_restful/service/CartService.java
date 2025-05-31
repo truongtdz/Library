@@ -7,9 +7,5 @@ import org.springframework.data.domain.Pageable;
 public interface CartService {
     PageResponse<Object> getByUser(Long userId, Pageable pageable);
 
-    boolean addBookToCart(CartRequest cartRequest);
-
-    boolean changeQuantityBook(CartRequest cartRequest);
-
-    boolean deleteBookAtCart(CartRequest cartRequest);
+    boolean updateCartByUser(CartRequest cartRequest);
 }
