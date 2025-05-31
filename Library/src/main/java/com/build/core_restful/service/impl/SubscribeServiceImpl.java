@@ -2,22 +2,17 @@ package com.build.core_restful.service.impl;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.Subscribe;
 import com.build.core_restful.domain.request.SubscribeRequest;
-import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.BookSendEmailResponse;
-import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.SubscribeRepository;
 import com.build.core_restful.service.SubscribeService;
 import com.build.core_restful.service.TrainService;
 import com.build.core_restful.util.exception.NewException;
-import com.build.core_restful.util.mapper.BookMapper;
 import com.build.core_restful.util.system.EmailUtil;
 
 @Service

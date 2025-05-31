@@ -16,17 +16,15 @@ public class BookResponse {
     private String description;
     private String publisher;
     private Instant publishDate;
-    private int pages;
+    private Long pages;
     private String language;
     private Long totalQuantity;
     private Long stock;
     private Long rentalPrice;
     private Long depositPrice;
     private String status;
-    
-    private Long quantityView;
-    private Long quantitySell;
-    private Long quantityLike;
+
+    private Long quantityRented;
 
     private CategoryRes category;
     private AuthorRes author;

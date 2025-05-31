@@ -1,5 +1,6 @@
 package com.build.core_restful.domain.response;
 
+import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
 import com.build.core_restful.util.enums.PaymentMethodEnum;
 import com.build.core_restful.util.enums.PaymentStatusEnum;
@@ -25,11 +26,13 @@ public class RentalOrderResponse {
     private String street;
     private String notes;
 
+    private DeliveryMethodEnum deliveryMethod;
     private OrderStatusEnum orderStatus;
     private PaymentStatusEnum paymentStatus;
     private PaymentMethodEnum paymentMethod;
 
     private Long userId;
+    private Long branchId;
 
     private List<RentalItemResponse> items;
 

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.BookSendEmailResponse;
 
 import java.time.Instant;

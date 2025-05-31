@@ -5,6 +5,7 @@ import com.build.core_restful.domain.Cart;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.CartRequest;
 import com.build.core_restful.domain.response.BookResponse;
+import com.build.core_restful.domain.response.CartResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.CartRepository;
@@ -40,7 +41,14 @@ public class CartServiceImpl implements CartService {
 
         Page<Cart> page = cartRepository.findByUserId(id, pageable);
 
-        Page<BookResponse> pageResponse = page.map(cart -> bookMapper.toBookResponse(cart.getBook()));
+        Page<CartResponse> pageResponse = page.map(
+            cart -> CartResponse.builder()
+                                .userId(cart.getUser().getId())
+                                .quantity(cart.getQuantity())
+                                .rentedDay(cart.getRentedDay())
+                                .book(bookMapper.toBookResponse(cart.getBook()))
+                                .build() 
+        );
 
         return PageResponse.builder()
                 .page(pageResponse.getNumber())
@@ -69,6 +77,8 @@ public class CartServiceImpl implements CartService {
         Cart newCart = Cart.builder()
                 .book(book)
                 .user(user)
+                .rentedDay(cartRequest.getRentedDay())
+                .quantity(cartRequest.getQuantity())
                 .build();
         try {
             cartRepository.save(newCart);

@@ -1,5 +1,6 @@
 package com.build.core_restful.domain.request;
 
+import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.PaymentMethodEnum;
 import com.build.core_restful.util.enums.PaymentStatusEnum;
 import com.build.core_restful.util.enums.ShippingMethodEnum;
@@ -27,6 +28,9 @@ public class RentalOrderRequest {
     private Long totalPrice;
     private Long depositPrice;
 
+    private Long branchId;
+
+    private DeliveryMethodEnum deliveryMethod;
     private PaymentStatusEnum paymentStatus;
     private PaymentMethodEnum paymentMethod;
     private ShippingMethodEnum shippingMethod;
