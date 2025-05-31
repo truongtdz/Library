@@ -1,5 +1,6 @@
 package com.build.core_restful.domain;
 
+import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.system.JwtUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -31,6 +32,7 @@ public class RentalOrder {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    private String deliveryMethod;
     private String orderStatus;
     private String paymentStatus;
     private String paymentMethod;
@@ -44,6 +46,10 @@ public class RentalOrder {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    private Branch branch;
 
     private Instant createAt;
     private Instant updateAt;

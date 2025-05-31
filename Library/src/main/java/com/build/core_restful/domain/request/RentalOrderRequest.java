@@ -8,6 +8,7 @@ import com.build.core_restful.util.enums.ShippingMethodEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -29,6 +30,7 @@ public class RentalOrderRequest {
     private Long depositPrice;
 
     private Long branchId;
+    private Instant receiveDay;
 
     private DeliveryMethodEnum deliveryMethod;
     private PaymentStatusEnum paymentStatus;

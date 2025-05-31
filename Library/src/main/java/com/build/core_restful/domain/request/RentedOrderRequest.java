@@ -1,7 +1,9 @@
 package com.build.core_restful.domain.request;
 
+import java.time.Instant;
 import java.util.List;
 
+import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.PaymentMethodEnum;
 import com.build.core_restful.util.enums.PaymentStatusEnum;
 import com.build.core_restful.util.enums.ShippingMethodEnum;
@@ -24,6 +26,10 @@ public class RentedOrderRequest {
     private String street;
     private String notes;
 
+    private Long branchId;
+    private Instant rentedDay;
+
+    private DeliveryMethodEnum deliveryMethod;
     private PaymentStatusEnum paymentStatus;
     private PaymentMethodEnum paymentMethod;
     private ShippingMethodEnum shippingMethod;

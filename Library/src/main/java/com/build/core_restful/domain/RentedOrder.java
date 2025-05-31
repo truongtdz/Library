@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.build.core_restful.util.system.JwtUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "rented_orders")
@@ -30,10 +31,13 @@ public class RentedOrder {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    private String deliveryMethod;
     private String orderStatus;
     private String paymentStatus;
     private String paymentMethod;
     private String shippingMethod;
+
+    private Instant rentedDay;
 
     @OneToMany(mappedBy = "rentedOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RentalItem> items;
@@ -41,6 +45,11 @@ public class RentedOrder {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    private Branch branch;
 
     private Instant createAt;
     private Instant updateAt;

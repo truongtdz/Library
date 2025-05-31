@@ -8,6 +8,7 @@ import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.repository.*;
 import com.build.core_restful.repository.specification.RentalOrderSpecification;
 import com.build.core_restful.service.RentalOrderService;
+import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.ItemStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
 import com.build.core_restful.util.enums.ShippingMethodEnum;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -30,19 +32,25 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     private final RentalOrderRepository rentalOrderRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final BranchRepository branchRepository;
     private final RentalOrderMapper rentalOrderMapper;
 
-    public RentalOrderServiceImpl(RentalOrderRepository rentalOrderRepository,
-                                    UserRepository userRepository,
-                                    BookRepository bookRepository,
-                                    RentalOrderMapper rentalOrderMapper) {
+    public RentalOrderServiceImpl(
+        RentalOrderRepository rentalOrderRepository,
+        UserRepository userRepository,
+        BookRepository bookRepository,
+        BranchRepository branchRepository,
+        RentalOrderMapper rentalOrderMapper
+    ) {
         this.rentalOrderRepository = rentalOrderRepository;
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
+        this.branchRepository = branchRepository;
         this.rentalOrderMapper = rentalOrderMapper;
     }
 
     @Override
+    @Transactional
     public RentalOrderResponse create(RentalOrderRequest request) {
         RentalOrder order = rentalOrderMapper.toEntity(request);
 
@@ -50,15 +58,86 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 .orElseThrow(() -> new NewException("User not found"));
         order.setUser(user);
 
-        Long timeDelivery = request.getShippingMethod().equals(ShippingMethodEnum.Express) ? 3L : 1L;
+        validateDeliveryMethod(request);
+
+        if (DeliveryMethodEnum.Offline.equals(request.getDeliveryMethod())) {
+            processOfflineDelivery(order, request);
+        } else {
+            processOnlineDelivery(order, request);
+        }
+
+        processRentalItems(order, request);
+
+        order.setOrderStatus(OrderStatusEnum.Processing.toString());
+        
+        return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));
+    }
+
+    private void validateDeliveryMethod(RentalOrderRequest request) {
+        if (request.getDeliveryMethod().equals(request.getDeliveryMethod())) {
+            if (request.getCity().isEmpty() || 
+                request.getDistrict().isEmpty() || 
+                request.getStreet().isEmpty()) {
+                throw new NewException("Address is required for online delivery");
+            }
+        } else {
+            if (request.getBranchId() == null) {
+                throw new NewException("Branch is required for offline pickup");
+            }
+            
+            branchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new NewException("Branch not found"));
+        }
+    }
+
+    private void processOfflineDelivery(RentalOrder order, RentalOrderRequest request) {
+        order.setBranch(branchRepository.findById(request.getBranchId())
+                        .orElseThrow(() -> new NewException("Branch with id = " + request.getBranchId() + " not found"))
+        );
+        
+        order.setReceiveDay(request.getReceiveDay()); 
+        order.setCity(null);
+        order.setDistrict(null);
+        order.setWard(null);
+        order.setStreet(null);
+
+        order.setShippingMethod(null);
+    }
+
+    private void processOnlineDelivery(RentalOrder order, RentalOrderRequest request) {
+        order.setCity(request.getCity());
+        order.setDistrict(request.getDistrict());
+        order.setWard(request.getWard());
+        order.setStreet(request.getStreet());
+        order.setNotes(request.getNotes());
+        
+        Long timeDelivery = ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 3L : 7L;
+        order.setReceiveDay(Instant.now().plus(timeDelivery, ChronoUnit.DAYS));
+        order.setShippingMethod(request.getShippingMethod().toString());
+        
+        order.setBranch(null);
+    }
+
+    private void processRentalItems(RentalOrder order, RentalOrderRequest request) {
         Instant now = Instant.now();
         List<RentalItem> items = new ArrayList<>();
-
+        
+        Long timeDelivery = getDeliveryTime(request);
+        
         for (RentalItemRequest item : request.getItems()) {
             Book book = bookRepository.findById(item.getBookId())
                     .orElseThrow(() -> new NewException("Book id= " + item.getBookId() + " not found"));
 
-            Long itemRental = book.getRentalPrice() * item.getQuantity() * (item.getRentedDay() - timeDelivery);
+            if (book.getStock() < item.getQuantity()) {
+                throw new NewException("Insufficient stock for book: " + book.getName());
+            }
+
+            Long actualRentalDays = item.getRentedDay() - timeDelivery;
+            if (actualRentalDays <= 0) {
+                throw new NewException("Rental days must be greater than delivery time");
+            }
+            
+            Long itemRental = book.getRentalPrice() * item.getQuantity() * actualRentalDays;
             Long itemDeposit = book.getDepositPrice() * item.getQuantity();
 
             RentalItem rentalItem = RentalItem.builder()
@@ -81,14 +160,18 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
             items.add(rentalItem);
         }
-
+        
         order.setItems(items);
-        order.setReceiveDay(now.plus(timeDelivery, ChronoUnit.DAYS));
-        order.setOrderStatus(OrderStatusEnum.Processing.toString());
-
-        return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));
     }
 
+    private Long getDeliveryTime(RentalOrderRequest request) {
+        if (DeliveryMethodEnum.Offline.equals(request.getDeliveryMethod())) {
+            return 0L; 
+        }
+        
+        return ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 1L : 3L;
+    }
+        
     @Override
     public RentalOrderResponse update(Long id, OrderStatusEnum newStatus) {
         RentalOrder order = rentalOrderRepository.findById(id)

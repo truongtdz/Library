@@ -7,12 +7,16 @@ import com.build.core_restful.domain.response.RentedOrderResponse;
 import com.build.core_restful.repository.*;
 import com.build.core_restful.repository.specification.RentedOrderSpecification;
 import com.build.core_restful.service.RentedOrderService;
+import com.build.core_restful.util.enums.DeliveryMethodEnum;
+import com.build.core_restful.util.enums.ItemStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
+import com.build.core_restful.util.enums.ShippingMethodEnum;
 import com.build.core_restful.util.enums.UserStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.RentedOrderMapper;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,15 +31,21 @@ public class RentedOrderServiceImpl implements RentedOrderService {
     private final RentedOrderRepository rentedOrderRepository;
     private final UserRepository userRepository;
     private final RentalItemRepository rentalItemRepository;
+    private final BranchRepository branchRepository;
+    private final BookRepository bookRepository;
     private final RentedOrderMapper rentedOrderMapper;
 
     public RentedOrderServiceImpl(RentedOrderRepository rentedOrderRepository,
                                     UserRepository userRepository,
                                     RentalItemRepository rentalItemRepository,
+                                    BranchRepository branchRepository,
+                                    BookRepository bookRepository,
                                     RentedOrderMapper rentedOrderMapper) {
         this.rentedOrderRepository = rentedOrderRepository;
         this.userRepository = userRepository;
         this.rentalItemRepository = rentalItemRepository;
+        this.branchRepository = branchRepository;
+        this.bookRepository = bookRepository;
         this.rentedOrderMapper = rentedOrderMapper;
     }
 
@@ -44,32 +54,125 @@ public class RentedOrderServiceImpl implements RentedOrderService {
     public RentedOrderResponse create(RentedOrderRequest request) {
         RentedOrder newRentedOrder = rentedOrderMapper.toEntity(request);
 
-        newRentedOrder.setOrderStatus(OrderStatusEnum.Delivering.toString());
-        newRentedOrder.setUser(userRepository.findByIdAndStatus(
+        User user = userRepository.findByIdAndStatus(
             request.getUserId(), UserStatusEnum.Active.toString()
-        ));
+        );
+        if (user == null) {
+            throw new NewException("Active user not found with id: " + request.getUserId());
+        }
+        newRentedOrder.setUser(user);
 
-        List<RentalItem> items = new ArrayList<>();
-        Long totalLateFee = 0L;
+        validateDeliveryMethod(request);
 
-        for (Long item : request.getItemIdLists()) {
-            RentalItem rentalItem = rentalItemRepository.findById(item)
-                .orElseThrow(() -> new NewException("item with id: " + item + " not found"));
-
-            if (Instant.now().isAfter(rentalItem.getRentedDate())) {
-                totalLateFee += rentalItem.getTotalRental() / 2;
-            }
-
-            rentalItem.setRentedOrder(newRentedOrder);
-            items.add(rentalItem);
+        if (DeliveryMethodEnum.Offline.equals(request.getDeliveryMethod())) {
+            processOfflineReturn(newRentedOrder, request);
+        } else {
+            processOnlineReturn(newRentedOrder, request);
         }
 
-        newRentedOrder.setLateFee(totalLateFee);
-        newRentedOrder.setItems(items);
+        processRentalItems(newRentedOrder, request);
+
+        newRentedOrder.setOrderStatus(OrderStatusEnum.Delivering.toString());
 
         return rentedOrderMapper.toResponse(rentedOrderRepository.save(newRentedOrder));
     }
 
+    private void validateDeliveryMethod(RentedOrderRequest request) {
+        if (DeliveryMethodEnum.Online.equals(request.getDeliveryMethod())) {
+            if (request.getCity().isEmpty() || 
+                request.getDistrict().isEmpty() || 
+                request.getStreet().isEmpty()
+            ) {
+                throw new NewException("Address is required for online return");
+            }
+
+            if (request.getShippingMethod() == null) {
+                throw new NewException("Shipping method is required for online return");
+            }
+        } else {
+            if (request.getBranchId() == null) {
+                throw new NewException("Branch is required for offline return");
+            }
+
+            branchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new NewException("Branch not found"));
+        }
+    }
+
+    private void processOfflineReturn(RentedOrder order, RentedOrderRequest request) {
+        order.setBranch(branchRepository.findById(request.getBranchId())
+                        .orElseThrow(() -> new NewException("Branch with id = " + request.getBranchId() + " not found"))
+        );
+        
+        order.setRentedDay(request.getRentedDay());
+
+        order.setCity(null);
+        order.setDistrict(null);
+        order.setWard(null);
+        order.setStreet(null);
+
+        order.setShippingMethod(null);
+
+        order.setOrderStatus(OrderStatusEnum.Delivering.toString());
+    }
+
+    private void processOnlineReturn(RentedOrder order, RentedOrderRequest request) {
+        // Gửi hàng từ địa chỉ khách hàng
+        order.setCity(request.getCity());
+        order.setDistrict(request.getDistrict());
+        order.setWard(request.getWard());
+        order.setStreet(request.getStreet());
+        order.setNotes(request.getNotes());
+        order.setShippingMethod(request.getShippingMethod().toString());
+        
+        // Tính thời gian nhận hàng (delivery time)
+        Long deliveryTime = ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 1L : 3L;
+        order.setRentedDay(Instant.now().plus(deliveryTime, ChronoUnit.DAYS));
+        
+        // Clear branch (không cần)
+        order.setBranch(null);
+        
+        // Status cho online delivery
+        order.setOrderStatus(OrderStatusEnum.Delivering.toString());
+    }
+
+    private void processRentalItems(RentedOrder order, RentedOrderRequest request) {
+        List<RentalItem> items = new ArrayList<>();
+        Long totalLateFee = 0L;
+        Instant now = Instant.now();
+
+        for (Long itemId : request.getItemIdLists()) {
+            RentalItem rentalItem = rentalItemRepository.findById(itemId)
+                .orElseThrow(() -> new NewException("Rental item with id: " + itemId + " not found"));
+
+            // Validate item status
+            if (!ItemStatusEnum.Rented.toString().equals(rentalItem.getItemStatus())) {
+                throw new NewException("Item " + itemId + " is not in rented status");
+            }
+
+            // Tính late fee nếu trả muộn
+            if (now.isAfter(rentalItem.getRentedDate())) {
+                Long daysLate = ChronoUnit.DAYS.between(rentalItem.getRentedDate(), now);
+                Long lateFeePerDay = rentalItem.getRentalPrice() / 2; // 50% rental price per day
+                totalLateFee += lateFeePerDay * daysLate * rentalItem.getQuantity();
+            }
+
+            // Update item status
+            rentalItem.setItemStatus(ItemStatusEnum.Returned.toString());
+            rentalItem.setRentedOrder(order);
+            
+            // Update book stock (trả lại stock)
+            Book book = rentalItem.getBook();
+            book.setStock(book.getStock() + rentalItem.getQuantity());
+            book.setQuantityRented(book.getQuantityRented() - rentalItem.getQuantity());
+            bookRepository.save(book);
+            
+            items.add(rentalItem);
+        }
+
+        order.setLateFee(totalLateFee);
+        order.setItems(items);
+    }
 
     @Override
     public RentedOrderResponse update(Long id, OrderStatusEnum newStatus) {

@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.build.core_restful.util.system.JwtUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "branches")
@@ -25,6 +27,14 @@ public class Branch {
     private String street;
     private Instant openTime;
     private Instant closeTime;  
+
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<RentalOrder> rentalOrders;
+
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<RentedOrder> rentedOrders;
 
     private Instant createAt;
     private Instant updateAt;
