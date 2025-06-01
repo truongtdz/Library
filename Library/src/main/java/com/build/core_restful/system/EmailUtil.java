@@ -1,4 +1,4 @@
-package com.build.core_restful.util.system;
+package com.build.core_restful.system;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

@@ -1,4 +1,4 @@
-package com.build.core_restful.util.system;
+package com.build.core_restful.system;
 
 import com.build.core_restful.domain.response.LoginResponse;
 import com.nimbusds.jose.util.Base64;

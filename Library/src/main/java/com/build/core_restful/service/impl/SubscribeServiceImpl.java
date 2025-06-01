@@ -12,8 +12,8 @@ import com.build.core_restful.domain.response.BookSendEmailResponse;
 import com.build.core_restful.repository.SubscribeRepository;
 import com.build.core_restful.service.SubscribeService;
 import com.build.core_restful.service.TrainService;
+import com.build.core_restful.system.EmailUtil;
 import com.build.core_restful.util.exception.NewException;
-import com.build.core_restful.util.system.EmailUtil;
 
 @Service
 public class SubscribeServiceImpl implements SubscribeService{

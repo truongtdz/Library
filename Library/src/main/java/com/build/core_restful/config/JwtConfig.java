@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
-import static com.build.core_restful.util.system.JwtUtil.JWT_ALGORITHM;
+import static com.build.core_restful.system.JwtUtil.JWT_ALGORITHM;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;

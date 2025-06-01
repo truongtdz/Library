@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.time.Instant;
 
-import com.build.core_restful.util.system.JwtUtil;
+import com.build.core_restful.system.JwtUtil;
 
 @Entity
 @Table(name = "notifications")
@@ -19,12 +19,15 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long userId;
+    private String role;
+    
     @Column(columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "create_by_user_id")
+    private User createByUser;
 
     private Instant createAt;
     private Instant updateAt;

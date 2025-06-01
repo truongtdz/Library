@@ -1,6 +1,6 @@
 package com.build.core_restful.domain;
 
-import com.build.core_restful.util.system.JwtUtil;
+import com.build.core_restful.system.JwtUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;

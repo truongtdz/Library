@@ -7,9 +7,9 @@ import com.build.core_restful.domain.response.RoleResponse;
 import com.build.core_restful.domain.response.LoginResponse;
 import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.service.UserService;
+import com.build.core_restful.system.JwtUtil;
 import com.build.core_restful.util.annotation.AddMessage;
 import com.build.core_restful.util.exception.NewException;
-import com.build.core_restful.util.system.JwtUtil;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;

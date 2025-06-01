@@ -1,4 +1,4 @@
-package com.build.core_restful.util.system;
+package com.build.core_restful.system;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
