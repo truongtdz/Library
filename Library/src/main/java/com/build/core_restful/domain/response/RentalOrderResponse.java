@@ -1,9 +1,5 @@
 package com.build.core_restful.domain.response;
 
-import com.build.core_restful.util.enums.DeliveryMethodEnum;
-import com.build.core_restful.util.enums.OrderStatusEnum;
-import com.build.core_restful.util.enums.PaymentMethodEnum;
-import com.build.core_restful.util.enums.PaymentStatusEnum;
 import lombok.*;
 
 import java.time.Instant;
@@ -28,10 +24,10 @@ public class RentalOrderResponse {
     private String fullName;
     private String phone;
 
-    private DeliveryMethodEnum deliveryMethod;
-    private OrderStatusEnum orderStatus;
-    private PaymentStatusEnum paymentStatus;
-    private PaymentMethodEnum paymentMethod;
+    private String deliveryMethod;
+    private String orderStatus;
+    private String paymentStatus;
+    private String paymentMethod;
 
     private Long userId;
     private Long branchId;
