@@ -7,6 +7,7 @@ import com.build.core_restful.domain.response.RentedOrderResponse;
 import com.build.core_restful.repository.*;
 import com.build.core_restful.repository.specification.RentedOrderSpecification;
 import com.build.core_restful.service.RentedOrderService;
+import com.build.core_restful.util.StringUtil;
 import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.ItemStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
@@ -25,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service
 public class RentedOrderServiceImpl implements RentedOrderService {
@@ -80,9 +80,9 @@ public class RentedOrderServiceImpl implements RentedOrderService {
 
     private void validateDeliveryMethod(RentedOrderRequest request) {
         if (DeliveryMethodEnum.Online.equals(request.getDeliveryMethod())) {
-            if (StringUtils.isEmpty(request.getCity()) || 
-                StringUtils.isEmpty(request.getDistrict()) || 
-                StringUtils.isEmpty(request.getStreet())) {
+            if (StringUtil.isEmpty(request.getCity()) || 
+                StringUtil.isEmpty(request.getDistrict()) || 
+                StringUtil.isEmpty(request.getStreet())) {
                 throw new NewException("Address is required for online return");
             } 
             if (request.getShippingMethod() == null) {
@@ -116,7 +116,6 @@ public class RentedOrderServiceImpl implements RentedOrderService {
     }
 
     private void processOnlineReturn(RentedOrder order, RentedOrderRequest request) {
-        // Gửi hàng từ địa chỉ khách hàng
         order.setCity(request.getCity());
         order.setDistrict(request.getDistrict());
         order.setWard(request.getWard());
@@ -124,14 +123,11 @@ public class RentedOrderServiceImpl implements RentedOrderService {
         order.setNotes(request.getNotes());
         order.setShippingMethod(request.getShippingMethod().toString());
         
-        // Tính thời gian nhận hàng (delivery time)
         Long deliveryTime = ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 1L : 3L;
         order.setRentedDay(Instant.now().plus(deliveryTime, ChronoUnit.DAYS));
         
-        // Clear branch (không cần)
         order.setBranch(null);
         
-        // Status cho online delivery
         order.setOrderStatus(OrderStatusEnum.Delivering.toString());
     }
 
@@ -144,23 +140,19 @@ public class RentedOrderServiceImpl implements RentedOrderService {
             RentalItem rentalItem = rentalItemRepository.findById(itemId)
                 .orElseThrow(() -> new NewException("Rental item with id: " + itemId + " not found"));
 
-            // Validate item status
             if (!ItemStatusEnum.Rented.toString().equals(rentalItem.getItemStatus())) {
                 throw new NewException("Item " + itemId + " is not in rented status");
             }
 
-            // Tính late fee nếu trả muộn
             if (now.isAfter(rentalItem.getRentedDate())) {
                 Long daysLate = ChronoUnit.DAYS.between(rentalItem.getRentedDate(), now);
                 Long lateFeePerDay = rentalItem.getRentalPrice() / 2; // 50% rental price per day
                 totalLateFee += lateFeePerDay * daysLate * rentalItem.getQuantity();
             }
 
-            // Update item status
             rentalItem.setItemStatus(ItemStatusEnum.Returned.toString());
             rentalItem.setRentedOrder(order);
             
-            // Update book stock (trả lại stock)
             Book book = rentalItem.getBook();
             book.setStock(book.getStock() + rentalItem.getQuantity());
             book.setQuantityRented(book.getQuantityRented() - rentalItem.getQuantity());

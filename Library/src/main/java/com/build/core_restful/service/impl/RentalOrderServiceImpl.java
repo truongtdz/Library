@@ -8,6 +8,7 @@ import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.repository.*;
 import com.build.core_restful.repository.specification.RentalOrderSpecification;
 import com.build.core_restful.service.RentalOrderService;
+import com.build.core_restful.util.StringUtil;
 import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.ItemStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
@@ -20,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -76,9 +76,9 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
     private void validateDeliveryMethod(RentalOrderRequest request) {
         if (DeliveryMethodEnum.Online.equals(request.getDeliveryMethod())) {
-            if (StringUtils.isEmpty(request.getCity()) || 
-                StringUtils.isEmpty(request.getDistrict()) || 
-                StringUtils.isEmpty(request.getStreet())) {
+            if (StringUtil.isEmpty(request.getCity()) || 
+                StringUtil.isEmpty(request.getDistrict()) || 
+                StringUtil.isEmpty(request.getStreet())) {
                 throw new NewException("Address is required for online return");
             }
         } else {
