@@ -26,6 +26,8 @@ public class RentedOrderResponse {
     private String paymentStatus;
     private String paymentMethod;
 
+    private Instant receiveDay;
+
     private Long userId;
 
     private List<RentalItemRes> items;

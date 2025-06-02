@@ -29,6 +29,8 @@ public class RentalOrderResponse {
     private String paymentStatus;
     private String paymentMethod;
 
+    private Instant receiveDay;
+
     private Long userId;
     private Long branchId;
 
