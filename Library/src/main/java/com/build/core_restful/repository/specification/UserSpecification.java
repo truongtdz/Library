@@ -28,11 +28,11 @@ public class UserSpecification {
             }
 
             if (gender != null) {
-                predicates.add(cb.equal(root.get("gender"), gender));
+                predicates.add(cb.equal(root.get("gender"), gender.toString()));
             }
 
             if (userStatus != null) {
-                predicates.add(cb.equal(root.get("status"), userStatus));
+                predicates.add(cb.equal(root.get("status"), userStatus.toString()));
             }
 
             if (roleId != null) {
