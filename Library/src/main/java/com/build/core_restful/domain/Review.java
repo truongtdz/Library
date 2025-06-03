@@ -20,7 +20,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int rate;
+    private Integer rate;
     private String image;
 
     @Column(columnDefinition = "TEXT")

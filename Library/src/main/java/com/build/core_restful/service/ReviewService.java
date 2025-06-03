@@ -9,9 +9,11 @@ import com.build.core_restful.domain.response.ReviewResponse;
 
 @Service
 public interface ReviewService {
-    PageResponse<Object> getAllParentReview(Pageable pageable);
+    PageResponse<Object> getReviewByUserId(Long id, Pageable pageable);
 
-    PageResponse<Object> getAllReplyReview(Long id, Pageable pageable);
+    PageResponse<Object> getReviewByBookId(Long id, Pageable pageable);
+
+    PageResponse<Object> getReviewByParentId(Long id, Pageable pageable);
 
     ReviewResponse createReview(ReviewRequest request);
 

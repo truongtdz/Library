@@ -9,5 +9,9 @@ import com.build.core_restful.domain.Review;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long>{
+    Page<Review> findByUserId(Long id, Pageable pageable);
+
+    Page<Review> findByBookId(Long id, Pageable pageable);
+    
     Page<Review> findByParentReviewId(Long id, Pageable pageable);
 }

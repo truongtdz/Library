@@ -2,6 +2,7 @@ package com.build.core_restful.service.impl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import com.build.core_restful.domain.Review;
 import com.build.core_restful.domain.request.ReviewRequest;
@@ -14,6 +15,7 @@ import com.build.core_restful.service.ReviewService;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.ReviewMapper;
 
+@Service
 public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
@@ -33,8 +35,8 @@ public class ReviewServiceImpl implements ReviewService{
     };
 
     @Override
-    public PageResponse<Object> getAllParentReview(Pageable pageable) {
-        Page<Review> page = reviewRepository.findByParentReviewId(1L, pageable);
+    public PageResponse<Object> getReviewByUserId(Long id, Pageable pageable) {
+        Page<Review> page = reviewRepository.findByUserId(id, pageable);
 
         Page<ReviewResponse> pageResponse = page.map(reviewMapper::toReviewResponse);
 
@@ -48,7 +50,22 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public PageResponse<Object> getAllReplyReview(Long id, Pageable pageable) {
+    public PageResponse<Object> getReviewByBookId(Long id, Pageable pageable) {
+        Page<Review> page = reviewRepository.findByBookId(id, pageable);
+
+        Page<ReviewResponse> pageResponse = page.map(reviewMapper::toReviewResponse);
+
+        return PageResponse.builder()
+                .page(pageResponse.getNumber())
+                .size(pageResponse.getSize())
+                .totalPages(pageResponse.getTotalPages())
+                .totalElements(pageResponse.getTotalElements())
+                .content(pageResponse.getContent())
+                .build();
+    }
+
+    @Override
+    public PageResponse<Object> getReviewByParentId(Long id, Pageable pageable) {
         Page<Review> page = reviewRepository.findByParentReviewId(id, pageable);
 
         Page<ReviewResponse> pageResponse = page.map(reviewMapper::toReviewResponse);
@@ -68,7 +85,7 @@ public class ReviewServiceImpl implements ReviewService{
             .image(request.getImage())
             .rate(request.getRate())
             .comment(request.getComment())
-            .parentReview(reviewRepository.findById(request.getParentId())
+            .parentReview(request.getParentId() == 0L ? null : reviewRepository.findById(request.getParentId())
                 .orElseThrow(() -> new NewException("Review with id = " + request.getParentId() + " not found"))
             )
             .book(bookRepository.findById(request.getBookId())

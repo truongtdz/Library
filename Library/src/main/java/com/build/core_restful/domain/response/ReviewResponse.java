@@ -35,5 +35,6 @@ public class ReviewResponse {
     public static class UserRes {
         private Long userId;
         private String fullName;
+        private String avatar;
     }
 }
