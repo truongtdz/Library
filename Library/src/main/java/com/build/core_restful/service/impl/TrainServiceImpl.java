@@ -42,7 +42,6 @@ public class TrainServiceImpl implements TrainService {
     @Transactional
     public void trainDataEveryDay() {
         try {
-            // 1. Lấy tất cả dữ liệu training
             List<DataTrain> trainData = dataTrainRepository.findAll();
             
             if (trainData.size() < MIN_SAMPLES_PER_RULE) {
@@ -50,13 +49,10 @@ public class TrainServiceImpl implements TrainService {
                 return;
             }
 
-            // 2. Xóa các rules cũ
             dataSaveRepository.deleteAll();
 
-            // 3. Tạo demographic rules
             Map<String, List<DataTrain>> demographicGroups = createDemographicGroups(trainData);
 
-            // 4. Tạo và lưu rules cho tất cả categories
             int rulesCreated = 0;
             for (Map.Entry<String, List<DataTrain>> entry : demographicGroups.entrySet()) {
                 List<DataTrain> groupData = entry.getValue();
@@ -108,18 +104,15 @@ public class TrainServiceImpl implements TrainService {
 
         List<DataSave> rules = new ArrayList<>();
 
-        // Đếm số lượng mỗi category trong group
         Map<String, Long> categoryCount = groupData.stream()
             .collect(Collectors.groupingBy(
                 DataTrain::getCategoryId,
                 Collectors.counting()
             ));
 
-        // Lấy thông tin chung từ sample đầu tiên
         DataTrain sample = groupData.get(0);
         long totalCount = groupData.size();
         
-        // Tính age range từ dữ liệu thực tế
         List<Long> ages = groupData.stream()
             .map(DataTrain::getAge)
             .filter(Objects::nonNull)
@@ -131,13 +124,11 @@ public class TrainServiceImpl implements TrainService {
         Long startAge = ages.get(0);
         Long endAge = ages.get(ages.size() - 1);
 
-        // Tạo rule cho mỗi category trong group
         for (Map.Entry<String, Long> entry : categoryCount.entrySet()) {
             String categoryId = entry.getKey();
             long categoryOccurrences = entry.getValue();
             double confidence = (double) categoryOccurrences / totalCount;
 
-            // Chỉ tạo rule nếu confidence >= 0.1 (10%) và có ít nhất 1 occurrence
             if (confidence >= 0.1 && categoryOccurrences >= 1) {
                 DataSave rule = new DataSave();
                 rule.setStartAge(startAge);

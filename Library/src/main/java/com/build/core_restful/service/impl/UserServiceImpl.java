@@ -83,10 +83,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        if(!userRepository.existsById(id)){
-            throw new NewException("User have id: " + id + " not exist!");
-        }
-        return userMapper.toUserResponse(userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString()));
+        return userMapper.toUserResponse(
+            userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString())
+                        .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"))
+        );
     }
 
     @Override
@@ -106,11 +106,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUser(Long id, UserRequest updateUser) {
-        if(!userRepository.existsById(id)){
-            throw new NewException("User id: " + id + " not exist!");
-        }
-
-        User currentUser = userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString());
+        User currentUser = userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString())
+                        .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
 
         userMapper.updateUser(currentUser, updateUser);
 
@@ -153,7 +150,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updatePasswordUser(UpdatePasswordUserRequest userRequest) {
-        User currentUser = userRepository.findByIdAndStatus(userRequest.getUserId(), UserStatusEnum.Active.toString());
+        User currentUser = userRepository.findByIdAndStatus(userRequest.getUserId(), UserStatusEnum.Active.toString())
+                        .orElseThrow(() -> new NewException("User have id: " + userRequest.getUserId() + " not exist!"));
 
         if(!passwordEncoder.matches(userRequest.getCurrentPassword(), currentUser.getPassword())){
             throw new NewException("Current password is false");

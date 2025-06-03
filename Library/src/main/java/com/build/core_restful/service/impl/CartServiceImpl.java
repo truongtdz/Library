@@ -65,11 +65,8 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public boolean updateCartByUser(CartRequest cartRequest) {
-        User user = userRepository.findByIdAndStatus(cartRequest.getUserId(), UserStatusEnum.Active.toString());
-
-        if(user == null){
-            throw new NewException("User with id: " + cartRequest.getUserId() + " not found");
-        }
+        User user = userRepository.findByIdAndStatus(cartRequest.getUserId(), UserStatusEnum.Active.toString())
+                                .orElseThrow(() -> new NewException("User with id: " + cartRequest.getUserId() + " not found"));
 
         List<Cart> newCarts = new ArrayList<>();
         for(CartRequest.BookReq cart : cartRequest.getBooks()){

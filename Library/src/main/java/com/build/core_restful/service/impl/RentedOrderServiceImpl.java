@@ -55,9 +55,8 @@ public class RentedOrderServiceImpl implements RentedOrderService {
     public RentedOrderResponse create(RentedOrderRequest request) {
         RentedOrder newRentedOrder = rentedOrderMapper.toEntity(request);
 
-        User user = userRepository.findByIdAndStatus(
-            request.getUserId(), UserStatusEnum.Active.toString()
-        );
+        User user = userRepository.findByIdAndStatus(request.getUserId(), UserStatusEnum.Active.toString())
+                        .orElseThrow(() -> new NewException("User have id: " + request.getUserId() + " not exist!"));
         if (user == null) {
             throw new NewException("Active user not found with id: " + request.getUserId());
         }
