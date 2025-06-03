@@ -1,6 +1,7 @@
 package com.build.core_restful.service;
 
 import com.build.core_restful.domain.request.RentalOrderRequest;
+import com.build.core_restful.domain.request.SaveRevenueEveryDay;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.util.enums.OrderStatusEnum;
@@ -26,10 +27,12 @@ public interface RentalOrderService {
         Pageable pageable
     );
 
-    Integer getQuantityByOrderStatus(Instant startDate, Instant endDate, OrderStatusEnum orderStatus);
+    Long getQuantityByOrderStatus(Instant date);
     
-    Integer getRevenueRentalOrder(Instant startDate, Instant endDate);
+    Long getRevenueRentalOrder(Instant date);
     
-    Integer getTotalDepositOrder(Instant startDate, Instant endDate);
+    Long getTotalDepositOrder(Instant date);
+
+    SaveRevenueEveryDay getRevenueEveryDay();
     
 }

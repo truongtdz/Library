@@ -3,6 +3,7 @@ package com.build.core_restful.service.impl;
 import com.build.core_restful.domain.*;
 import com.build.core_restful.domain.request.RentalItemRequest;
 import com.build.core_restful.domain.request.RentalOrderRequest;
+import com.build.core_restful.domain.request.SaveRevenueEveryDay;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.repository.*;
@@ -29,7 +30,6 @@ import java.util.List;
 
 @Service
 public class RentalOrderServiceImpl implements RentalOrderService {
-
     private final RentalOrderRepository rentalOrderRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
@@ -223,18 +223,29 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     }
 
     @Override
-    public Integer getQuantityByOrderStatus(Instant startDate, Instant endDate, OrderStatusEnum orderStatus) {
-        return rentalOrderRepository.countRentalOrdersByStatusBetween(startDate, endDate, orderStatus.toString());
+    public Long getQuantityByOrderStatus(Instant date) {
+        return rentalOrderRepository.countAllRentalOrdersByDate(date);
     }
 
     @Override
-    public Integer getRevenueRentalOrder(Instant startDate, Instant endDate) {
-        return rentalOrderRepository.getRevenueRentalOrder(startDate, endDate);
+    public Long getRevenueRentalOrder(Instant date) {
+        return rentalOrderRepository.getRevenueRentalOrderByDate(date);
     }
 
     @Override
-    public Integer getTotalDepositOrder(Instant startDate, Instant endDate) {
-        return rentalOrderRepository.getTotalDepositOrder(startDate, endDate);
+    public Long getTotalDepositOrder(Instant date) {
+        return rentalOrderRepository.getTotalDepositOrderByDate(date);
+    }
+
+    @Override
+    public SaveRevenueEveryDay getRevenueEveryDay() {
+        Instant date = Instant.now();
+        return SaveRevenueEveryDay.builder()
+                .date(date)
+                .totalDeposit(rentalOrderRepository.getTotalDepositOrderByDate(date))
+                .totalRentalPrice(rentalOrderRepository.getRevenueRentalOrderByDate(date))
+                .totalRevenue(rentalOrderRepository.getRevenueRentalOrderByDate(date))
+                .build();
     }
 
 }

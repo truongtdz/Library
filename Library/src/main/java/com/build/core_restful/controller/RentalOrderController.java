@@ -77,27 +77,23 @@ public class RentalOrderController {
     }
 
     @GetMapping("/quantity")
-    public ResponseEntity<Integer> getQuantityByOrderStatus(
-        @RequestParam(required = false) Instant startDate,
-        @RequestParam(required = false) Instant endDate,
-        @RequestParam(required = false) OrderStatusEnum orderStatus
+    public ResponseEntity<Long> getQuantityByOrderStatus(
+        @RequestParam(required = false) Instant date
     ){
-        return ResponseEntity.ok(rentalOrderService.getQuantityByOrderStatus(startDate, endDate, orderStatus));
+        return ResponseEntity.ok(rentalOrderService.getQuantityByOrderStatus(date));
     }
 
     @GetMapping("/revenue")
-    public ResponseEntity<Integer> getRevenueRentalOrder(
-        @RequestParam(required = false) Instant startDate,
-        @RequestParam(required = false) Instant endDate
+    public ResponseEntity<Long> getRevenueRentalOrder(
+        @RequestParam(required = false) Instant date
     ){
-        return ResponseEntity.ok(rentalOrderService.getRevenueRentalOrder(startDate, endDate));
+        return ResponseEntity.ok(rentalOrderService.getRevenueRentalOrder(date));
     }
 
     @GetMapping("/deposit")
-    public ResponseEntity<Integer> getTotalDepositOrder(
-        @RequestParam(required = false) Instant startDate,
-        @RequestParam(required = false) Instant endDate
+    public ResponseEntity<Long> getTotalDepositOrder(
+        @RequestParam(required = false) Instant date
     ){
-        return ResponseEntity.ok(rentalOrderService.getTotalDepositOrder(startDate, endDate));
+        return ResponseEntity.ok(rentalOrderService.getTotalDepositOrder(date));
     }
 }
