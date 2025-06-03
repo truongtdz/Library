@@ -1,6 +1,6 @@
 package com.build.core_restful.util.mapper;
 
-import com.build.core_restful.domain.RevenueReports;
+import com.build.core_restful.domain.RevenueReport;
 import com.build.core_restful.domain.response.RevenueReportResponse;
 
 import org.mapstruct.Mapper;
@@ -10,6 +10,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RevenueReportMapper {
-    RevenueReportResponse toRevenueReportResponse(RevenueReports revenueReport);
-    List<RevenueReportResponse> toRevenueReportResponseList(List<RevenueReports> revenueReports);
+    RevenueReportResponse toRevenueReportResponse(RevenueReport revenueReport);
+    List<RevenueReportResponse> toRevenueReportResponseList(List<RevenueReport> revenueReports);
 }

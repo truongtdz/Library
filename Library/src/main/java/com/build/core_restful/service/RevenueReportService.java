@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.build.core_restful.domain.request.ChangeRevenueByLateFee;
+import com.build.core_restful.domain.request.SaveRevenueEveryDay;
 import com.build.core_restful.domain.response.RevenueReportResponse;
 import com.build.core_restful.domain.response.TotalFieldInRevenueResponse;
 
@@ -12,11 +14,11 @@ import com.build.core_restful.domain.response.TotalFieldInRevenueResponse;
 public interface RevenueReportService {
     RevenueReportResponse getRevenueReportById(Long id);
     
-    List<RevenueReportResponse> getAllRevenueReports();
+    List<RevenueReportResponse> getAllRevenueReport();
     
-    List<RevenueReportResponse> getRevenueReportsByDateRange(Instant startDate, Instant endDate);
+    List<RevenueReportResponse> getRevenueReportByDateRange(Instant startDate, Instant endDate);
 
-    TotalFieldInRevenueResponse getQuantityRentalOrders(Instant startDate, Instant endDate);
+    TotalFieldInRevenueResponse getQuantityRentalOrder(Instant startDate, Instant endDate);
 
     TotalFieldInRevenueResponse getTotalLateFee(Instant startDate, Instant endDate);
 
@@ -25,5 +27,8 @@ public interface RevenueReportService {
     TotalFieldInRevenueResponse getTotalDeposit(Instant startDate, Instant endDate);
 
     TotalFieldInRevenueResponse getTotalRevenue(Instant startDate, Instant endDate);
+
+    void saveRevenueDate(SaveRevenueEveryDay saveRevenueEveryDay);
  
+    void changeLateFeeAndRevenue(ChangeRevenueByLateFee changeRevenueByLateFee);
 }

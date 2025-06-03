@@ -3,6 +3,8 @@ package com.build.core_restful.system;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.build.core_restful.service.RentalOrderService;
+import com.build.core_restful.service.RevenueReportService;
 import com.build.core_restful.service.SubscribeService;
 import com.build.core_restful.service.TrainService;
 
@@ -10,13 +12,19 @@ import com.build.core_restful.service.TrainService;
 public class DailySchedulerUtil {
     private final SubscribeService subscribeService;
     private final TrainService trainService;
+    private final RevenueReportService revenueReportService;
+    private final RentalOrderService rentalOrderService;
 
     public DailySchedulerUtil(
         SubscribeService subscribeService,
-        TrainService trainService
+        TrainService trainService,
+        RevenueReportService revenueReportService,
+        RentalOrderService rentalOrderService
     ){
         this.subscribeService = subscribeService;
         this.trainService = trainService;
+        this.revenueReportService = revenueReportService;
+        this.rentalOrderService = rentalOrderService;
     };
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")

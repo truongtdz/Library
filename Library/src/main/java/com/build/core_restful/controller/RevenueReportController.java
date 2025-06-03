@@ -28,7 +28,7 @@ public class RevenueReportController {
     @GetMapping
     @AddMessage("Get all revenue report")
     public ResponseEntity<List<RevenueReportResponse>> getAllRevenueReports() {
-        return ResponseEntity.ok(revenueReportService.getAllRevenueReports());
+        return ResponseEntity.ok(revenueReportService.getAllRevenueReport());
     }
 
     @GetMapping("/date-range")
@@ -36,7 +36,7 @@ public class RevenueReportController {
     public ResponseEntity<List<RevenueReportResponse>> getRevenueReportsByDateRange(
             @RequestParam Instant startDate,
             @RequestParam Instant endDate) {
-        return ResponseEntity.ok(revenueReportService.getRevenueReportsByDateRange(startDate, endDate));
+        return ResponseEntity.ok(revenueReportService.getRevenueReportByDateRange(startDate, endDate));
     }
 
     @GetMapping("/quantity-rental-orders")
@@ -44,7 +44,7 @@ public class RevenueReportController {
     public ResponseEntity<TotalFieldInRevenueResponse> getQuantityRentalOrders(
             @RequestParam Instant startDate,
             @RequestParam Instant endDate) {
-        return ResponseEntity.ok(revenueReportService.getQuantityRentalOrders(startDate, endDate));
+        return ResponseEntity.ok(revenueReportService.getQuantityRentalOrder(startDate, endDate));
     }
 
     @GetMapping("/total-late-fee")

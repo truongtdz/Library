@@ -10,8 +10,6 @@ import java.time.Instant;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.build.core_restful.system.JwtUtil;
-
 @Entity
 @Table(name = "revenue_reports", indexes = {
     @Index(name = "idx_date", columnList = "date")
@@ -21,7 +19,7 @@ import com.build.core_restful.system.JwtUtil;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RevenueReports {
+public class RevenueReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +29,7 @@ public class RevenueReports {
     private Long quantityRentalOrder;
 
     private Long totalLateFee;
-    private Long totalRental;
+    private Long totalRentalPrice;
     private Long totalDeposit;
 
     private Long totalRevenue;

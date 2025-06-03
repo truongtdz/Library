@@ -1,7 +1,9 @@
 package com.build.core_restful.service.impl;
 
 
-import com.build.core_restful.domain.RevenueReports;
+import com.build.core_restful.domain.RevenueReport;
+import com.build.core_restful.domain.request.ChangeRevenueByLateFee;
+import com.build.core_restful.domain.request.SaveRevenueEveryDay;
 import com.build.core_restful.domain.response.RevenueReportResponse;
 import com.build.core_restful.domain.response.TotalFieldInRevenueResponse;
 import com.build.core_restful.repository.RevenueReportRepository;
@@ -16,7 +18,6 @@ import java.util.List;
 
 @Service
 public class RevenueReportServiceImpl implements RevenueReportService {
-
     private final RevenueReportRepository revenueReportRepository;
     private final RevenueReportMapper revenueReportMapper;
 
@@ -37,19 +38,19 @@ public class RevenueReportServiceImpl implements RevenueReportService {
     }
 
     @Override
-    public List<RevenueReportResponse> getAllRevenueReports() {
-        List<RevenueReports> reports = revenueReportRepository.findAllByOrderByDateDesc();
+    public List<RevenueReportResponse> getAllRevenueReport() {
+        List<RevenueReport> reports = revenueReportRepository.findAllByOrderByDateDesc();
         return revenueReportMapper.toRevenueReportResponseList(reports);
     }
 
     @Override
-    public List<RevenueReportResponse> getRevenueReportsByDateRange(Instant startDate, Instant endDate) {
-        List<RevenueReports> reports = revenueReportRepository.findByDateBetweenOrderByDateDesc(startDate, endDate);
+    public List<RevenueReportResponse> getRevenueReportByDateRange(Instant startDate, Instant endDate) {
+        List<RevenueReport> reports = revenueReportRepository.findByDateBetweenOrderByDateDesc(startDate, endDate);
         return revenueReportMapper.toRevenueReportResponseList(reports);
     }
 
     @Override
-    public TotalFieldInRevenueResponse getQuantityRentalOrders(Instant startDate, Instant endDate) {
+    public TotalFieldInRevenueResponse getQuantityRentalOrder(Instant startDate, Instant endDate) {
         return TotalFieldInRevenueResponse.builder()
             .startDate(startDate)
             .endDate(endDate)
@@ -96,6 +97,31 @@ public class RevenueReportServiceImpl implements RevenueReportService {
             .totalValue(revenueReportRepository.sumTotalRevenueByDateRange(startDate, endDate))
             .build();
             
+    }
+
+    @Override
+    public void saveRevenueDate(SaveRevenueEveryDay saveRevenueEveryDay) {
+        RevenueReport revenueReport = RevenueReport.builder()
+                                        .date(Instant.now())
+                                        .totalLateFee(0L)
+                                        .totalRentalPrice(saveRevenueEveryDay.getTotalRentalPrice())
+                                        .totalDeposit(saveRevenueEveryDay.getTotalDeposit())
+                                        .totalRevenue(saveRevenueEveryDay.getTotalRevenue())
+                                        .build();
+
+        revenueReportRepository.save(revenueReport);
+    }
+
+    @Override
+    public void changeLateFeeAndRevenue(ChangeRevenueByLateFee changeRevenueByLateFee){
+        RevenueReport curRevenueReport = revenueReportRepository.findByDate(changeRevenueByLateFee.getDate())
+                                            .orElseThrow(() -> new NewException("RevenueReport with date: " + changeRevenueByLateFee.getDate() + " not found"));
+        
+        curRevenueReport.setTotalLateFee(curRevenueReport.getTotalLateFee());
+        curRevenueReport.setTotalRevenue(curRevenueReport.getTotalRevenue() + changeRevenueByLateFee.getTotalFee());
+        curRevenueReport.setTotalDeposit(curRevenueReport.getTotalDeposit() - changeRevenueByLateFee.getTotalFee());
+
+        revenueReportRepository.save(curRevenueReport);
     }
 
 }
