@@ -120,6 +120,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         order.setBranch(null);
     }
 
+    @Transactional
     private void processRentalItems(RentalOrder order, RentalOrderRequest request) {
         Instant now = Instant.now();
         List<RentalItem> items = new ArrayList<>();
@@ -131,7 +132,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                     .orElseThrow(() -> new NewException("Book id= " + item.getBookId() + " not found"));
 
             if (book.getStock() < item.getQuantity()) {
-                throw new NewException("Insufficient stock for book: " + book.getName());
+                throw new NewException("Insufficient stock for book: " + book.getId() + " and stock: " + book.getStock());
             }
 
             Long actualRentalDays = item.getRentedDay() - timeDelivery;
@@ -145,6 +146,13 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             RentalItem rentalItem = RentalItem.builder()
                     .quantity(item.getQuantity())
                     .bookName(book.getName())
+                    .imageUrl(
+                        book.getImages().stream()
+                            .filter(image -> "true".equals(image.getIsDefault()))
+                            .findFirst()
+                            .map(Image::getUrl)
+                            .orElse(null)
+                    )
                     .rentalDate(now)
                     .rentedDate(now.plus(item.getRentedDay(), ChronoUnit.DAYS))
                     .rentalPrice(book.getRentalPrice())
@@ -184,8 +192,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
     @Override
     public RentalOrderResponse getById(Long id) {
-        return rentalOrderMapper.toResponse(
-                rentalOrderRepository.findById(id)
+        return rentalOrderMapper.toResponse(rentalOrderRepository.findById(id)
                         .orElseThrow(() -> new NewException("Order not found"))
         );
     }

@@ -21,9 +21,9 @@ public class RentalItem {
 
     private Instant rentalDate;
     private Instant rentedDate;
-    private Long lateFee;
 
     private String bookName;
+    private String imageUrl;
     private Long rentalPrice;
     private Long depositPrice;
     private Long quantity;

@@ -30,20 +30,10 @@ public class RentedOrderResponse {
 
     private Long userId;
 
-    private List<RentalItemRes> items;
+    private List<RentalItemResponse> items;
 
     private Instant createAt;
     private Instant updateAt;
     private String createBy;
     private String updateBy;
-
-    @Getter
-    @Setter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RentalItemRes {
-        private Long itemId;
-        private Long orderId;
-    }
 }

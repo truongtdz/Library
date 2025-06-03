@@ -16,11 +16,14 @@ public class RentalItemResponse {
     private Instant rentedDate;
 
     private String bookName;
+    private String imageUrl;
     private Long rentalPrice;
     private Long depositPrice;
     private Long quantity;
     private Long totalRental;
     private Long totalDeposit;
+
+    private String itemStatus;
 
     private Instant createAt;
     private Instant updateAt;
