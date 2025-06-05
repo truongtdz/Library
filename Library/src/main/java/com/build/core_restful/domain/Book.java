@@ -1,6 +1,7 @@
 package com.build.core_restful.domain;
 
 import com.build.core_restful.system.JwtUtil;
+import com.build.core_restful.system.entityListener.BookListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "books")
+@EntityListeners(BookListener.class)
 @Getter
 @Setter
 @Builder
@@ -36,6 +38,9 @@ public class Book {
     private Long rentalPrice;
     private Long depositPrice;
 
+    private String typeActive;
+    private String status;
+
     @Column(nullable = false)
     @Builder.Default
     private Long quantityViewed = 0L;
@@ -47,8 +52,6 @@ public class Book {
     @Column(nullable = false)
     @Builder.Default
     private Long quantityLiked = 0L;
-
-    private String bookStatus;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -78,22 +81,4 @@ public class Book {
     private Instant updateAt;
     private String createBy;
     private String updateBy;
-
-    @PrePersist
-    public void handleBeforeCreate() {
-        this.setCreateBy(JwtUtil.getCurrentUserLogin().isPresent()
-                ? JwtUtil.getCurrentUserLogin().get()
-                : "");
-
-        this.setCreateAt(Instant.now());
-    }
-
-    @PreUpdate
-    public void handleBeforeUpdate() {
-        this.setUpdateBy(JwtUtil.getCurrentUserLogin().isPresent()
-                ? JwtUtil.getCurrentUserLogin().get()
-                : "");
-
-        this.setUpdateAt(Instant.now());
-    }
 }

@@ -13,6 +13,7 @@ import com.build.core_restful.repository.CategoryRepository;
 import com.build.core_restful.repository.AuthorRepository;
 import com.build.core_restful.repository.specification.BookSpecification;
 import com.build.core_restful.service.BookService;
+import com.build.core_restful.util.enums.BookStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.BookMapper;
 import org.springframework.data.domain.Page;
@@ -45,8 +46,22 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResponse<Object> getAllBooks(Pageable pageable) {
-        Page<Book> page = bookRepository.findAll(pageable);
+    public PageResponse<Object> getAllBooksAvailable(Pageable pageable) {
+        Page<Book> page = bookRepository.findByStatus(BookStatusEnum.Available.toString() , pageable);
+        Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
+
+        return PageResponse.builder()
+                .page(pageResponse.getNumber())
+                .size(pageResponse.getSize())
+                .totalElements(pageResponse.getTotalElements())
+                .totalPages(pageResponse.getTotalPages())
+                .content(pageResponse.getContent())
+                .build();
+    }
+
+    @Override
+    public PageResponse<Object> getAllBooksUnavailable(Pageable pageable) {
+        Page<Book> page = bookRepository.findByStatus(BookStatusEnum.Unavailable.toString() , pageable);
         Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
 
         return PageResponse.builder()
@@ -60,7 +75,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponse getBookById(Long id) {
-        Book book = bookRepository.findById(id)
+        Book book = bookRepository.findByIdAndStatus(id, BookStatusEnum.Available.toString())
                 .orElseThrow(() -> new NewException("Book with id: " + id + " not found")); 
             
         book.setQuantityViewed(book.getQuantityViewed() + 1);
@@ -80,6 +95,9 @@ public class BookServiceImpl implements BookService {
         book.setCategory(category);
         book.setAuthor(author);
 
+        book.setStatus(BookStatusEnum.Available.toString());
+        book.setTypeActive("CREATE");
+
         if (bookRequest.getImageList() != null) {
             List<Image> images = bookRequest.getImageList().stream()
                     .map(imageReq -> Image.builder()
@@ -97,7 +115,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponse updateBook(Long id, BookRequest bookRequest) {
-        Book book = bookRepository.findById(id)
+        Book book = bookRepository.findByIdAndStatus(id, BookStatusEnum.Available.toString())
                 .orElseThrow(() -> new NewException("Book with id: " + id + " not found"));
 
         bookMapper.updateBook(book, bookRequest);
@@ -111,8 +129,6 @@ public class BookServiceImpl implements BookService {
         book.setAuthor(author);
 
         if (bookRequest.getImageList() != null) {
-            // book.getImages().clear();
-
             List<Image> newImages = bookRequest.getImageList().stream()
                     .map(imageReq -> Image.builder()
                             .url(imageReq.getUrl())
@@ -124,17 +140,47 @@ public class BookServiceImpl implements BookService {
             book.getImages().addAll(newImages);
         }
 
+        book.setTypeActive("UPDATE");
 
         return bookMapper.toBookResponse(bookRepository.save(book));
     }
 
     @Override
-    public boolean deleteBook(Long id) {
-        if (!bookRepository.existsById(id)) {
-            throw new NewException("Book with id: " + id + " not found");
+    public boolean softDeleteBooks(List<Long> booksId) {
+        try {
+            for(Long id : booksId){
+                Book book = bookRepository.findByIdAndStatus(id, BookStatusEnum.Available.toString())
+                    .orElseThrow(() -> new NewException("Book with id: " + id + " not found"));
+                    
+                book.setStatus(BookStatusEnum.Unavailable.toString());
+
+                book.setTypeActive("DELETE");
+
+                bookRepository.save(book);
+            }
+            return true;
+        } catch (Exception e) {
+            throw new NewException("Error soft deleting books: " + e.getMessage());
         }
-        bookRepository.deleteById(id);
-        return true;
+    }
+
+    @Override
+    public boolean restoreBooks(List<Long> booksId) {
+        try {
+            for(Long id : booksId){
+                Book book = bookRepository.findByIdAndStatus(id, BookStatusEnum.Unavailable.toString())
+                    .orElseThrow(() -> new NewException("Book with id: " + id + " not found"));
+                    
+                book.setStatus(BookStatusEnum.Available.toString());
+
+                book.setTypeActive("RESTORE");
+
+                bookRepository.save(book);
+            }
+            return true;
+        } catch (Exception e) {
+            throw new NewException("Error restoring books: " + e.getMessage());
+        }
     }
 
     @Override
@@ -166,6 +212,7 @@ public class BookServiceImpl implements BookService {
             String language,
             BigDecimal minPrice,
             BigDecimal maxPrice,
+            String bookStatus,
             Pageable pageable
     ) {
         Specification<Book> spec = BookSpecification.filterBooks(
@@ -174,7 +221,8 @@ public class BookServiceImpl implements BookService {
                 authorId,
                 language,
                 minPrice,
-                maxPrice
+                maxPrice,
+                bookStatus
         );
 
         Page<Book> page = bookRepository.findAll(spec, pageable);

@@ -1,6 +1,8 @@
 package com.build.core_restful.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.build.core_restful.domain.Notification;
 import com.build.core_restful.repository.NotificationRepository;
@@ -15,14 +17,23 @@ public class NotificationServiceImpl implements NotificationService{
     ){
         this.notificationRepository = notificationRepository;
     }
-    @Override
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void createNotification(Notification notification) {
-        notificationRepository.save(notification);
+        try {
+            notificationRepository.save(notification);
+        } catch (Exception e) {
+            System.err.println("Failed to save notification: " + e.getMessage());
+        }
     }
 
-    @Override
+    @Transactional
     public void deleteNotification(Long id) {
-        notificationRepository.deleteById(id);;
+        try {
+            notificationRepository.deleteById(id);
+        } catch (Exception e) {
+            System.err.println("Failed to delete notification: " + e.getMessage());
+        }
     }
     
 }

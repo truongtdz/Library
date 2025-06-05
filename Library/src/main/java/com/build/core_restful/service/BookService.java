@@ -1,5 +1,6 @@
 package com.build.core_restful.service;
 
+import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.request.BookRequest;
 import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
@@ -11,7 +12,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface BookService {
-    PageResponse<Object> getAllBooks(Pageable pageable);
+    PageResponse<Object> getAllBooksAvailable(Pageable pageable);
+
+    PageResponse<Object> getAllBooksUnavailable(Pageable pageable);
 
     BookResponse getBookById(Long id);
 
@@ -19,7 +22,9 @@ public interface BookService {
 
     BookResponse updateBook(Long id, BookRequest bookRequest);
 
-    boolean deleteBook(Long id);
+    public boolean softDeleteBooks(List<Long> booksId);
+
+    public boolean restoreBooks(List<Long> booksId);
 
     List<BookResponse> getTop10BookBy(String getBookBy);
 
@@ -32,6 +37,8 @@ public interface BookService {
             String language,
             BigDecimal minPrice,
             BigDecimal maxPrice,
+            String bookStatus,
             Pageable pageable
+            
     );
 }

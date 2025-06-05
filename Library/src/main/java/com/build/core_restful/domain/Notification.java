@@ -20,7 +20,6 @@ public class Notification {
     private Long id;
 
     private Long userId;
-    private String role;
     
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -31,24 +30,14 @@ public class Notification {
 
     private Instant createAt;
     private Instant updateAt;
-    private String createBy;
-    private String updateBy;
 
     @PrePersist
     public void handleBeforeCreate() {
-        this.setCreateBy(JwtUtil.getCurrentUserLogin().isPresent()
-                ? JwtUtil.getCurrentUserLogin().get()
-                : "");
-
         this.setCreateAt(Instant.now());
     }
 
     @PreUpdate
     public void handleBeforeUpdate() {
-        this.setUpdateBy(JwtUtil.getCurrentUserLogin().isPresent()
-                ? JwtUtil.getCurrentUserLogin().get()
-                : "");
-
         this.setUpdateAt(Instant.now());
     }
 }

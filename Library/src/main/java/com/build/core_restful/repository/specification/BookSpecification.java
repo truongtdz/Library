@@ -16,7 +16,8 @@ public class BookSpecification {
             Long authorId,
             String language,
             BigDecimal minPrice,
-            BigDecimal maxPrice
+            BigDecimal maxPrice,
+            String bookStatus
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -43,6 +44,10 @@ public class BookSpecification {
 
             if (maxPrice != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("rentalPrice"), maxPrice));
+            }
+
+            if (bookStatus != null) {
+                predicates.add(cb.equal(root.get("bookStatus"), bookStatus.toString()));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

@@ -6,6 +6,7 @@ import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.util.annotation.AddMessage;
+import com.build.core_restful.util.enums.BookStatusEnum;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -30,13 +31,22 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping
-    @AddMessage("Get all books")
-    public ResponseEntity<PageResponse<Object>> getAllBooks(
+    @GetMapping("/available")
+    @AddMessage("Get all available books")
+    public ResponseEntity<PageResponse<Object>> getAllBooksAvailable(
             @RequestParam int page,
             @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(bookService.getAllBooks(pageable));
+        return ResponseEntity.ok(bookService.getAllBooksAvailable(pageable));
+    }
+
+    @GetMapping("/unavailable")
+    @AddMessage("Get all unavailable books")
+    public ResponseEntity<PageResponse<Object>> getAllBooksUnavailable(
+            @RequestParam int page,
+            @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(bookService.getAllBooksUnavailable(pageable));
     }
 
     @GetMapping("/{id}")
@@ -57,10 +67,16 @@ public class BookController {
         return ResponseEntity.ok(bookService.updateBook(id, bookRequest));
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/delete")
     @AddMessage("Delete book")
-    public ResponseEntity<Boolean> deleteBook(@PathVariable Long id) {
-        return ResponseEntity.ok(bookService.deleteBook(id));
+    public ResponseEntity<Boolean> softDeleteBook(@RequestParam List<Long> booksId) {
+        return ResponseEntity.ok(bookService.softDeleteBooks(booksId));
+    }
+
+    @PutMapping("/restore")
+    @AddMessage("Restore book")
+    public ResponseEntity<Boolean> restoreBook(@RequestParam List<Long> booksId) {
+        return ResponseEntity.ok(bookService.restoreBooks(booksId));
     }
 
     @GetMapping("/search")
@@ -81,7 +97,8 @@ public class BookController {
         Pageable pageable = PageRequest.of(page, size, sort);
         
         return ResponseEntity.ok(bookService.searchBook(
-                keyword, categoryId, authorId, language, minPrice, maxPrice, pageable
+                keyword, categoryId, authorId, language, minPrice, maxPrice, 
+                BookStatusEnum.Available.toString(), pageable
         ));
     }
 

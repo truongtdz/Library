@@ -8,10 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
     Page<Book> findAll(Specification<Book> spec, Pageable pageable);
+
+    Optional<Book> findByIdAndStatus(Long id, String status);
+
+    Page<Book> findByStatus(String status, Pageable pageable);
 
     List<Book> findTop10ByOrderByQuantityRentedDesc();
 
