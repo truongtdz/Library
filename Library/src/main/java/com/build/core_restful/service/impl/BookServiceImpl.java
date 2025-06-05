@@ -197,24 +197,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookResponse> getTop10BookBy(String getBookBy) {
-        return switch (getBookBy) {
-            case "rented" -> bookRepository.findTop10ByOrderByQuantityRentedDesc().stream()
-                    .map(bookMapper::toBookResponse)
-                    .collect(Collectors.toList());
-            case "view" -> bookRepository.findTop10ByOrderByQuantityViewedDesc().stream()
-                    .map(bookMapper::toBookResponse)
-                    .collect(Collectors.toList());
-            case "like" -> bookRepository.findTop10ByOrderByQuantityLikedDesc().stream()
-                    .map(bookMapper::toBookResponse)
-                    .collect(Collectors.toList());
-            default -> null;
-        };
+    public Long getQuantityBookActive() {
+        return bookRepository.countByStatus(EntityStatusEnum.Active.toString());
     };
 
     @Override
-    public long getQuantityBook() {
-        return bookRepository.count();
+    public Long getQuantityBookDelete() {
+        return bookRepository.countByStatus(EntityStatusEnum.Delete.toString());
     };
 
     @Override

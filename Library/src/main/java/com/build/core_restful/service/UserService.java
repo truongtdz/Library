@@ -8,6 +8,8 @@ import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.util.enums.GenderEnum;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +41,13 @@ public interface UserService {
 
     boolean updatePasswordUser(UpdatePasswordUserRequest userRequest);
     
-    Long getQuantityUser();
+    Long getQuantityUserActive();
 
-    boolean banUser(Long id);
+    Long getQuantityUserDelete();
 
-    boolean restoreUser(Long id);
+    boolean softDeleteUsers(List<Long> usersId);
+
+    boolean restoreUsers(List<Long> usersId);
 
     void deleteUser(Long id);
 

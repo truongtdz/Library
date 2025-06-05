@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-import javax.swing.text.html.parser.Entity;
+import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @Operation(summary = "Lấy danh sách người dùng", description = "API này trả về danh sách tất cả người dùng, có hỗ trợ phân trang.")
-    @GetMapping
+    @GetMapping("/all")
     @AddMessage("Get all user")
     public ResponseEntity<PageResponse<Object>> getAllUsers(
         @RequestParam int page, 
@@ -54,31 +54,37 @@ public class UserController {
         ));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/by/{id}")
     @AddMessage("Get user by id")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id){
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @AddMessage("Create new user")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest newUser) {
         return ResponseEntity.ok(userService.createUser(newUser));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @AddMessage("Update user")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,@Valid @RequestBody UserRequest updateUser) {
         return ResponseEntity.ok(userService.updateUser(id, updateUser));
     }
 
-    @DeleteMapping("/{id}")
-    @AddMessage("Ban user")
-    public ResponseEntity<Boolean> banUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.banUser(id));
+    @PutMapping("/delete")
+    @AddMessage("Delete user")
+    public ResponseEntity<Boolean> softDeleteUser(@RequestParam List<Long> usersId) {
+        return ResponseEntity.ok(userService.softDeleteUsers(usersId));
     }
 
-    @PutMapping("/password")
+    @PutMapping("/restore")
+    @AddMessage("Restore user")
+    public ResponseEntity<Boolean> restoreUser(@RequestParam List<Long> usersId) {
+        return ResponseEntity.ok(userService.restoreUsers(usersId));
+    }
+
+    @PutMapping("/update/password")
     @AddMessage("Update password user")
     public ResponseEntity<Boolean> updatePasswordUser(@RequestBody UpdatePasswordUserRequest userRequest){
         return ResponseEntity.ok(userService.updatePasswordUser(userRequest));
@@ -90,9 +96,15 @@ public class UserController {
         return ResponseEntity.ok(userService.updateRoleUser(updateRoleUserRequest));
     }
 
-    @GetMapping("/quantity")
-    @AddMessage("Get user by id")
-    public ResponseEntity<Long> getQuantityUser(){
-        return ResponseEntity.ok(userService.getQuantityUser());
+    @GetMapping("/quantity/active")
+    @AddMessage("Get quantity active")
+    public ResponseEntity<Long> getQuantityUserActive(){
+        return ResponseEntity.ok(userService.getQuantityUserActive());
+    }
+
+    @GetMapping("/quantity/delete")
+    @AddMessage("Get quantity delete")
+    public ResponseEntity<Long> getQuantityUserDelete(){
+        return ResponseEntity.ok(userService.getQuantityUserDelete());
     }
 }

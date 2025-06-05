@@ -14,6 +14,8 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book, Long> {
     Page<Book> findAll(Specification<Book> spec, Pageable pageable);
 
+    Long countByStatus(String status);
+
     Optional<Book> findByIdAndStatus(Long id, String status);
 
     Page<Book> findByStatus(String status, Pageable pageable);

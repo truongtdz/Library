@@ -27,9 +27,9 @@ public interface BookService {
 
     void deleteBook(Long id);
 
-    List<BookResponse> getTop10BookBy(String getBookBy);
+    Long getQuantityBookActive();
 
-    long getQuantityBook();
+    Long getQuantityBookDelete();
 
     SearchResponse searchBook(
             String keyword,

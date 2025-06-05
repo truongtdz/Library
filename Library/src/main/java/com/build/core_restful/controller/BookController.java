@@ -1,8 +1,6 @@
 package com.build.core_restful.controller;
 
 import com.build.core_restful.domain.request.BookRequest;
-import com.build.core_restful.domain.response.BookResponse;
-import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.util.annotation.AddMessage;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -31,37 +27,43 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/active")
-    @AddMessage("Get all active books")
-    public ResponseEntity<PageResponse<Object>> getAllBooksActive(
+    @GetMapping("/all")
+    @AddMessage("search book")
+    public ResponseEntity<SearchResponse> searchBook(
             @RequestParam int page,
-            @RequestParam int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(bookService.getAllBooksActive(pageable));
+            @RequestParam int size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long authorId,
+            @RequestParam(required = false) String language,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(defaultValue = "Active") EntityStatusEnum userStatus
+    ) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        return ResponseEntity.ok(bookService.searchBook(
+                keyword, categoryId, authorId, language, minPrice, maxPrice, 
+                EntityStatusEnum.Active.toString(), pageable
+        ));
     }
 
-    @GetMapping("/delete")
-    @AddMessage("Get all delete books")
-    public ResponseEntity<PageResponse<Object>> getAllBooksDelete(
-            @RequestParam int page,
-            @RequestParam int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(bookService.getAllBooksDelete(pageable));
-    }
-
-    @GetMapping("/{id}")
+    @GetMapping("/by/{id}")
     @AddMessage("Get book by id")
     public ResponseEntity<Object> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @AddMessage("Create book")
     public ResponseEntity<Object> createBook(@Valid @RequestBody BookRequest bookRequest) {
         return ResponseEntity.ok(bookService.createBook(bookRequest));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @AddMessage("Update book")
     public ResponseEntity<Object> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequest bookRequest) {
         return ResponseEntity.ok(bookService.updateBook(id, bookRequest));
@@ -79,36 +81,13 @@ public class BookController {
         return ResponseEntity.ok(bookService.restoreBooks(booksId));
     }
 
-    @GetMapping("/search")
-    @AddMessage("search book")
-    public ResponseEntity<SearchResponse> searchBook(
-            @RequestParam int page,
-            @RequestParam int size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Long authorId,
-            @RequestParam(required = false) String language,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice
-    ) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
-        Pageable pageable = PageRequest.of(page, size, sort);
-        
-        return ResponseEntity.ok(bookService.searchBook(
-                keyword, categoryId, authorId, language, minPrice, maxPrice, 
-                EntityStatusEnum.Active.toString(), pageable
-        ));
+    @GetMapping("/quantity/active")
+    public ResponseEntity<Long> getQuantityBookActive(){
+        return ResponseEntity.ok(bookService.getQuantityBookActive());
     }
 
-    @GetMapping("/top10/{type}")
-    public ResponseEntity<List<BookResponse>> getTop10BookBy(@PathVariable String type){
-        return ResponseEntity.ok(bookService.getTop10BookBy(type));
-    }
-
-    @GetMapping("/quantity")
-    public ResponseEntity<Long> getQuantityBook(){
-        return ResponseEntity.ok(bookService.getQuantityBook());
+    @GetMapping("/quantity/delete")
+    public ResponseEntity<Long> getQuantityBookDelete(){
+        return ResponseEntity.ok(bookService.getQuantityBookDelete());
     }
 }

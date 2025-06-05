@@ -160,37 +160,46 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long getQuantityUser(){
-        return Long.valueOf(userRepository.findByStatus(EntityStatusEnum.Active.toString()).size());
+    public Long getQuantityUserActive(){
+        return userRepository.countByStatus(EntityStatusEnum.Active.toString());
     }
 
     @Override
-    public boolean banUser(Long id) {
-        User currentUser = userRepository.findById(id)
-                .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
+    public Long getQuantityUserDelete(){
+        return userRepository.countByStatus(EntityStatusEnum.Delete.toString());
+    }
 
-        currentUser.setStatus(EntityStatusEnum.Delete.toString());
+    @Override
+    public boolean softDeleteUsers(List<Long> usersId) {
+        try {
+            for(Long id : usersId){
+                User user = userRepository.findByIdAndStatus(id, EntityStatusEnum.Delete.toString())
+                    .orElseThrow(() -> new NewException("User with id: " + id + " not found"));
+                    
+                user.setStatus(EntityStatusEnum.Delete.toString());
 
-        try{
-            userRepository.save(currentUser);
+                userRepository.save(user);
+            }
             return true;
-        } catch (Exception e){
-            return false;
+        } catch (Exception e) {
+            throw new NewException("Error restoring users: " + e.getMessage());
         }
     }
 
     @Override
-    public boolean restoreUser(Long id){
-        User currentUser = userRepository.findById(id)
-                .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
+    public boolean restoreUsers(List<Long> usersId){
+        try {
+            for(Long id : usersId){
+                User user = userRepository.findByIdAndStatus(id, EntityStatusEnum.Delete.toString())
+                    .orElseThrow(() -> new NewException("User with id: " + id + " not found"));
+                    
+                user.setStatus(EntityStatusEnum.Active.toString());
 
-        currentUser.setStatus(EntityStatusEnum.Active.toString());
-
-        try{
-            userRepository.save(currentUser);
+                userRepository.save(user);
+            }
             return true;
-        } catch (Exception e){
-            return false;
+        } catch (Exception e) {
+            throw new NewException("Error restoring users: " + e.getMessage());
         }
     }
 
