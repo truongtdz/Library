@@ -204,16 +204,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id){
-        List<RentalOrder> rentalOrder = rentalOrderRepository.findAllByUserId(id);
-        rentalOrder.forEach(item -> item.setUser(null));
-        rentalOrderRepository.saveAll(rentalOrder);
+    public boolean deleteUser(Long id){
+        try {
+            List<RentalOrder> rentalOrder = rentalOrderRepository.findAllByUserId(id);
+            rentalOrder.forEach(item -> item.setUser(null));
+            rentalOrderRepository.saveAll(rentalOrder);
 
-        List<RentedOrder> rentedOrder = rentedOrderRepository.findAllByUserId(id);
-        rentedOrder.forEach(item -> item.setUser(null));
-        rentedOrderRepository.saveAll(rentedOrder);
+            List<RentedOrder> rentedOrder = rentedOrderRepository.findAllByUserId(id);
+            rentedOrder.forEach(item -> item.setUser(null));
+            rentedOrderRepository.saveAll(rentedOrder);
 
-        userRepository.deleteById(id);
+            userRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            throw new NewException("Delete user with id: " + id + " fail");
+        }
+
     }
 
 }

@@ -27,4 +27,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findTop10ByOrderByQuantityLikedDesc();
 
     List<Book> findByCategoryId(Long id);
+
+    List<Book> findByAuthorId(Long id);
 }

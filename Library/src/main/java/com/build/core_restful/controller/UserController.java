@@ -73,7 +73,7 @@ public class UserController {
     }
 
     @PutMapping("/delete")
-    @AddMessage("Delete user")
+    @AddMessage("Delete soft user")
     public ResponseEntity<Boolean> softDeleteUser(@RequestParam List<Long> usersId) {
         return ResponseEntity.ok(userService.softDeleteUsers(usersId));
     }
@@ -82,6 +82,12 @@ public class UserController {
     @AddMessage("Restore user")
     public ResponseEntity<Boolean> restoreUser(@RequestParam List<Long> usersId) {
         return ResponseEntity.ok(userService.restoreUsers(usersId));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @AddMessage("Delete user")
+    public ResponseEntity<Boolean> deleteBook(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.deleteUser(id));
     }
 
     @PutMapping("/update/password")

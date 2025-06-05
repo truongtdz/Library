@@ -25,6 +25,7 @@ public class Author {
     private String name;
 
     private String avatar;
+    private String status;
 
     @Column(columnDefinition = "TEXT")
     private String description;

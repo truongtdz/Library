@@ -70,7 +70,7 @@ public class BookController {
     }
 
     @PutMapping("/delete")
-    @AddMessage("Delete book")
+    @AddMessage("Delete soft book")
     public ResponseEntity<Boolean> softDeleteBook(@RequestParam List<Long> booksId) {
         return ResponseEntity.ok(bookService.softDeleteBooks(booksId));
     }
@@ -79,6 +79,12 @@ public class BookController {
     @AddMessage("Restore book")
     public ResponseEntity<Boolean> restoreBook(@RequestParam List<Long> booksId) {
         return ResponseEntity.ok(bookService.restoreBooks(booksId));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @AddMessage("Delete book")
+    public ResponseEntity<Boolean> deleteBook(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.deleteBook(id));
     }
 
     @GetMapping("/quantity/active")

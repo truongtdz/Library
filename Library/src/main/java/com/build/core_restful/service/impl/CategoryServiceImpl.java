@@ -1,13 +1,18 @@
 package com.build.core_restful.service.impl;
 
+import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.Category;
 import com.build.core_restful.domain.request.CategoryRequest;
 import com.build.core_restful.domain.response.CategoryResponse;
 import com.build.core_restful.domain.response.PageResponse;
+import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.CategoryRepository;
 import com.build.core_restful.service.CategoryService;
+import com.build.core_restful.util.enums.EntityStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.CategoryMapper;
+
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,19 +21,24 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-
     private final CategoryRepository categoryRepository;
+    private final BookRepository bookRepository;
     private final CategoryMapper categoryMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
+    public CategoryServiceImpl(
+        CategoryRepository categoryRepository, 
+        CategoryMapper categoryMapper,
+        BookRepository bookRepository
+    ) {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
-    }
+        this.bookRepository = bookRepository;
+    };
 
     @Override
-    public PageResponse<Object> getAllCategories(String name, Pageable pageable) {
+    public PageResponse<Object> getAllCategories(String name, String status, Pageable pageable) {
         Page<Category> page = StringUtils.hasText(name) ? 
-            categoryRepository.findByName(name, pageable) : categoryRepository.findAll(pageable);
+            categoryRepository.findByNameAndStatus(name, status, pageable) : categoryRepository.findAll(pageable);
 
         Page<CategoryResponse> pageResponse = page.map(categoryMapper::toCategoryResponse);
         
@@ -43,15 +53,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse getCategoryById(Long id) {
-        return categoryRepository.findById(id)
+        return categoryRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                 .map(categoryMapper::toCategoryResponse)
                 .orElseThrow(() -> new NewException("Category with id " + id + " not found"));
     }
 
     @Override
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
-        if (categoryRepository.existsByName(categoryRequest.getName())) {
-            throw new NewException("Category with name: " + categoryRequest.getName() + " already exists!");
+        if (categoryRepository.existsByNameAndStatus(categoryRequest.getName(), EntityStatusEnum.Active.toString())) {
+            throw new NewException("Author with name " + categoryRequest.getName() + " already exists!");
+        }
+        if (categoryRepository.existsByNameAndStatus(categoryRequest.getName(), EntityStatusEnum.Delete.toString())) {
+            throw new NewException("Author with name " + categoryRequest.getName() + " already exists at bin!");
         }
         Category category = categoryMapper.toCategory(categoryRequest);
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
@@ -59,18 +72,57 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest) {
-        Category category = categoryRepository.findById(id)
+        Category category = categoryRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                 .orElseThrow(() -> new NewException("Category with id " + id + " not found"));
         categoryMapper.updateCategory(category, categoryRequest);
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
     @Override
-    public boolean deleteCategory(Long id) {
-        if (!categoryRepository.existsById(id)) {
-            throw new NewException("Category with id " + id + " not found");
+    public boolean softDelete(List<Long> idList){
+        try {
+            for(Long id : idList){
+                Category category = categoryRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
+                    .orElseThrow(() -> new NewException("Category with id: " + id + " not found"));
+                    
+                category.setStatus(EntityStatusEnum.Delete.toString());
+
+                categoryRepository.save(category);
+            }
+            return true;
+        } catch (Exception e) {
+            throw new NewException("Error soft deleting books: " + e.getMessage());
         }
-        categoryRepository.deleteById(id);
-        return true;
+    }
+    
+    @Override
+    public boolean restore(List<Long> idList){
+        try {
+            for(Long id : idList){
+                Category category = categoryRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
+                    .orElseThrow(() -> new NewException("Category with id: " + id + " not found"));
+                    
+                category.setStatus(EntityStatusEnum.Active.toString());
+
+                categoryRepository.save(category);
+            }
+            return true;
+        } catch (Exception e) {
+            throw new NewException("Error soft deleting books: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        try {
+            List<Book> books = bookRepository.findByCategoryId(id);
+            books.forEach(item -> item.setCategory(null));
+            bookRepository.saveAll(books);
+
+            categoryRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            throw new NewException("Delete author with id: " + id + " fail");
+        }  
     }
 }

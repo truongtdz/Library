@@ -25,7 +25,7 @@ public interface BookService {
 
     boolean restoreBooks(List<Long> booksId);
 
-    void deleteBook(Long id);
+    boolean deleteBook(Long id);
 
     Long getQuantityBookActive();
 

@@ -4,10 +4,12 @@ import com.build.core_restful.domain.request.AuthorRequest;
 import com.build.core_restful.domain.response.AuthorResponse;
 import com.build.core_restful.domain.response.PageResponse;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 
 public interface AuthorService {
-    PageResponse<Object> getAllAuthor(String name, Pageable pageable);
+    public PageResponse<Object> getAllAuthor(String name, String status, Pageable pageable);
 
     AuthorResponse getAuthorById(Long id);
 
@@ -15,5 +17,9 @@ public interface AuthorService {
 
     AuthorResponse updateAuthor(Long id, AuthorRequest authorRequest);
 
-    boolean deleteAuthor(Long id);
+    boolean softDelete(List<Long> idList);
+    
+    boolean restore(List<Long> idList);
+
+    boolean delete(Long id);
 }

@@ -49,7 +49,7 @@ public interface UserService {
 
     boolean restoreUsers(List<Long> usersId);
 
-    void deleteUser(Long id);
+    boolean deleteUser(Long id);
 
     
 

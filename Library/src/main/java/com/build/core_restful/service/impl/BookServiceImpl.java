@@ -188,12 +188,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteBook(Long id){
-        List<RentalItem> rentalItem = rentalItemRepository.findAllByBookId(id);
-        rentalItem.forEach(item -> item.setBook(null));
-        rentalItemRepository.saveAll(rentalItem);
+    public boolean deleteBook(Long id){
+        try {
+            List<RentalItem> rentalItem = rentalItemRepository.findAllByBookId(id);
+            rentalItem.forEach(item -> item.setBook(null));
+            rentalItemRepository.saveAll(rentalItem);
 
-        bookRepository.deleteById(id);
+            bookRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            throw new NewException("Delete book with id: " + id + " fail");
+        }
+        
     }
 
     @Override
