@@ -159,7 +159,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                     .depositPrice(book.getDepositPrice())
                     .totalRental(itemRental)
                     .totalDeposit(itemDeposit)
-                    .itemStatus(ItemStatusEnum.Pending.toString())
+                    .itemStatus(ItemStatusEnum.Rented.toString())
                     .rentalOrder(order)
                     .book(book)
                     .build();

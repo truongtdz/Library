@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.build.core_restful.domain.Subscribe;
 import com.build.core_restful.domain.request.SubscribeRequest;
-import com.build.core_restful.domain.response.BookSendEmailResponse;
+import com.build.core_restful.domain.response.BookRecommendResponse;
 import com.build.core_restful.repository.SubscribeRepository;
 import com.build.core_restful.service.SubscribeService;
 import com.build.core_restful.service.TrainService;
@@ -59,15 +59,15 @@ public class SubscribeServiceImpl implements SubscribeService{
 
     @Override
     @Transactional
-    public void sendEmailToUser() {
+    public void sendEmailRecommendBook() {
         List<Subscribe> subscribes = subscribeRepository.findAll();
 
         for(Subscribe subscribe: subscribes){
             String city = Optional.ofNullable(subscribe.getCity())
                       .orElse(null);
 
-            List<BookSendEmailResponse> books = trainService.predictCategory(subscribe.getAge(), subscribe.getGender(), city);
-            emailUtil.sendEmailTemplate(subscribe.getEmail(), subscribe.getFullName(), books);
+            List<BookRecommendResponse> books = trainService.predictCategory(subscribe.getAge(), subscribe.getGender(), city);
+            emailUtil.sendEmailRecommendBook(subscribe.getEmail(), subscribe.getFullName(), books);
         }
     }
     

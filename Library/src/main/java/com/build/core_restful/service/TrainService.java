@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.build.core_restful.domain.response.BookSendEmailResponse;
+import com.build.core_restful.domain.response.BookRecommendResponse;
 
 @Service
 public interface TrainService {
     void trainDataEveryDay();
 
-    List<BookSendEmailResponse> predictCategory(Long age, String gender, String city);
+    List<BookRecommendResponse> predictCategory(Long age, String gender, String city);
 }

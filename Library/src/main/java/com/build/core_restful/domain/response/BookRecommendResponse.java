@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookSendEmailResponse {
+public class BookRecommendResponse {
     private Long id;
     private String name;
     private Long stock;

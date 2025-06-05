@@ -14,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.DataSave;
 import com.build.core_restful.domain.DataTrain;
-import com.build.core_restful.domain.response.BookSendEmailResponse;
+import com.build.core_restful.domain.Image;
+import com.build.core_restful.domain.response.BookRecommendResponse;
 import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.DataSaveRepository;
 import com.build.core_restful.repository.DataTrainRepository;
@@ -150,21 +151,26 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public List<BookSendEmailResponse> predictCategory(Long age, String gender, String city) {
+    public List<BookRecommendResponse> predictCategory(Long age, String gender, String city) {
         List<DataSave> matchingRules = dataSaveRepository.findByGenderAndAgeRange(gender, age);
         if (city != null) {
             matchingRules = dataSaveRepository.findByGenderAndCityAndAgeRange(
             gender, city, age);
         }
 
-        List<BookSendEmailResponse> bookResponses = new ArrayList<>();
+        List<BookRecommendResponse> bookResponses = new ArrayList<>();
         for(DataSave data : matchingRules){
             List<Book> books = bookRepository.findByCategoryId(data.getCategoryId());
             for(Book book: books){
-                BookSendEmailResponse response = BookSendEmailResponse.builder()          
+                BookRecommendResponse response = BookRecommendResponse.builder()          
                                                     .id(book.getId())
                                                     .name(book.getName())
-                                                    .imageUrl(book.getImages().get(0).getUrl())
+                                                    .imageUrl(book.getImages().stream()
+                                                    .filter(image -> "true".equalsIgnoreCase(image.getIsDefault()))
+                                                    .map(Image::getUrl)
+                                                    .findFirst()
+                                                    .orElse(null)
+                                                    )
                                                     .rentalPrice(book.getRentalPrice())
                                                     .authorName(book.getAuthor().getName())
                                                     .categoryName(book.getCategory().getName())

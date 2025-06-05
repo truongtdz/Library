@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhắc Nhở Trả Sách</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #e74c3c;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .email-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #e74c3c;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 667px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            padding: 25px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header .date {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats-bar {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+            border-radius: 15px;
+            color: white;
+            display: inline-block;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .warning-message {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .book-grid {
+            width: 100%;
+            margin-top: 25px;
+            padding: 0;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #d02a2a;
+            margin-bottom: 20px;
+            width: 48%;
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 1%;
+        }
+
+        .book-image-container {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+        }
+
+        .book-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .late-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .book-info {
+            padding: 18px;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .book-meta {
+            margin-bottom: 15px;
+        }
+
+        .meta-item {
+            font-size: 0.9rem;
+            color: #636e72;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .meta-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        .rental-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .rental-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .rental-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .rental-label {
+            color: #636e72;
+            font-weight: 500;
+        }
+
+        .rental-value {
+            color: #2d3436;
+            font-weight: bold;
+        }
+
+        .due-date {
+            color: #e74c3c !important;
+            font-weight: bold !important;
+        }
+
+        .days-late {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 1rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .urgent-cta {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .no-books-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #636e72;
+            font-style: italic;
+        }
+
+        .footer-note {
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .contact-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            color: #2d3436;
+        }
+
+        /* Mobile responsive */
+        @media only screen and (max-width: 768px) {
+            .container {
+                max-width: 100% !important;
+                margin: 0 10px !important;
+            }
+            
+            .content {
+                padding: 20px !important;
+            }
+            
+            .book-image-container {
+                height: 160px !important;
+            }
+            
+            .book-info {
+                padding: 15px !important;
+            }
+            
+            .book-title {
+                font-size: 1.1rem !important;
+            }
+            
+            .meta-item {
+                font-size: 0.85rem !important;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .book-image-container {
+                height: 180px !important;
+            }
+            
+            .rental-item {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+            
+            .rental-value {
+                margin-top: 2px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>⚠️ Nhắc Nhở Trả Sách</h1>
+                <div class="date" th:text="'Cập nhật ngày: ' + ${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></div>
+            </div>
+
+            <div class="content">
+                <div th:if="${books != null and #lists.size(books) > 0}">
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <span class="stat-number" th:text="${#lists.size(books)}">0</span>
+                            <div class="stat-label">Sách cần trả</div>
+                        </div>
+                    </div>
+
+                    <div class="warning-message">
+                        📚 Bạn có sách sắp đến hạn trả. Vui lòng liên hệ để gia hạn hoặc trả sách!
+                    </div>
+
+                    <div class="book-grid">
+                        <div th:each="book : ${books}" class="book-card">
+                            <div class="book-image-container">
+                                <img th:src="${book.imageUrl != null ? book.imageUrl : 'https://via.placeholder.com/300x200/e74c3c/ffffff?text=No+Image'}"
+                                    th:alt="${book.bookName}" alt="Book Cover" />
+                                <div class="late-badge">QUÁ HẠN</div>
+                            </div>
+                            <div class="book-info">
+                                <div class="book-title" th:text="${book.bookName}">Tên sách</div>
+                                
+                                <div class="book-meta">
+                                    <div class="meta-item">
+                                        <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>Mã đơn thuê: <strong th:text="${book.rentalOrderId}">RO001</strong></span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span th:text="'Email: ' + ${book.email}">Email khách hàng</span>
+                                    </div>
+                                </div>
+
+                                <div class="rental-info">
+                                    <div class="rental-item">
+                                        <span class="rental-label">Ngày thuê:</span>
+                                        <span class="rental-value" th:text="${#dates.format(book.rentalDate, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</span>
+                                    </div>
+                                    <div class="rental-item">
+                                        <span class="rental-label">Hạn trả:</span>
+                                        <span class="rental-value due-date" th:text="${#dates.format(book.rentedDate, 'dd/MM/yyyy HH:mm')}">07/01/2024 10:00</span>
+                                    </div>
+                                </div>
+
+                                <div class="days-late" 
+                                     th:text="'Còn ' + ${T(java.time.Duration).between(T(java.time.Instant).now(), book.rentedDate).toDays()} + ' ngày để tiến hàng trả sách'">
+                                    Quá hạn 5 ngày
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="cta-button urgent-cta" 
+                    th:href="@{http://localhost:5173/rental-orders}">
+                    Tiến hành trả sách 
+                </a>
+                <div class="footer-note">
+                    ⚡ Vui lòng trả sách đúng hạn để tránh mất tiền cọc và đảm bảo quyền lợi của bạn!
+                </div>
+
+                <div class="contact-info">
+                    <h3>📞 Thông tin liên hệ</h3>
+                    <p>Hotline: 1900-2004 | Email: libraryHaUi@gmail.com</p>
+                    <p>Giờ làm việc: 8:00 - 22:00 (Thứ 2 - Chủ nhật)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

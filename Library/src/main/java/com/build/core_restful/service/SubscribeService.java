@@ -10,5 +10,5 @@ public interface SubscribeService {
 
     boolean deleteSubscribe(String email);
 
-    void sendEmailToUser();
+    void sendEmailRecommendBook();
 }
