@@ -64,7 +64,6 @@ public class BookListener {
             }
             
             Notification notification = Notification.builder()
-                    .userId(null) 
                     .description(description)
                     .build();
             

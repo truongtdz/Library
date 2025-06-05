@@ -18,8 +18,6 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long userId;
     
     @Column(columnDefinition = "TEXT")
     private String description;
