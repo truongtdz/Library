@@ -1,6 +1,7 @@
 package com.build.core_restful.service;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public interface BranchService {
         String street, 
         Instant openTime, 
         Instant closeTime,
+        String status,
         Pageable pageable
     );
 
@@ -27,5 +29,9 @@ public interface BranchService {
 
     BranchResponse updateBranch(Long id, BranchRequest request);
 
-    boolean deleteBranch(Long id);
+    boolean softDeleteBranch(List<Long> idList);
+    
+    boolean restoreBranch(List<Long> idList);
+
+    void deleteBranch(Long id);
 } 

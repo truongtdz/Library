@@ -20,6 +20,8 @@ public interface RentedOrderRepository extends JpaRepository<RentedOrder, Long> 
 
     List<RentedOrder> findAllByUserId(Long id);
 
+    List<RentedOrder> findAllByBranchId(Long id);
+
     @EntityGraph(attributePaths = {"items"})
     @Query("SELECT r FROM RentedOrder r WHERE r.id = :id")
     Optional<RentedOrder> findWithItems(@Param("id") Long id);

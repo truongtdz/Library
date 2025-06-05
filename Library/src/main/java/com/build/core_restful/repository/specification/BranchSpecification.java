@@ -17,7 +17,8 @@ public class BranchSpecification {
             String ward,
             String street,
             Instant openTime, 
-            Instant closeTime
+            Instant closeTime,
+            String status
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -44,6 +45,10 @@ public class BranchSpecification {
 
             if (closeTime != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("closeTime"), closeTime));
+            }
+
+            if (status != null) {
+                predicates.add(cb.equal(root.get("status"), status.toString()));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

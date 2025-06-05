@@ -19,6 +19,8 @@ public interface RentalOrderRepository extends JpaRepository<RentalOrder, Long> 
 
     List<RentalOrder> findAllByUserId(Long id);
 
+    List<RentalOrder> findAllByBranchId(Long id);
+
     @Query("SELECT SUM(ro.totalPrice) FROM RentalOrder ro WHERE DATE(ro.createAt) = DATE(:date) AND ro.orderStatus = 'Returned'")
     Long getRevenueRentalOrderByDate(
         @Param("date") Instant date

@@ -38,8 +38,7 @@ public interface BookService {
             String language,
             BigDecimal minPrice,
             BigDecimal maxPrice,
-            String bookStatus,
-            Pageable pageable
-            
+            String status,
+            Pageable pageable   
     );
 }

@@ -44,13 +44,13 @@ public class UserController {
         @RequestParam(required = false) String keyword,
         @RequestParam(required = false) GenderEnum gender,
         @RequestParam(required = false) Long roleId,
-        @RequestParam(defaultValue = "Active") EntityStatusEnum userStatus
+        @RequestParam(defaultValue = "Active") EntityStatusEnum status
     ) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return ResponseEntity.ok(userService.getAllUsers(
-            keyword, gender, roleId, userStatus.toString(), pageable
+            keyword, gender, roleId, status.toString(), pageable
         ));
     }
 

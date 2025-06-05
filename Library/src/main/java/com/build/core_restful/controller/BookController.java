@@ -40,14 +40,14 @@ public class BookController {
             @RequestParam(required = false) String language,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(defaultValue = "Active") EntityStatusEnum userStatus
+            @RequestParam(defaultValue = "Active") EntityStatusEnum status
     ) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
         Pageable pageable = PageRequest.of(page, size, sort);
         
         return ResponseEntity.ok(bookService.searchBook(
                 keyword, categoryId, authorId, language, minPrice, maxPrice, 
-                EntityStatusEnum.Active.toString(), pageable
+                status.toString(), pageable
         ));
     }
 
