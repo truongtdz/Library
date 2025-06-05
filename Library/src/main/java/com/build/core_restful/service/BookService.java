@@ -11,9 +11,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface BookService {
-    PageResponse<Object> getAllBooksAvailable(Pageable pageable);
+    PageResponse<Object> getAllBooksActive(Pageable pageable);
 
-    PageResponse<Object> getAllBooksUnavailable(Pageable pageable);
+    PageResponse<Object> getAllBooksDelete(Pageable pageable);
 
     BookResponse getBookById(Long id);
 
@@ -21,9 +21,11 @@ public interface BookService {
 
     BookResponse updateBook(Long id, BookRequest bookRequest);
 
-    public boolean softDeleteBooks(List<Long> booksId);
+    boolean softDeleteBooks(List<Long> booksId);
 
-    public boolean restoreBooks(List<Long> booksId);
+    boolean restoreBooks(List<Long> booksId);
+
+    void deleteBook(Long id);
 
     List<BookResponse> getTop10BookBy(String getBookBy);
 

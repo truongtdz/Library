@@ -9,10 +9,10 @@ import com.build.core_restful.repository.specification.RentedOrderSpecification;
 import com.build.core_restful.service.RentedOrderService;
 import com.build.core_restful.util.StringUtil;
 import com.build.core_restful.util.enums.DeliveryMethodEnum;
+import com.build.core_restful.util.enums.EntityStatusEnum;
 import com.build.core_restful.util.enums.ItemStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
 import com.build.core_restful.util.enums.ShippingMethodEnum;
-import com.build.core_restful.util.enums.UserStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.RentedOrderMapper;
 
@@ -55,7 +55,7 @@ public class RentedOrderServiceImpl implements RentedOrderService {
     public RentedOrderResponse create(RentedOrderRequest request) {
         RentedOrder newRentedOrder = rentedOrderMapper.toEntity(request);
 
-        User user = userRepository.findByIdAndStatus(request.getUserId(), UserStatusEnum.Active.toString())
+        User user = userRepository.findByIdAndStatus(request.getUserId(), EntityStatusEnum.Active.toString())
                         .orElseThrow(() -> new NewException("User have id: " + request.getUserId() + " not exist!"));
         if (user == null) {
             throw new NewException("Active user not found with id: " + request.getUserId());

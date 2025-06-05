@@ -6,7 +6,7 @@ import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.util.annotation.AddMessage;
-import com.build.core_restful.util.enums.BookStatusEnum;
+import com.build.core_restful.util.enums.EntityStatusEnum;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -31,22 +31,22 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/available")
-    @AddMessage("Get all available books")
-    public ResponseEntity<PageResponse<Object>> getAllBooksAvailable(
+    @GetMapping("/active")
+    @AddMessage("Get all active books")
+    public ResponseEntity<PageResponse<Object>> getAllBooksActive(
             @RequestParam int page,
             @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(bookService.getAllBooksAvailable(pageable));
+        return ResponseEntity.ok(bookService.getAllBooksActive(pageable));
     }
 
-    @GetMapping("/unavailable")
-    @AddMessage("Get all unavailable books")
-    public ResponseEntity<PageResponse<Object>> getAllBooksUnavailable(
+    @GetMapping("/delete")
+    @AddMessage("Get all delete books")
+    public ResponseEntity<PageResponse<Object>> getAllBooksDelete(
             @RequestParam int page,
             @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(bookService.getAllBooksUnavailable(pageable));
+        return ResponseEntity.ok(bookService.getAllBooksDelete(pageable));
     }
 
     @GetMapping("/{id}")
@@ -98,7 +98,7 @@ public class BookController {
         
         return ResponseEntity.ok(bookService.searchBook(
                 keyword, categoryId, authorId, language, minPrice, maxPrice, 
-                BookStatusEnum.Available.toString(), pageable
+                EntityStatusEnum.Active.toString(), pageable
         ));
     }
 

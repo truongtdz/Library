@@ -1,6 +1,5 @@
 package com.build.core_restful.domain.request;
 
-import com.build.core_restful.util.enums.BookStatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -27,9 +26,6 @@ public class BookRequest {
     private Long stock;
     private Long rentalPrice;
     private Long depositPrice;
-
-    @NotNull(message = "Trạng thái sách không được để trống")
-    private BookStatusEnum status;
 
     @NotNull(message = "Category ID không được để trống")
     private Long categoryId;

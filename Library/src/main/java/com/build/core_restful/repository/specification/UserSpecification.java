@@ -2,7 +2,6 @@ package com.build.core_restful.repository.specification;
 
 import com.build.core_restful.domain.User;
 import com.build.core_restful.util.enums.GenderEnum;
-import com.build.core_restful.util.enums.UserStatusEnum;
 import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Predicate;
@@ -15,7 +14,7 @@ public class UserSpecification {
             String keyword,
             GenderEnum gender,
             Long roleId,
-            UserStatusEnum userStatus
+            String userStatus
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

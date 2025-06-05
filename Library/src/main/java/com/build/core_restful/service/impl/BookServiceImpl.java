@@ -4,16 +4,18 @@ import com.build.core_restful.domain.Author;
 import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.Category;
 import com.build.core_restful.domain.Image;
+import com.build.core_restful.domain.RentalItem;
 import com.build.core_restful.domain.request.BookRequest;
 import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.SearchResponse;
 import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.CategoryRepository;
+import com.build.core_restful.repository.RentalItemRepository;
 import com.build.core_restful.repository.AuthorRepository;
 import com.build.core_restful.repository.specification.BookSpecification;
 import com.build.core_restful.service.BookService;
-import com.build.core_restful.util.enums.BookStatusEnum;
+import com.build.core_restful.util.enums.EntityStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.BookMapper;
 import org.springframework.data.domain.Page;
@@ -30,24 +32,26 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
     private final AuthorRepository authorsRepository;
+    private final RentalItemRepository rentalItemRepository;
     private final BookMapper bookMapper;
 
     public BookServiceImpl(
-                            BookRepository bookRepository, 
-                            CategoryRepository categoryRepository, 
-                            AuthorRepository authorsRepository, 
-                            BookMapper bookMapper
+        BookRepository bookRepository, 
+        CategoryRepository categoryRepository, 
+        AuthorRepository authorsRepository, 
+        BookMapper bookMapper,
+        RentalItemRepository rentalItemRepository
     ) {
         this.bookRepository = bookRepository;
         this.categoryRepository = categoryRepository;
         this.authorsRepository = authorsRepository;
         this.bookMapper = bookMapper;
-
-    }
+        this.rentalItemRepository = rentalItemRepository;
+    };
 
     @Override
-    public PageResponse<Object> getAllBooksAvailable(Pageable pageable) {
-        Page<Book> page = bookRepository.findByStatus(BookStatusEnum.Available.toString() , pageable);
+    public PageResponse<Object> getAllBooksActive(Pageable pageable) {
+        Page<Book> page = bookRepository.findByStatus(EntityStatusEnum.Active.toString() , pageable);
         Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
 
         return PageResponse.builder()
@@ -60,8 +64,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResponse<Object> getAllBooksUnavailable(Pageable pageable) {
-        Page<Book> page = bookRepository.findByStatus(BookStatusEnum.Unavailable.toString() , pageable);
+    public PageResponse<Object> getAllBooksDelete(Pageable pageable) {
+        Page<Book> page = bookRepository.findByStatus(EntityStatusEnum.Delete.toString() , pageable);
         Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
 
         return PageResponse.builder()
@@ -75,7 +79,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponse getBookById(Long id) {
-        Book book = bookRepository.findByIdAndStatus(id, BookStatusEnum.Available.toString())
+        Book book = bookRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                 .orElseThrow(() -> new NewException("Book with id: " + id + " not found")); 
             
         book.setQuantityViewed(book.getQuantityViewed() + 1);
@@ -95,7 +99,7 @@ public class BookServiceImpl implements BookService {
         book.setCategory(category);
         book.setAuthor(author);
 
-        book.setStatus(BookStatusEnum.Available.toString());
+        book.setStatus(EntityStatusEnum.Active.toString());
         book.setTypeActive("CREATE");
 
         if (bookRequest.getImageList() != null) {
@@ -115,7 +119,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponse updateBook(Long id, BookRequest bookRequest) {
-        Book book = bookRepository.findByIdAndStatus(id, BookStatusEnum.Available.toString())
+        Book book = bookRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                 .orElseThrow(() -> new NewException("Book with id: " + id + " not found"));
 
         bookMapper.updateBook(book, bookRequest);
@@ -149,10 +153,10 @@ public class BookServiceImpl implements BookService {
     public boolean softDeleteBooks(List<Long> booksId) {
         try {
             for(Long id : booksId){
-                Book book = bookRepository.findByIdAndStatus(id, BookStatusEnum.Available.toString())
+                Book book = bookRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                     .orElseThrow(() -> new NewException("Book with id: " + id + " not found"));
                     
-                book.setStatus(BookStatusEnum.Unavailable.toString());
+                book.setStatus(EntityStatusEnum.Delete.toString());
 
                 book.setTypeActive("DELETE");
 
@@ -168,10 +172,10 @@ public class BookServiceImpl implements BookService {
     public boolean restoreBooks(List<Long> booksId) {
         try {
             for(Long id : booksId){
-                Book book = bookRepository.findByIdAndStatus(id, BookStatusEnum.Unavailable.toString())
+                Book book = bookRepository.findByIdAndStatus(id, EntityStatusEnum.Delete.toString())
                     .orElseThrow(() -> new NewException("Book with id: " + id + " not found"));
                     
-                book.setStatus(BookStatusEnum.Available.toString());
+                book.setStatus(EntityStatusEnum.Active.toString());
 
                 book.setTypeActive("RESTORE");
 
@@ -181,6 +185,15 @@ public class BookServiceImpl implements BookService {
         } catch (Exception e) {
             throw new NewException("Error restoring books: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void deleteBook(Long id){
+        List<RentalItem> rentalItem = rentalItemRepository.findAllByBookId(id);
+        rentalItem.forEach(item -> item.setBook(null));
+        rentalItemRepository.saveAll(rentalItem);
+
+        bookRepository.deleteById(id);
     }
 
     @Override

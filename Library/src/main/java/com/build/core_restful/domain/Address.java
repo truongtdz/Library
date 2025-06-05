@@ -25,6 +25,8 @@ public class Address {
     private String street;
     private String isDefault;
 
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

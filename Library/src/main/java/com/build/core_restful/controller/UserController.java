@@ -8,12 +8,15 @@ import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.service.BookService;
 import com.build.core_restful.service.UserService;
 import com.build.core_restful.util.annotation.AddMessage;
+import com.build.core_restful.util.enums.EntityStatusEnum;
 import com.build.core_restful.util.enums.GenderEnum;
-import com.build.core_restful.util.enums.UserStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+
+import javax.swing.text.html.parser.Entity;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,13 +44,13 @@ public class UserController {
         @RequestParam(required = false) String keyword,
         @RequestParam(required = false) GenderEnum gender,
         @RequestParam(required = false) Long roleId,
-        @RequestParam(defaultValue = "Active") UserStatusEnum userStatus
+        @RequestParam(defaultValue = "Active") EntityStatusEnum userStatus
     ) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return ResponseEntity.ok(userService.getAllUsers(
-            keyword, gender, roleId, userStatus, pageable
+            keyword, gender, roleId, userStatus.toString(), pageable
         ));
     }
 

@@ -10,7 +10,7 @@ import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.CartRepository;
 import com.build.core_restful.repository.UserRepository;
 import com.build.core_restful.service.CartService;
-import com.build.core_restful.util.enums.UserStatusEnum;
+import com.build.core_restful.util.enums.EntityStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.BookMapper;
 
@@ -65,7 +65,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public boolean updateCartByUser(CartRequest cartRequest) {
-        User user = userRepository.findByIdAndStatus(cartRequest.getUserId(), UserStatusEnum.Active.toString())
+        User user = userRepository.findByIdAndStatus(cartRequest.getUserId(), EntityStatusEnum.Active.toString())
                                 .orElseThrow(() -> new NewException("User with id: " + cartRequest.getUserId() + " not found"));
 
         List<Cart> newCarts = new ArrayList<>();

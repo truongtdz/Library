@@ -7,7 +7,6 @@ import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
 import com.build.core_restful.util.enums.GenderEnum;
-import com.build.core_restful.util.enums.UserStatusEnum;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ public interface UserService {
         String keyword,
         GenderEnum gender,
         Long roleId,
-        UserStatusEnum userStatus,
+        String userStatus,
         Pageable pageable        
     );
 
@@ -38,10 +37,16 @@ public interface UserService {
 
     UserResponse updateRoleUser(UpdateRoleUserRequest updateRoleUserRequest);
 
+    boolean updatePasswordUser(UpdatePasswordUserRequest userRequest);
+    
     Long getQuantityUser();
 
     boolean banUser(Long id);
 
-    boolean updatePasswordUser(UpdatePasswordUserRequest userRequest);
+    boolean restoreUser(Long id);
+
+    void deleteUser(Long id);
+
+    
 
 }

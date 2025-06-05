@@ -1,19 +1,26 @@
 package com.build.core_restful.service.impl;
 
+import com.build.core_restful.domain.RentalOrder;
+import com.build.core_restful.domain.RentedOrder;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.UpdatePasswordUserRequest;
 import com.build.core_restful.domain.request.UpdateRoleUserRequest;
 import com.build.core_restful.domain.request.UserRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.UserResponse;
+import com.build.core_restful.repository.RentalOrderRepository;
+import com.build.core_restful.repository.RentedOrderRepository;
 import com.build.core_restful.repository.RoleRepository;
 import com.build.core_restful.repository.UserRepository;
 import com.build.core_restful.repository.specification.UserSpecification;
 import com.build.core_restful.service.UserService;
+import com.build.core_restful.util.enums.EntityStatusEnum;
 import com.build.core_restful.util.enums.GenderEnum;
-import com.build.core_restful.util.enums.UserStatusEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.UserMapper;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,15 +32,25 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final RentalOrderRepository rentalOrderRepository;
+    private final RentedOrderRepository rentedOrderRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-                           UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+        UserRepository userRepository, 
+        RoleRepository roleRepository,
+        UserMapper userMapper, 
+        PasswordEncoder passwordEncoder,
+        RentalOrderRepository rentalOrderRepository,
+        RentedOrderRepository rentedOrderRepository
+    ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.rentalOrderRepository = rentalOrderRepository;
+        this.rentedOrderRepository = rentedOrderRepository;
     }
 
     @Override
@@ -65,7 +82,7 @@ public class UserServiceImpl implements UserService {
         String keyword,
         GenderEnum gender,
         Long roleId,
-        UserStatusEnum userStatus,
+        String userStatus,
         Pageable pageable   
     ){
         Specification<User> spec = UserSpecification.filterUsers(keyword, gender, roleId, userStatus);
@@ -84,7 +101,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         return userMapper.toUserResponse(
-            userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString())
+            userRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                         .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"))
         );
     }
@@ -98,7 +115,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toUser(newUser);
 
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        user.setStatus(UserStatusEnum.Active.toString());
+        user.setStatus(EntityStatusEnum.Active.toString());
         user.setRole(roleRepository.findByName("USER"));
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -106,7 +123,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUser(Long id, UserRequest updateUser) {
-        User currentUser = userRepository.findByIdAndStatus(id, UserStatusEnum.Active.toString())
+        User currentUser = userRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                         .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
 
         userMapper.updateUser(currentUser, updateUser);
@@ -127,30 +144,9 @@ public class UserServiceImpl implements UserService {
 
         return userMapper.toUserResponse(userRepository.save(currentUser));
     }
-
-    @Override
-    public Long getQuantityUser(){
-        return userRepository.count();
-    }
-
-    @Override
-    public boolean banUser(Long id) {
-        User currentUser = userRepository.findById(id)
-                .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
-
-        currentUser.setStatus(UserStatusEnum.Banned.toString());
-
-        try{
-            userRepository.save(currentUser);
-            return true;
-        } catch (Exception e){
-            return false;
-        }
-    }
-
     @Override
     public boolean updatePasswordUser(UpdatePasswordUserRequest userRequest) {
-        User currentUser = userRepository.findByIdAndStatus(userRequest.getUserId(), UserStatusEnum.Active.toString())
+        User currentUser = userRepository.findByIdAndStatus(userRequest.getUserId(), EntityStatusEnum.Active.toString())
                         .orElseThrow(() -> new NewException("User have id: " + userRequest.getUserId() + " not exist!"));
 
         if(!passwordEncoder.matches(userRequest.getCurrentPassword(), currentUser.getPassword())){
@@ -162,4 +158,53 @@ public class UserServiceImpl implements UserService {
         userRepository.save(currentUser);
         return true;
     }
+
+    @Override
+    public Long getQuantityUser(){
+        return Long.valueOf(userRepository.findByStatus(EntityStatusEnum.Active.toString()).size());
+    }
+
+    @Override
+    public boolean banUser(Long id) {
+        User currentUser = userRepository.findById(id)
+                .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
+
+        currentUser.setStatus(EntityStatusEnum.Delete.toString());
+
+        try{
+            userRepository.save(currentUser);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
+    public boolean restoreUser(Long id){
+        User currentUser = userRepository.findById(id)
+                .orElseThrow(() -> new NewException("User have id: " + id + " not exist!"));
+
+        currentUser.setStatus(EntityStatusEnum.Active.toString());
+
+        try{
+            userRepository.save(currentUser);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
+    public void deleteUser(Long id){
+        List<RentalOrder> rentalOrder = rentalOrderRepository.findAllByUserId(id);
+        rentalOrder.forEach(item -> item.setUser(null));
+        rentalOrderRepository.saveAll(rentalOrder);
+
+        List<RentedOrder> rentedOrder = rentedOrderRepository.findAllByUserId(id);
+        rentedOrder.forEach(item -> item.setUser(null));
+        rentedOrderRepository.saveAll(rentedOrder);
+
+        userRepository.deleteById(id);
+    }
+
 }

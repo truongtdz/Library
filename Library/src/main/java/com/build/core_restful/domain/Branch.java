@@ -30,6 +30,8 @@ public class Branch {
     private Instant openTime;
     private Instant closeTime;  
 
+    private String status;
+
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
     List<RentalOrder> rentalOrders;

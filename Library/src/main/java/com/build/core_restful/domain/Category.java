@@ -28,6 +28,8 @@ public class Category {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    private String status;
+
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @JsonIgnore
     List<Book> products;
