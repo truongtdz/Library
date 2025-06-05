@@ -8,15 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.Branch;
-import com.build.core_restful.domain.RentalItem;
 import com.build.core_restful.domain.RentalOrder;
 import com.build.core_restful.domain.RentedOrder;
 import com.build.core_restful.domain.request.BranchRequest;
 import com.build.core_restful.domain.response.BranchResponse;
 import com.build.core_restful.domain.response.PageResponse;
-import com.build.core_restful.repository.BookRepository;
 import com.build.core_restful.repository.BranchRepository;
 import com.build.core_restful.repository.RentalOrderRepository;
 import com.build.core_restful.repository.RentedOrderRepository;
