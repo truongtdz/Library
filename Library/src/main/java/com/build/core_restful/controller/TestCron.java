@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.build.core_restful.service.RentalItemService;
-import com.build.core_restful.service.RentalOrderService;
 import com.build.core_restful.service.SubscribeService;
 import com.build.core_restful.service.TrainService;
 import com.build.core_restful.domain.response.BookRecommendResponse;

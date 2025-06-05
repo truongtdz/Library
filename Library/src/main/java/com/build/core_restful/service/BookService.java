@@ -1,6 +1,5 @@
 package com.build.core_restful.service;
 
-import com.build.core_restful.domain.Book;
 import com.build.core_restful.domain.request.BookRequest;
 import com.build.core_restful.domain.response.BookResponse;
 import com.build.core_restful.domain.response.PageResponse;
