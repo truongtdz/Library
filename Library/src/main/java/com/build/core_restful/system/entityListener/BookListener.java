@@ -35,6 +35,7 @@ public class BookListener {
 
             Notification notification = Notification.builder()
                     .createByUser(user)
+                    .active(book.getTypeActive())
                     .description("Sách mới đã được thêm: " + book.getName() + 
                                " (ID: " + book.getId() + ") bởi " + currentUser)
                     .build();
@@ -64,6 +65,7 @@ public class BookListener {
             }
             
             Notification notification = Notification.builder()
+                    .active(book.getTypeActive())
                     .description(description)
                     .build();
             

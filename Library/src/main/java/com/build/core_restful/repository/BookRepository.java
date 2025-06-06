@@ -18,8 +18,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Optional<Book> findByIdAndStatus(Long id, String status);
 
-    Page<Book> findByStatus(String status, Pageable pageable);
-
     List<Book> findTop10ByOrderByQuantityRentedDesc();
 
     List<Book> findTop10ByOrderByQuantityViewedDesc();

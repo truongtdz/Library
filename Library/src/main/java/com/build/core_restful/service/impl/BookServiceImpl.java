@@ -50,34 +50,6 @@ public class BookServiceImpl implements BookService {
     };
 
     @Override
-    public PageResponse<Object> getAllBooksActive(Pageable pageable) {
-        Page<Book> page = bookRepository.findByStatus(EntityStatusEnum.Active.toString() , pageable);
-        Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
-
-        return PageResponse.builder()
-                .page(pageResponse.getNumber())
-                .size(pageResponse.getSize())
-                .totalElements(pageResponse.getTotalElements())
-                .totalPages(pageResponse.getTotalPages())
-                .content(pageResponse.getContent())
-                .build();
-    }
-
-    @Override
-    public PageResponse<Object> getAllBooksDelete(Pageable pageable) {
-        Page<Book> page = bookRepository.findByStatus(EntityStatusEnum.Delete.toString() , pageable);
-        Page<BookResponse> pageResponse = page.map(bookMapper::toBookResponse);
-
-        return PageResponse.builder()
-                .page(pageResponse.getNumber())
-                .size(pageResponse.getSize())
-                .totalElements(pageResponse.getTotalElements())
-                .totalPages(pageResponse.getTotalPages())
-                .content(pageResponse.getContent())
-                .build();
-    }
-
-    @Override
     public BookResponse getBookById(Long id) {
         Book book = bookRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                 .orElseThrow(() -> new NewException("Book with id: " + id + " not found")); 

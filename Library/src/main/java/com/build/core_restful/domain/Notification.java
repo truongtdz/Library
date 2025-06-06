@@ -24,6 +24,8 @@ public class Notification {
     @JoinColumn(name = "create_by_user_id")
     private User createByUser;
 
+    private String active;
+
     private Instant createAt;
     private Instant updateAt;
 

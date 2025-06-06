@@ -47,6 +47,10 @@ public class User {
     @JsonIgnore
     private List<Address> addresses;
 
+    @OneToMany(mappedBy = "createByUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Notification> notifications;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<RentalOrder> rentalOrders;
