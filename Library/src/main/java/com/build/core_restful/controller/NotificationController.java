@@ -24,7 +24,7 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     @AddMessage("Get all notifications")
     public ResponseEntity<PageResponse<Object>> getAllAddress(
         @RequestParam int page, 

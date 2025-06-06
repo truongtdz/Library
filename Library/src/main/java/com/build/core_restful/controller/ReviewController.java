@@ -28,7 +28,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/by/user/{id}")
     @AddMessage("Get reviews by user")
     public ResponseEntity<PageResponse<Object>> getReviewByUser(
         @PathVariable Long id, 
@@ -39,7 +39,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewByUserId(id, pageable));
     }
 
-    @GetMapping("/book/{id}")
+    @GetMapping("/by/book/{id}")
     @AddMessage("Get reviews by id")
     public ResponseEntity<Object> getReviewByBook(
         @PathVariable Long id, 
@@ -50,7 +50,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewByParentId(id, pageable));
     }
 
-    @GetMapping("/parent/{id}")
+    @GetMapping("/by/parent/{id}")
     @AddMessage("Get reviews by id")
     public ResponseEntity<Object> getReviewByParent(
         @PathVariable Long id, 
@@ -61,13 +61,13 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewByParentId(id, pageable));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @AddMessage("Create review")
     public ResponseEntity<Object> createAddress(@RequestBody ReviewRequest request) {
         return ResponseEntity.ok(reviewService.createReview(request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @AddMessage("Delete review")
     public ResponseEntity<Object> deleteAddress(@PathVariable Long id) {
         return ResponseEntity.ok(reviewService.deleteReview(id));

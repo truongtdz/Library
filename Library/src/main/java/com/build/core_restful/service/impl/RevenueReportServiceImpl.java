@@ -70,11 +70,11 @@ public class RevenueReportServiceImpl implements RevenueReportService {
     }
 
     @Override
-    public TotalFieldInRevenueResponse getTotalRental(Instant startDate, Instant endDate) {
+    public TotalFieldInRevenueResponse getTotalRentalPrice(Instant startDate, Instant endDate) {
         return TotalFieldInRevenueResponse.builder()
             .startDate(startDate)
             .endDate(endDate)
-            .totalValue(revenueReportRepository.sumTotalRentalByDateRange(startDate, endDate))
+            .totalValue(revenueReportRepository.sumTotalRentalPriceByDateRange(startDate, endDate))
             .build();
             
     }

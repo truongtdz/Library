@@ -22,7 +22,7 @@ public interface RevenueReportService {
 
     TotalFieldInRevenueResponse getTotalLateFee(Instant startDate, Instant endDate);
 
-    TotalFieldInRevenueResponse getTotalRental(Instant startDate, Instant endDate);
+    TotalFieldInRevenueResponse getTotalRentalPrice(Instant startDate, Instant endDate);
 
     TotalFieldInRevenueResponse getTotalDeposit(Instant startDate, Instant endDate);
 

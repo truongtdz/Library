@@ -23,7 +23,7 @@ public class AddressController {
         this.addressService = addressService;
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     @AddMessage("Get all addresses")
     public ResponseEntity<PageResponse<Object>> getAllAddress(
         @RequestParam int page, 
@@ -44,38 +44,38 @@ public class AddressController {
         ));
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/by/user/{id}")
     @AddMessage("Get addresses by user")
     public ResponseEntity<PageResponse<Object>> getAllByUser(@PathVariable Long id, @RequestParam int page, @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(addressService.getAddressByUser(id, pageable));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/by/{id}")
     @AddMessage("Get addresses by id")
     public ResponseEntity<Object> getAddressById(@PathVariable Long id) {
         return ResponseEntity.ok(addressService.getAddressById(id));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @AddMessage("Create address")
     public ResponseEntity<Object> createAddress(@Valid @RequestBody AddressRequest request) {
         return ResponseEntity.ok(addressService.createAddress(request));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update{id}")
     @AddMessage("Update address")
     public ResponseEntity<Object> updateAddress(@PathVariable Long id, @Valid @RequestBody AddressRequest request) {
         return ResponseEntity.ok(addressService.updateAddress(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @AddMessage("Delete address")
     public ResponseEntity<Object> deleteAddress(@PathVariable Long id) {
         return ResponseEntity.ok(addressService.deleteAddress(id));
     }
 
-    @PutMapping
+    @PutMapping("/update/default")
     @AddMessage("Set address default")
     public ResponseEntity<AddressResponse> setAddressDefault(@RequestBody SetAddressDefault addressDefault){
         return ResponseEntity.ok(addressService.setAddressDefault(addressDefault));

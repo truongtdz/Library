@@ -23,13 +23,13 @@ public class SubscribeController {
         this.subscribeService = subscribeService;
     };
 
-    @PostMapping()
+    @PostMapping("/create")
     public ResponseEntity<Boolean> subscribe(@RequestBody SubscribeRequest request) {
         return ResponseEntity.ok(subscribeService.createSubscribe(request));
     }
     
-    @DeleteMapping()
-    public ResponseEntity<Boolean> cancelSubscribe(@RequestBody SubscribeRequest request) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Boolean> deleteSubscribe(@RequestBody SubscribeRequest request) {
         return ResponseEntity.ok(subscribeService.deleteSubscribe(request.getEmail()));
     }
 }

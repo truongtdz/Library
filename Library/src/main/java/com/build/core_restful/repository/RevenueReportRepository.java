@@ -29,7 +29,7 @@ public interface RevenueReportRepository extends JpaRepository<RevenueReport, Lo
     Long sumTotalLateFeeByDateRange(@Param("startDate") Instant startDate, @Param("endDate") Instant endDate);
 
     @Query("SELECT COALESCE(SUM(r.totalRentalPrice), 0) FROM RevenueReport r WHERE r.date >= :startDate AND r.date <= :endDate")
-    Long sumTotalRentalByDateRange(@Param("startDate") Instant startDate, @Param("endDate") Instant endDate);
+    Long sumTotalRentalPriceByDateRange(@Param("startDate") Instant startDate, @Param("endDate") Instant endDate);
 
     @Query("SELECT COALESCE(SUM(r.totalDeposit), 0) FROM RevenueReport r WHERE r.date >= :startDate AND r.date <= :endDate")
     Long sumTotalDepositByDateRange(@Param("startDate") Instant startDate, @Param("endDate") Instant endDate);

@@ -19,7 +19,7 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/by/user/{id}")
     @AddMessage("Get book at cart by user")
     public ResponseEntity<PageResponse<Object>> getCartByUser(
             @PathVariable Long id,
@@ -30,7 +30,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.getByUser(id, pageable));
     }
 
-    @PostMapping()
+    @PostMapping("/update")
     @AddMessage("Change book to cart")
     public ResponseEntity<Boolean> getCartByUser(
             @Valid @RequestBody CartRequest cartRequest) {

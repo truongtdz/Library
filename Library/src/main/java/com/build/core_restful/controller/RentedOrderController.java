@@ -25,24 +25,7 @@ public class RentedOrderController {
         this.rentedOrderService = rentedOrderService;
     }
 
-    @PostMapping()
-    public ResponseEntity<Object> createOrder(@RequestBody RentedOrderRequest request){
-        return ResponseEntity.ok(rentedOrderService.create(request));
-    }
-
-    @PutMapping("/{id}")
-    @AddMessage("Update status order")
-    public ResponseEntity<RentedOrderResponse> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusEnum newStatus) {
-        return ResponseEntity.ok(rentedOrderService.update(id, newStatus));
-    }
-
-    @GetMapping("/{id}")
-    @AddMessage("Get order by id")
-    public ResponseEntity<RentedOrderResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(rentedOrderService.getById(id));
-    }
-
-    @GetMapping
+    @GetMapping("/all")
     @AddMessage("Get all orders")
     public ResponseEntity<PageResponse<Object>> getAll(
         @RequestParam int page, 
@@ -62,4 +45,20 @@ public class RentedOrderController {
         ));
     }
 
+    @GetMapping("/by/{id}")
+    @AddMessage("Get order by id")
+    public ResponseEntity<RentedOrderResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(rentedOrderService.getById(id));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Object> createOrder(@RequestBody RentedOrderRequest request){
+        return ResponseEntity.ok(rentedOrderService.create(request));
+    }
+
+    @PutMapping("/update/{id}")
+    @AddMessage("Update status order")
+    public ResponseEntity<RentedOrderResponse> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusEnum newStatus) {
+        return ResponseEntity.ok(rentedOrderService.update(id, newStatus));
+    }
 }

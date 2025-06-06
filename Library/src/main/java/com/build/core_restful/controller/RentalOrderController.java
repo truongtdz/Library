@@ -27,34 +27,7 @@ public class RentalOrderController {
         this.rentalOrderService = rentalOrderService;
     }
 
-    @PostMapping()
-    public ResponseEntity<Object> createOrder(@RequestBody RentalOrderRequest request){
-        return ResponseEntity.ok(rentalOrderService.create(request));
-    }
-
-    @PutMapping("/confirm/{id}")
-    public ResponseEntity<RentalOrderResponse> confirmRentalOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(rentalOrderService.update(id, OrderStatusEnum.Confirmed));
-    }   
-
-    @PutMapping("/cancel/{id}")
-    public ResponseEntity<RentalOrderResponse> cancelRentalOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(rentalOrderService.update(id, OrderStatusEnum.Cancelled));
-    }
-
-    @PutMapping("/{id}")
-    @AddMessage("Update status order")
-    public ResponseEntity<RentalOrderResponse> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusEnum newStatus) {
-        return ResponseEntity.ok(rentalOrderService.update(id, newStatus));
-    }
-
-    @GetMapping("/{id}")
-    @AddMessage("Get order by id")
-    public ResponseEntity<RentalOrderResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(rentalOrderService.getById(id));
-    }
-
-    @GetMapping
+    @GetMapping("/all")
     @AddMessage("Get all orders")
     public ResponseEntity<PageResponse<Object>> getAll(
         @RequestParam int page, 
@@ -75,22 +48,49 @@ public class RentalOrderController {
             fromTotalPrice, toTotalPrice, fromDepositPrice, toDepositPrice, userId, orderStatus, pageable
         ));
     }
+    
+    @GetMapping("/by/{id}")
+    @AddMessage("Get order by id")
+    public ResponseEntity<RentalOrderResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(rentalOrderService.getById(id));
+    }
 
-    @GetMapping("/quantity")
+    @PostMapping("/create")
+    public ResponseEntity<Object> createOrder(@RequestBody RentalOrderRequest request){
+        return ResponseEntity.ok(rentalOrderService.create(request));
+    }
+
+    @PutMapping("/update/confirm/{id}")
+    public ResponseEntity<RentalOrderResponse> confirmRentalOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(rentalOrderService.update(id, OrderStatusEnum.Confirmed));
+    }   
+
+    @PutMapping("/update/cancel/{id}")
+    public ResponseEntity<RentalOrderResponse> cancelRentalOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(rentalOrderService.update(id, OrderStatusEnum.Cancelled));
+    }
+
+    @PutMapping("/update/status/{id}")
+    @AddMessage("Update status order")
+    public ResponseEntity<RentalOrderResponse> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusEnum newStatus) {
+        return ResponseEntity.ok(rentalOrderService.update(id, newStatus));
+    }
+
+    @GetMapping("/total/quantity")
     public ResponseEntity<Long> getQuantityByOrderStatus(
         @RequestParam(required = false) Instant date
     ){
         return ResponseEntity.ok(rentalOrderService.getQuantityByOrderStatus(date));
     }
 
-    @GetMapping("/revenue")
+    @GetMapping("/total/revenue")
     public ResponseEntity<Long> getRevenueRentalOrder(
         @RequestParam(required = false) Instant date
     ){
         return ResponseEntity.ok(rentalOrderService.getRevenueRentalOrder(date));
     }
 
-    @GetMapping("/deposit")
+    @GetMapping("/total/deposit")
     public ResponseEntity<Long> getTotalDepositOrder(
         @RequestParam(required = false) Instant date
     ){

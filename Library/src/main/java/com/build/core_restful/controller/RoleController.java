@@ -19,7 +19,7 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @AddMessage("Get all roles")
     public ResponseEntity<PageResponse<Object>> getAllRoles(@RequestParam int page, @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -29,25 +29,25 @@ public class RoleController {
         return ResponseEntity.ok(roles);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/by/{id}")
     @AddMessage("Get role by id")
     public ResponseEntity<Object> getRoleById(@PathVariable Long id) {
         return ResponseEntity.ok(roleService.getRoleById(id));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @AddMessage("Create new role")
     public ResponseEntity<Object> createRole(@Valid @RequestBody RoleRequest newRole) {
         return ResponseEntity.ok(roleService.createRole(newRole));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @AddMessage("Update role")
     public ResponseEntity<Object> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequest updateRole) {
         return ResponseEntity.ok(roleService.updateRole(id, updateRole));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @AddMessage("Delete role")
     public ResponseEntity<Boolean> deleteRole(@PathVariable Long id) {
         return ResponseEntity.ok(roleService.deleteRole(id));

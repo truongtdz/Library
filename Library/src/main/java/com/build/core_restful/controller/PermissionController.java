@@ -19,32 +19,32 @@ public class PermissionController {
         this.permissionService = permissionService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @AddMessage("Get all permissions")
     public ResponseEntity<PageResponse<Object>> getAllPermissions(@RequestParam int page, @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(permissionService.getAllPermissions(pageable));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/by/{id}")
     @AddMessage("Get permission by id")
     public ResponseEntity<Object> getPermissionById(@PathVariable Long id) {
         return ResponseEntity.ok(permissionService.getPermissionById(id));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @AddMessage("Create new permission")
     public ResponseEntity<Object> createPermission(@Valid @RequestBody PermissionRequest request) {
         return ResponseEntity.ok(permissionService.createPermission(request));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @AddMessage("Update permission")
     public ResponseEntity<Object> updatePermission(@PathVariable Long id, @Valid @RequestBody PermissionRequest request) {
         return ResponseEntity.ok(permissionService.updatePermission(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @AddMessage("Delete permission")
     public ResponseEntity<Boolean> deletePermission(@PathVariable Long id) {
         return ResponseEntity.ok(permissionService.deletePermission(id));
