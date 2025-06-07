@@ -14,7 +14,7 @@ public class UserSpecification {
             String keyword,
             GenderEnum gender,
             Long roleId,
-            String userStatus
+            String status
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -30,8 +30,8 @@ public class UserSpecification {
                 predicates.add(cb.equal(root.get("gender"), gender.toString()));
             }
 
-            if (userStatus != null) {
-                predicates.add(cb.equal(root.get("status"), userStatus.toString()));
+            if (status != null) {
+                predicates.add(cb.equal(root.get("status"), status.toString()));
             }
 
             if (roleId != null) {

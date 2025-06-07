@@ -17,7 +17,7 @@ public class BookSpecification {
             String language,
             BigDecimal minPrice,
             BigDecimal maxPrice,
-            String bookStatus
+            String status
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -46,8 +46,8 @@ public class BookSpecification {
                 predicates.add(cb.lessThanOrEqualTo(root.get("rentalPrice"), maxPrice));
             }
 
-            if (bookStatus != null) {
-                predicates.add(cb.equal(root.get("bookStatus"), bookStatus.toString()));
+            if (status != null) {
+                predicates.add(cb.equal(root.get("status"), status.toString()));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
