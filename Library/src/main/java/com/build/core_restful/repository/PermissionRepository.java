@@ -10,6 +10,8 @@ import java.util.List;
 public interface PermissionRepository extends JpaRepository<Permission, Long> {
     boolean existsByDescription(String name);
 
+    List<Permission> findByApiPathEquals(String apiPath);
+
     List<Permission> findByModule(String module);
 
     List<Permission> findByModuleAndMethod(String module, String method);

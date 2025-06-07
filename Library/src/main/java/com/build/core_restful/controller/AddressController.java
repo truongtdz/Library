@@ -69,15 +69,17 @@ public class AddressController {
         return ResponseEntity.ok(addressService.updateAddress(id, request));
     }
 
+    @PutMapping("/update/default")
+    @AddMessage("Set address default")
+    public ResponseEntity<AddressResponse> setAddressDefault(@RequestBody SetAddressDefault addressDefault){
+        return ResponseEntity.ok(addressService.setAddressDefault(addressDefault));
+    }
+
     @DeleteMapping("/delete/{id}")
     @AddMessage("Delete address")
     public ResponseEntity<Object> deleteAddress(@PathVariable Long id) {
         return ResponseEntity.ok(addressService.deleteAddress(id));
     }
 
-    @PutMapping("/update/default")
-    @AddMessage("Set address default")
-    public ResponseEntity<AddressResponse> setAddressDefault(@RequestBody SetAddressDefault addressDefault){
-        return ResponseEntity.ok(addressService.setAddressDefault(addressDefault));
-    }
+    
 }
