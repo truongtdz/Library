@@ -40,7 +40,10 @@ public class FormatResponseUtil implements ResponseBodyAdvice {
        }
 
         String path = request.getURI().getPath();
-        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+        if (path.startsWith("/v3/api-docs") || 
+            path.startsWith("/swagger-ui") ||
+            path.startsWith("/api/v1/payment")
+        ) {
             return body;
         }
 
