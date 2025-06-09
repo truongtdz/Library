@@ -1,6 +1,5 @@
 package com.build.core_restful.domain.response;
 
-import com.build.core_restful.util.enums.GenderEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
@@ -13,10 +12,13 @@ import java.time.Instant;
 @NoArgsConstructor
 public class UserResponse {
     private Long id;
-    private String fullName;
     private String email;
-    private GenderEnum gender;
+    
+    private String fullName;
     private int age;
+    private String avatar;
+    private String gender;
+    private String status;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createAt;
