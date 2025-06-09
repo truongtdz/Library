@@ -1,7 +1,5 @@
 package com.build.core_restful.util.mapper;
 
-import java.util.List;
-
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

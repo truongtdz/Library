@@ -23,6 +23,12 @@ public interface UserMapper {
                     .roleName(user.getRole().getName())
                     .build());
         }
+        if (user.getRentalOrders() != null) {
+            response.totalRental(Long.valueOf(user.getRentalOrders().size()));
+        }
+        if (user.getRentedOrders() != null) {
+            response.totalRented(Long.valueOf(user.getRentedOrders().size()));
+        }
     }
 
     User toUser(UserRequest userRequest);

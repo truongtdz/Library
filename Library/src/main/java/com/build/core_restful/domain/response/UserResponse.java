@@ -20,12 +20,11 @@ public class UserResponse {
     private String gender;
     private String status;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
+    private Long totalRental;
+    private Long totalRented;
+
     private Instant createAt;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant updateAt;
-
     private String createBy;
     private String updateBy;
 
