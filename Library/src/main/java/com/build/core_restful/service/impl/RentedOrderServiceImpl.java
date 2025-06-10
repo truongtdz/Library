@@ -10,7 +10,6 @@ import com.build.core_restful.service.RentedOrderService;
 import com.build.core_restful.util.StringUtil;
 import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.EntityStatusEnum;
-import com.build.core_restful.util.enums.ItemStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
 import com.build.core_restful.util.enums.ShippingMethodEnum;
 import com.build.core_restful.util.exception.NewException;
@@ -72,7 +71,7 @@ public class RentedOrderServiceImpl implements RentedOrderService {
 
         processRentalItems(newRentedOrder, request);
 
-        newRentedOrder.setOrderStatus(OrderStatusEnum.Delivering.toString());
+        newRentedOrder.setOrderStatus(OrderStatusEnum.Delivered.toString());
 
         return rentedOrderMapper.toResponse(rentedOrderRepository.save(newRentedOrder));
     }
@@ -111,7 +110,7 @@ public class RentedOrderServiceImpl implements RentedOrderService {
 
         order.setShippingMethod(null);
 
-        order.setOrderStatus(OrderStatusEnum.Delivering.toString());
+        order.setOrderStatus(OrderStatusEnum.Delivered.toString());
     }
 
     private void processOnlineReturn(RentedOrder order, RentedOrderRequest request) {
@@ -127,7 +126,7 @@ public class RentedOrderServiceImpl implements RentedOrderService {
         
         order.setBranch(null);
         
-        order.setOrderStatus(OrderStatusEnum.Delivering.toString());
+        order.setOrderStatus(OrderStatusEnum.Delivered.toString());
     }
 
     private void processRentalItems(RentedOrder order, RentedOrderRequest request) {
@@ -139,28 +138,28 @@ public class RentedOrderServiceImpl implements RentedOrderService {
             RentalItem rentalItem = rentalItemRepository.findById(itemId)
                 .orElseThrow(() -> new NewException("Rental item with id: " + itemId + " not found"));
 
-            if (!ItemStatusEnum.Rented.toString().equals(rentalItem.getItemStatus())) {
-                throw new NewException("Item " + itemId + " is not in rented status");
+            if (!OrderStatusEnum.Renting.toString().equals(rentalItem.getStatus())) {
+                throw new NewException("Item " + itemId + " is not in renting status");
             }
 
             if (now.isAfter(rentalItem.getRentedDate())) {
                 Long daysLate = ChronoUnit.DAYS.between(rentalItem.getRentedDate(), now);
-                Long lateFeePerDay = rentalItem.getRentalPrice() / 2; // 50% rental price per day
+                Long lateFeePerDay = rentalItem.getLateFee();
                 totalLateFee += lateFeePerDay * daysLate * rentalItem.getQuantity();
             }
 
-            rentalItem.setItemStatus(ItemStatusEnum.Returned.toString());
+            rentalItem.setStatus(OrderStatusEnum.Processing.toString());
             rentalItem.setRentedOrder(order);
             
             Book book = rentalItem.getBook();
             book.setStock(book.getStock() + rentalItem.getQuantity());
-            book.setQuantityRented(book.getQuantityRented() - rentalItem.getQuantity());
+            book.setQuantityRented(book.getQuantityRented() + rentalItem.getQuantity());
             bookRepository.save(book);
             
             items.add(rentalItem);
         }
 
-        order.setLateFee(totalLateFee);
+        order.setTotalLateFee(totalLateFee);
         order.setItems(items);
     }
 

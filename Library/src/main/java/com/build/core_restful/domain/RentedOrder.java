@@ -20,7 +20,7 @@ public class RentedOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long lateFee;
+    private Long totalLateFee;
 
     private String city;
     private String district;

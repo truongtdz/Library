@@ -11,7 +11,6 @@ import com.build.core_restful.repository.specification.RentalOrderSpecification;
 import com.build.core_restful.service.RentalOrderService;
 import com.build.core_restful.util.StringUtil;
 import com.build.core_restful.util.enums.DeliveryMethodEnum;
-import com.build.core_restful.util.enums.ItemStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
 import com.build.core_restful.util.enums.ShippingMethodEnum;
 import com.build.core_restful.util.exception.NewException;
@@ -67,9 +66,8 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             processOnlineDelivery(order, request);
         }
 
-        processRentalItems(order, request);
-
         order.setOrderStatus(OrderStatusEnum.Processing.toString());
+        processRentalItems(order, request);
         
         return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));
     }
@@ -145,7 +143,9 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
             RentalItem rentalItem = RentalItem.builder()
                     .quantity(item.getQuantity())
+                    .userId(order.getUser().getId())
                     .bookName(book.getName())
+                    .lateFee(book.getLateFee())
                     .imageUrl(
                         book.getImages().stream()
                             .filter(image -> "true".equals(image.getIsDefault()))
@@ -154,12 +154,12 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                             .orElse(null)
                     )
                     .rentalDate(now)
-                    .rentedDate(now.plus(item.getRentedDay(), ChronoUnit.DAYS))
+                    .rentedDate(order.getReceiveDay().plus(item.getRentedDay(), ChronoUnit.DAYS))
                     .rentalPrice(book.getRentalPrice())
                     .depositPrice(book.getDepositPrice())
                     .totalRental(itemRental)
                     .totalDeposit(itemDeposit)
-                    .itemStatus(ItemStatusEnum.Rented.toString())
+                    .status(order.getOrderStatus())
                     .rentalOrder(order)
                     .book(book)
                     .build();

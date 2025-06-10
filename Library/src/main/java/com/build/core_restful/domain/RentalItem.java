@@ -22,6 +22,9 @@ public class RentalItem {
     private Instant rentalDate;
     private Instant rentedDate;
 
+    private Long lateFee;
+
+    private Long userId;
     private String bookName;
     private String imageUrl;
     private Long rentalPrice;
@@ -30,7 +33,7 @@ public class RentalItem {
     private Long totalRental;
     private Long totalDeposit;
 
-    private String itemStatus;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "rental_order_id")

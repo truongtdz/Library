@@ -28,6 +28,8 @@ public class Book {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    private Long lateFee;
+
     private String publisher;
     private Instant publishDate;
     private Long pages;
