@@ -29,8 +29,6 @@ public class BookResponse {
 
     private CategoryRes category;
     private AuthorRes author;
-
-    private List<ReviewRes> reviews;
     private List<ImageRes> imageList;
 
     private Instant createAt;
@@ -66,15 +64,5 @@ public class BookResponse {
     public static class CategoryRes{
         private Long id;
         private String name;
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class ReviewRes{
-        private Long id;
-        private Integer rate;
     }
 }

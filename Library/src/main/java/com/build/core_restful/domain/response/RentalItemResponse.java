@@ -23,7 +23,7 @@ public class RentalItemResponse {
     private Long totalRental;
     private Long totalDeposit;
 
-    private String itemStatus;
+    private String status;
 
     private Instant createAt;
     private Instant updateAt;

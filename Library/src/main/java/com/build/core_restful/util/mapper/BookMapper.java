@@ -44,7 +44,7 @@ public interface BookMapper {
 
         if (book.getReviews() != null) {
             List<Review> parentReviews = book.getReviews().stream()
-                .filter(review -> review.getParentReview().getId() == 0L)
+                .filter(review -> review.getParentReview() == null)
                 .toList();
 
             double averageRate = 0.0;
@@ -54,17 +54,6 @@ public interface BookMapper {
                     .average()
                     .orElse(5.0);
             }
-
-            List<BookResponse.ReviewRes> reviewRes = new ArrayList<>();
-
-            for(Review review : parentReviews){
-                BookResponse.ReviewRes item = BookResponse.ReviewRes.builder()
-                                                    .id(review.getId())
-                                                    .rate(review.getRate())
-                                                    .build();
-                reviewRes.add(item);
-            }
-            response.reviews(reviewRes);
             response.averageRate(averageRate);
         }
     }
