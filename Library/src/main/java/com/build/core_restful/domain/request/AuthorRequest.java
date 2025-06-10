@@ -9,12 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AuthorRequest {
-    private Long id;
-
     @NotBlank(message = "Name không được để trống")
     private String name;
 
     private String avatar;
-
     private String description;
 }

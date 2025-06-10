@@ -61,10 +61,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         if (categoryRepository.existsByNameAndStatus(categoryRequest.getName(), EntityStatusEnum.Active.toString())) {
-            throw new NewException("Author with name " + categoryRequest.getName() + " already exists!");
+            throw new NewException("Category with name " + categoryRequest.getName() + " already exists!");
         }
         if (categoryRepository.existsByNameAndStatus(categoryRequest.getName(), EntityStatusEnum.Delete.toString())) {
-            throw new NewException("Author with name " + categoryRequest.getName() + " already exists at bin!");
+            throw new NewException("Category with name " + categoryRequest.getName() + " already exists at bin!");
         }
         Category category = categoryMapper.toCategory(categoryRequest);
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
