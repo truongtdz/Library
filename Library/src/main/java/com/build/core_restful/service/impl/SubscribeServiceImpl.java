@@ -32,6 +32,11 @@ public class SubscribeServiceImpl implements SubscribeService{
     };
 
     @Override
+    public boolean existsByEmail(String email) {
+        return subscribeRepository.existsByEmail(email);
+    }
+
+    @Override
     public boolean createSubscribe(SubscribeRequest request) {
         try {
             subscribeRepository.save(
@@ -70,5 +75,7 @@ public class SubscribeServiceImpl implements SubscribeService{
             emailUtil.sendEmailRecommendBook(subscribe.getEmail(), subscribe.getFullName(), books);
         }
     }
+
+
     
 }

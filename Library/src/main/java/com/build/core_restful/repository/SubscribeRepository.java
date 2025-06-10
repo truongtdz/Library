@@ -6,4 +6,6 @@ import com.build.core_restful.domain.Subscribe;
 
 public interface SubscribeRepository extends JpaRepository<Subscribe, Long>{
     void deleteByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

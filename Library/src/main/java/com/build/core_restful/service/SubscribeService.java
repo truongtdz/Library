@@ -6,6 +6,8 @@ import com.build.core_restful.domain.request.SubscribeRequest;
 
 @Service
 public interface SubscribeService {
+    boolean existsByEmail(String email);
+
     boolean createSubscribe(SubscribeRequest request);
 
     boolean deleteSubscribe(String email);

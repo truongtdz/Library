@@ -10,6 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -22,6 +26,12 @@ public class SubscribeController {
     ){
         this.subscribeService = subscribeService;
     };
+
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> getStatusSubscribe(@RequestParam String email) {
+        return ResponseEntity.ok(subscribeService.existsByEmail(email));
+    }
+    
 
     @PostMapping("/create")
     public ResponseEntity<Boolean> subscribe(@RequestBody SubscribeRequest request) {
