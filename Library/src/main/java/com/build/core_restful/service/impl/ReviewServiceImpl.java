@@ -85,7 +85,7 @@ public class ReviewServiceImpl implements ReviewService{
             .image(request.getImage())
             .rate(request.getRate())
             .comment(request.getComment())
-            .parentReview(request.getParentId() == 0L ? null : reviewRepository.findById(request.getParentId())
+            .parentReview(request.getParentId() == null ? null : reviewRepository.findById(request.getParentId())
                 .orElseThrow(() -> new NewException("Review with id = " + request.getParentId() + " not found"))
             )
             .book(bookRepository.findById(request.getBookId())
