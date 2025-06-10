@@ -1,5 +1,7 @@
 package com.build.core_restful.system.entityListener;
 
+import java.time.Instant;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -10,8 +12,8 @@ import com.build.core_restful.service.NotificationService;
 import com.build.core_restful.service.UserService;
 import com.build.core_restful.system.JwtUtil;
 
-import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostUpdate;
+import jakarta.persistence.PrePersist;
 
 @Component
 public class BookListener {
@@ -26,21 +28,24 @@ public class BookListener {
         this.userService = userService;
     };
 
-    @PostPersist
+    @PrePersist
     public void afterCreate(Book book) {
         try {
-            String currentUser = JwtUtil.getCurrentUserLogin().orElse("System");
+            String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
             
-            User user = userService.getUserByEmail(currentUser);
+            User user = userService.getUserByEmail(currentUsername);
 
             Notification notification = Notification.builder()
                     .createByUser(user)
                     .active(book.getTypeActive())
                     .description("Sách mới đã được thêm: " + book.getName() + 
-                               " (ID: " + book.getId() + ") bởi " + currentUser)
+                               " bởi " + currentUsername)
                     .build();
             
             notificationService.createNotification(notification);
+
+            book.setCreateBy(currentUsername);
+            book.setCreateAt(Instant.now());
         } catch (Exception e) {
             System.err.println("Error creating notification for book creation: " + e.getMessage());
         }
@@ -70,6 +75,8 @@ public class BookListener {
                     .build();
             
             notificationService.createNotification(notification);
+            book.setUpdateBy(currentUsername);
+            book.setUpdateAt(Instant.now());
         } catch (Exception e) {
             System.err.println("Error creating notification for book update: " + e.getMessage());
         }

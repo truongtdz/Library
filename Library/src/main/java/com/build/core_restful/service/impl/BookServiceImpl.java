@@ -67,6 +67,7 @@ public class BookServiceImpl implements BookService {
         Author author = authorsRepository.findById(bookRequest.getAuthorsId())
                 .orElseThrow(() -> new NewException("Author id " + bookRequest.getAuthorsId() + " not found"));
 
+        
         Book book = bookMapper.toBook(bookRequest);
         book.setCategory(category);
         book.setAuthor(author);
