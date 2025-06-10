@@ -1,13 +1,16 @@
 package com.build.core_restful.util.upload;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.annotation.PostConstruct;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,21 +19,25 @@ import java.util.UUID;
 
 @Service
 public class ServerUpload {
+    @Value("${file.upload-dir}")
+    private Path uploadDir;
 
-    private final Path fileStorageLocation;
-
-    public ServerUpload(FileStorageProperties fileStorageProperties) {
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
-                .toAbsolutePath().normalize();
-
+    @PostConstruct
+    public void init() {
         try {
-            Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception ex) {
-            throw new RuntimeException("Không thể tạo thư mục lưu trữ.", ex);
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Không thể tạo thư mục uploads: " + uploadDir, e);
         }
     }
 
     public String storeFile(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new RuntimeException("File upload không có nội dung.");
+        }
+
         String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
         try {
@@ -38,7 +45,6 @@ public class ServerUpload {
                 throw new RuntimeException("Tên file không hợp lệ: " + originalFileName);
             }
 
-            // Tách tên và đuôi file
             String fileExtension = "";
             int dotIndex = originalFileName.lastIndexOf('.');
             if (dotIndex > 0) {
@@ -48,10 +54,13 @@ public class ServerUpload {
             String baseName = originalFileName.substring(0, dotIndex).replaceAll("[^a-zA-Z0-9\\-_]", "_");
             String uniqueFileName = baseName + "_" + UUID.randomUUID() + fileExtension;
 
-            Path targetLocation = this.fileStorageLocation.resolve(uniqueFileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            Path targetLocation = uploadDir.resolve(uniqueFileName);
 
-            return "http://localhost:8080/upload/" + uniqueFileName;
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            return "http://localhost:8080/uploads/" + uniqueFileName;
         } catch (IOException ex) {
             throw new RuntimeException("Không thể lưu file: " + originalFileName, ex);
         }

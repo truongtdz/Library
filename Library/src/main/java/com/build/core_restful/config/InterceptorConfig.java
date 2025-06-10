@@ -29,7 +29,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Giả sử bạn lưu file vào thư mục D:/6-DoAn/BackEnd/uploads
-        registry.addResourceHandler("/upload/**")
+        registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:D:/6-DoAn/BackEnd/uploads/");
     }
 }
