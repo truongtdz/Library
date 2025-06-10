@@ -1,6 +1,5 @@
 package com.build.core_restful.domain.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.Instant;

@@ -113,7 +113,8 @@ public class BookServiceImpl implements BookService {
                             .build())
                     .collect(Collectors.toList());
 
-            book.getImages().addAll(newImages);
+            book.getImages().clear();  
+            book.getImages().addAll(newImages);  
         }
 
         book.setTypeActive("UPDATE");
