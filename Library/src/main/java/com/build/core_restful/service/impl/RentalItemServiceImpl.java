@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.build.core_restful.domain.RentalItem;
 import com.build.core_restful.domain.RentalOrder;
@@ -73,11 +72,8 @@ public class RentalItemServiceImpl implements RentalItemService{
     }
 
     @Override
-    public PageResponse<Object> getItemByUser(OrderStatusEnum itemStatus, Long userId, Pageable pageable) {
-        Page<RentalItem> page = !StringUtils.hasText(userId.toString()) ? 
-            rentalItemRepository.findByStatusAndUserId(
-                itemStatus.toString(), userId, pageable) : 
-                rentalItemRepository.findByStatus(itemStatus.toString(), pageable);
+    public PageResponse<Object> getItemByUser(String status, Long userId, Pageable pageable) {
+        Page<RentalItem> page = rentalItemRepository.findByStatusAndUserId(status, userId, pageable);
 
         Page<RentalItemResponse> pageResponse = page.map(rentalItemMapper::toResponse);
         

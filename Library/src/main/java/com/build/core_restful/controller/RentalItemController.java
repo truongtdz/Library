@@ -34,8 +34,16 @@ public class RentalItemController {
     ) {
         Pageable pageable = PageRequest.of(page, size);
 
+        String status = null; Long id = null;
+        if(itemStatus != null){
+            status = itemStatus.toString();
+        }
+        if(userId != null){
+            id = userId;
+        }
+
         return ResponseEntity.ok(rentalItemService.getItemByUser(
-            itemStatus, userId, pageable
+            status, id, pageable
         ));
     }
 }

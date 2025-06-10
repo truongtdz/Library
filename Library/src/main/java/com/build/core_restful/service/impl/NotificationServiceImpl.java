@@ -42,14 +42,13 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public PageResponse<Object> getAllNotification(Long id, String active, Pageable pageable) {
-        Page<Notification> page = notificationRepository.findByCreateByUserIdAndActive(id, active, pageable);
+        Page<Notification> page = notificationRepository.findNotificationsWithOptionalFilters(id, active, pageable);
 
         Page<NotificationResponse> pageResponse = page.map(notification -> NotificationResponse.builder()
                                     .createAt(notification.getCreateAt())
                                     .updateAt(notification.getUpdateAt())
                                     .id(notification.getId())
                                     .description(notification.getDescription())
-                                    .createByUserId(notification.getCreateByUser().getId())
                                     .build());
 
         return PageResponse.builder()

@@ -30,12 +30,20 @@ public class NotificationController {
         @RequestParam int page, 
         @RequestParam int size,
         @RequestParam(required = false) Long userId,
-        @RequestParam(required = false) TypeActiveEnum active
+        @RequestParam(required = false) TypeActiveEnum typeActive
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        
+
+        String active = null; Long id = null;
+        if(typeActive != null){
+            active = typeActive.toString();
+        }
+        if(userId != null){
+            id = userId;
+        }
+
         return ResponseEntity.ok(notificationService.getAllNotification(
-            userId, active.toString(), pageable
+            id, active, pageable
         ));
     }
 }
