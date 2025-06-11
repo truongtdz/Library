@@ -11,6 +11,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class RentalItemResponse {
     private Long id;
+    private Long rentalOrderId;
 
     private Instant rentalDate;
     private Instant rentedDate;
