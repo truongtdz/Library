@@ -67,6 +67,8 @@ public class CategoryServiceImpl implements CategoryService {
             throw new NewException("Category with name " + categoryRequest.getName() + " already exists at bin!");
         }
         Category category = categoryMapper.toCategory(categoryRequest);
+        category.setStatus(EntityStatusEnum.Active.toString());
+        category.setTypeActive("CREATE");
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
@@ -75,6 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                 .orElseThrow(() -> new NewException("Category with id " + id + " not found"));
         categoryMapper.updateCategory(category, categoryRequest);
+        category.setTypeActive("UPDATE");
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
@@ -86,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
                     .orElseThrow(() -> new NewException("Category with id: " + id + " not found"));
                     
                 category.setStatus(EntityStatusEnum.Delete.toString());
-
+                category.setTypeActive("DELETE");
                 categoryRepository.save(category);
             }
             return true;
@@ -103,7 +106,7 @@ public class CategoryServiceImpl implements CategoryService {
                     .orElseThrow(() -> new NewException("Category with id: " + id + " not found"));
                     
                 category.setStatus(EntityStatusEnum.Active.toString());
-
+                category.setTypeActive("RESTORE");
                 categoryRepository.save(category);
             }
             return true;
@@ -116,7 +119,12 @@ public class CategoryServiceImpl implements CategoryService {
     public boolean delete(Long id) {
         try {
             List<Book> books = bookRepository.findByCategoryId(id);
-            books.forEach(item -> item.setCategory(null));
+            books.forEach(
+                item -> {
+                    item.setCategory(null);
+                    item.setTypeActive(null);
+                }
+            );
             bookRepository.saveAll(books);
 
             categoryRepository.deleteById(id);

@@ -6,10 +6,12 @@ import lombok.*;
 import java.time.Instant;
 import java.util.List;
 
+import com.build.core_restful.domain.listener.RentedOrderListener;
 import com.build.core_restful.system.JwtUtil;
 
 @Entity
 @Table(name = "rented_orders")
+@EntityListeners(RentedOrderListener.class)
 @Getter
 @Setter
 @Builder

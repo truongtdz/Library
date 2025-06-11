@@ -68,6 +68,9 @@ public class AuthorServiceImpl implements AuthorService {
         }
 
         Author author = authorMapper.toAuthor(authorRequest);
+        author.setStatus(EntityStatusEnum.Active.toString());
+        author.setTypeActive("CREATE");
+
         return authorMapper.toAuthorResponse(authorRepository.save(author));
     }
 
@@ -76,6 +79,7 @@ public class AuthorServiceImpl implements AuthorService {
         Author author = authorRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                 .orElseThrow(() -> new NewException("Author with id " + id + " not found!"));
         authorMapper.updateAuthor(author, authorRequest);
+        author.setTypeActive("UPDATE");
         return authorMapper.toAuthorResponse(authorRepository.save(author));
     }
 
@@ -88,6 +92,7 @@ public class AuthorServiceImpl implements AuthorService {
                     
                 author.setStatus(EntityStatusEnum.Delete.toString());
 
+                author.setTypeActive("DELETE");
                 authorRepository.save(author);
             }
             return true;
@@ -105,6 +110,7 @@ public class AuthorServiceImpl implements AuthorService {
                     
                 author.setStatus(EntityStatusEnum.Active.toString());
 
+                author.setTypeActive("RESTORE");
                 authorRepository.save(author);
             }
             return true;
@@ -117,7 +123,12 @@ public class AuthorServiceImpl implements AuthorService {
     public boolean delete(Long id) {
         try {
             List<Book> books = bookRepository.findByCategoryId(id);
-            books.forEach(item -> item.setCategory(null));
+            books.forEach(
+                item -> {
+                    item.setCategory(null);
+                    item.setTypeActive(null);
+                }
+            );
             bookRepository.saveAll(books);
 
             authorRepository.deleteById(id);

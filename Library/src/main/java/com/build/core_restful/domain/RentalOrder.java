@@ -1,5 +1,6 @@
 package com.build.core_restful.domain;
 
+import com.build.core_restful.domain.listener.RentalOrderListener;
 import com.build.core_restful.system.JwtUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "rental_orders")
+@EntityListeners(RentalOrderListener.class)
 @Getter
 @Setter
 @Builder

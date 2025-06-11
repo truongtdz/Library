@@ -1,7 +1,7 @@
 package com.build.core_restful.domain;
 
 
-import com.build.core_restful.system.JwtUtil;
+import com.build.core_restful.domain.listener.CategoryListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
+@EntityListeners(CategoryListener.class)
 @Getter
 @Setter
 @Builder
@@ -29,6 +30,7 @@ public class Category {
     private String description;
 
     private String status;
+    private String typeActive;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -38,22 +40,4 @@ public class Category {
     private Instant updateAt;
     private String createBy;
     private String updateBy;
-
-    @PrePersist
-    public void handleBeforeCreate() {
-        this.setCreateBy(JwtUtil.getCurrentUserLogin().isPresent()
-                ? JwtUtil.getCurrentUserLogin().get()
-                : "");
-
-        this.setCreateAt(Instant.now());
-    }
-
-    @PreUpdate
-    public void handleBeforeUpdate() {
-        this.setUpdateBy(JwtUtil.getCurrentUserLogin().isPresent()
-                ? JwtUtil.getCurrentUserLogin().get()
-                : "");
-
-        this.setUpdateAt(Instant.now());
-    }
 }

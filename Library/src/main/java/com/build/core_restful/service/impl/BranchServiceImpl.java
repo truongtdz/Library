@@ -82,17 +82,18 @@ public class BranchServiceImpl implements BranchService{
     public BranchResponse createBranch(BranchRequest request) {
         Branch branch = branchMapper.toBranch(request);
         branch.setStatus(EntityStatusEnum.Active.toString());
+        branch.setTypeActive("CREATE");
         return branchMapper.toBranchResponse(branchRepository.save(branch));
     }
 
     @Override
     public BranchResponse updateBranch(Long id, BranchRequest request) {
-        Branch currentBranch = branchRepository.findById(id)
+        Branch branch = branchRepository.findById(id)
             .orElseThrow(() -> new NewException("Branch with id = " + id + " not found"));
 
-        branchMapper.updateBranch(currentBranch, request);
-
-        return branchMapper.toBranchResponse(branchRepository.save(currentBranch));
+        branchMapper.updateBranch(branch, request);
+        branch.setTypeActive("UPDATE");
+        return branchMapper.toBranchResponse(branchRepository.save(branch));
     }
     
     @Override
@@ -103,7 +104,7 @@ public class BranchServiceImpl implements BranchService{
                     .orElseThrow(() -> new NewException("Branch with id: " + id + " not found"));
                     
                 branch.setStatus(EntityStatusEnum.Delete.toString());
-
+                branch.setTypeActive("DELETE");
                 branchRepository.save(branch);
             }
             return true;
@@ -118,7 +119,8 @@ public class BranchServiceImpl implements BranchService{
             for(Long id : idList){
                 Branch branch = branchRepository.findByIdAndStatus(id, EntityStatusEnum.Active.toString())
                     .orElseThrow(() -> new NewException("Branch with id: " + id + " not found"));
-                    
+                
+                branch.setTypeActive("RESTORE");
                 branch.setStatus(EntityStatusEnum.Active.toString());
 
                 branchRepository.save(branch);

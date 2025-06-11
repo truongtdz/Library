@@ -6,11 +6,12 @@ import lombok.*;
 import java.time.Instant;
 import java.util.List;
 
-import com.build.core_restful.system.JwtUtil;
+import com.build.core_restful.domain.listener.BranchListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "branches")
+@EntityListeners(BranchListener.class)
 @Getter
 @Setter
 @Builder
@@ -31,6 +32,7 @@ public class Branch {
     private Instant closeTime;  
 
     private String status;
+    private String typeActive;
 
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -44,22 +46,4 @@ public class Branch {
     private Instant updateAt;
     private String createBy;
     private String updateBy;
-
-    @PrePersist
-    public void handleBeforeCreate() {
-        this.setCreateBy(JwtUtil.getCurrentUserLogin().isPresent()
-                ? JwtUtil.getCurrentUserLogin().get()
-                : "");
-
-        this.setCreateAt(Instant.now());
-    }
-
-    @PreUpdate
-    public void handleBeforeUpdate() {
-        this.setUpdateBy(JwtUtil.getCurrentUserLogin().isPresent()
-                ? JwtUtil.getCurrentUserLogin().get()
-                : "");
-
-        this.setUpdateAt(Instant.now());
-    }
 }

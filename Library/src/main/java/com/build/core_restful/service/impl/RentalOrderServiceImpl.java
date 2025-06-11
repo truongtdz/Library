@@ -166,6 +166,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
             book.setStock(book.getStock() - item.getQuantity());
             book.setQuantityRented(book.getQuantityRented() + item.getQuantity());
+            book.setTypeActive(null);
             bookRepository.save(book);
 
             items.add(rentalItem);

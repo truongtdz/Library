@@ -1,11 +1,11 @@
-package com.build.core_restful.system.entityListener;
+package com.build.core_restful.domain.listener;
 
 import java.time.Instant;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.build.core_restful.domain.Book;
+import com.build.core_restful.domain.RentalOrder;
 import com.build.core_restful.domain.Notification;
 import com.build.core_restful.domain.User;
 import com.build.core_restful.service.NotificationService;
@@ -16,11 +16,11 @@ import jakarta.persistence.PostUpdate;
 import jakarta.persistence.PrePersist;
 
 @Component
-public class BookListener {
+public class RentalOrderListener {
     private final NotificationService notificationService;
     private final UserService userService;
     
-    public BookListener(
+    public RentalOrderListener(
         @Lazy NotificationService notificationService,
         @Lazy UserService userService
     ) {
@@ -29,7 +29,7 @@ public class BookListener {
     };
 
     @PrePersist
-    public void afterCreate(Book book) {
+    public void afterCreate(RentalOrder rentalOrder) {
         try {
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
             
@@ -37,48 +37,38 @@ public class BookListener {
 
             Notification notification = Notification.builder()
                     .createByUser(user)
-                    .active(book.getTypeActive())
-                    .description("Sách mới đã được thêm: " + book.getName() + 
+                    .active("CREATE")
+                    .description("Đơn thuê sách mới đã được thêm: " + rentalOrder.getId() + 
                                " bởi " + currentUsername)
                     .build();
             
             notificationService.createNotification(notification);
 
-            book.setCreateBy(currentUsername);
-            book.setCreateAt(Instant.now());
+            rentalOrder.setCreateBy(currentUsername);
+            rentalOrder.setCreateAt(Instant.now());
         } catch (Exception e) {
-            System.err.println("Error creating notification for book creation: " + e.getMessage());
+            System.err.println("Error creating notification for rentalOrder creation: " + e.getMessage());
         }
     }
 
     @PostUpdate
-    public void afterUpdate(Book book) {
+    public void afterUpdate(RentalOrder rentalOrder) {
         try {
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
             
-            String description;
-
-            if (book.getTypeActive().equals("DELETE")) {
-                description = "Sách đã được xóa: " + book.getName() + 
-                            " (ID: " + book.getId() + ") bởi " + currentUsername;
-            } else if (book.getTypeActive().equals("RESTORE")) {
-                description = "Sách đã được khôi phục: " + book.getName() + 
-                            " (ID: " + book.getId() + ") bởi " + currentUsername;
-            } else {
-                description = "Sách đã được cập nhật: " + book.getName() + 
-                            " (ID: " + book.getId() + ") bởi " + currentUsername;
-            }
+            String description = "Đơn thuê sách đã được cập nhật trạng thái: " + rentalOrder.getOrderStatus() + 
+                            " (ID: " + rentalOrder.getId() + ") bởi " + currentUsername;
             
             Notification notification = Notification.builder()
-                    .active(book.getTypeActive())
+                    .active("UPDATE")
                     .description(description)
                     .build();
             
             notificationService.createNotification(notification);
-            book.setUpdateBy(currentUsername);
-            book.setUpdateAt(Instant.now());
+            rentalOrder.setUpdateBy(currentUsername);
+            rentalOrder.setUpdateAt(Instant.now());
         } catch (Exception e) {
-            System.err.println("Error creating notification for book update: " + e.getMessage());
+            System.err.println("Error creating notification for rentalOrder update: " + e.getMessage());
         }
     } 
 }
