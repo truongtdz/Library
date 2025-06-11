@@ -12,10 +12,10 @@ import com.build.core_restful.domain.Notification;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     @Query("SELECT n FROM Notification n WHERE " +
-           "(:userId IS NULL OR n.createByUser.id = :userId) AND " +
+           "(:email IS NULL OR n.email = :email) AND " +
            "(:active IS NULL OR n.active = :active)")
     Page<Notification> findNotificationsWithOptionalFilters(
-        @Param("userId") Long userId, 
+        @Param("email") String email, 
         @Param("active") String active, 
         Pageable pageable
     );

@@ -18,25 +18,20 @@ import jakarta.persistence.PrePersist;
 @Component
 public class CategoryListener {
     private final NotificationService notificationService;
-    private final UserService userService;
     
     public CategoryListener(
-        @Lazy NotificationService notificationService,
-        @Lazy UserService userService
+        @Lazy NotificationService notificationService
     ) {
         this.notificationService = notificationService;
-        this.userService = userService;
     };
 
     @PrePersist
     public void afterCreate(Category category) {
         try {
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
-            
-            User user = userService.getUserByEmail(currentUsername);
 
             Notification notification = Notification.builder()
-                    .createByUser(user)
+                    .email(currentUsername)
                     .active(category.getTypeActive())
                     .description("Danh mục mới đã được thêm: " + category.getName() + 
                                " bởi " + currentUsername)
@@ -71,6 +66,7 @@ public class CategoryListener {
             
             Notification notification = Notification.builder()
                     .active(category.getTypeActive())
+                    .email(currentUsername)
                     .description(description)
                     .build();
             

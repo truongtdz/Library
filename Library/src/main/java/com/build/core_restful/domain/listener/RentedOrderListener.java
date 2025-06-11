@@ -18,25 +18,20 @@ import jakarta.persistence.PrePersist;
 @Component
 public class RentedOrderListener {
     private final NotificationService notificationService;
-    private final UserService userService;
     
     public RentedOrderListener(
-        @Lazy NotificationService notificationService,
-        @Lazy UserService userService
+        @Lazy NotificationService notificationService
     ) {
         this.notificationService = notificationService;
-        this.userService = userService;
     };
 
     @PrePersist
     public void afterCreate(RentedOrder rentedOrder) {
         try {
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
-            
-            User user = userService.getUserByEmail(currentUsername);
 
             Notification notification = Notification.builder()
-                    .createByUser(user)
+                    .email(currentUsername)
                     .active("CREATE")
                     .description("Đơn trả sách mới đã được thêm: " + rentedOrder.getId() + 
                                " bởi " + currentUsername)
@@ -61,6 +56,7 @@ public class RentedOrderListener {
             
             Notification notification = Notification.builder()
                     .active("UPDATE")
+                    .email(currentUsername)
                     .description(description)
                     .build();
             

@@ -18,25 +18,20 @@ import jakarta.persistence.PrePersist;
 @Component
 public class BranchListener {
     private final NotificationService notificationService;
-    private final UserService userService;
     
     public BranchListener(
-        @Lazy NotificationService notificationService,
-        @Lazy UserService userService
+        @Lazy NotificationService notificationService
     ) {
         this.notificationService = notificationService;
-        this.userService = userService;
     };
 
     @PrePersist
     public void afterCreate(Branch branch) {
         try {
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
-            
-            User user = userService.getUserByEmail(currentUsername);
 
             Notification notification = Notification.builder()
-                    .createByUser(user)
+                    .email(currentUsername)
                     .active(branch.getTypeActive())
                     .description("Chi nhánh mới đã được thêm: " + branch.getName() + 
                                " bởi " + currentUsername)
@@ -70,6 +65,7 @@ public class BranchListener {
             }
             
             Notification notification = Notification.builder()
+                    .email(currentUsername)
                     .active(branch.getTypeActive())
                     .description(description)
                     .build();

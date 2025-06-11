@@ -106,6 +106,7 @@ public class BookServiceImpl implements BookService {
         book.setAuthor(author);
 
         if (bookRequest.getImageList() != null) {
+            
             List<Image> newImages = bookRequest.getImageList().stream()
                     .map(imageReq -> Image.builder()
                             .url(imageReq.getUrl())

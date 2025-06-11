@@ -17,14 +17,12 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    private String email;
+    private String active;
+    
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "create_by_user_id")
-    private User createByUser;
-
-    private String active;
 
     private Instant createAt;
     private Instant updateAt;

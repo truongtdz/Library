@@ -29,21 +29,21 @@ public class NotificationController {
     public ResponseEntity<PageResponse<Object>> getAllAddress(
         @RequestParam int page, 
         @RequestParam int size,
-        @RequestParam(required = false) Long userId,
+        @RequestParam(required = false) String mail,
         @RequestParam(required = false) TypeActiveEnum typeActive
     ) {
         Pageable pageable = PageRequest.of(page, size);
 
-        String active = null; Long id = null;
+        String active = null; String email = null;
         if(typeActive != null){
             active = typeActive.toString();
         }
-        if(userId != null){
-            id = userId;
+        if(mail != null){
+            email = mail;
         }
 
         return ResponseEntity.ok(notificationService.getAllNotification(
-            id, active, pageable
+            email, active, pageable
         ));
     }
 }

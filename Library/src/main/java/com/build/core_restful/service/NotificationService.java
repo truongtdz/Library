@@ -10,7 +10,7 @@ import com.build.core_restful.domain.response.PageResponse;
 public interface NotificationService {
     void createNotification(Notification notification);
 
-    PageResponse<Object> getAllNotification(Long id, String active, Pageable pageable);
+    PageResponse<Object> getAllNotification(String email, String active, Pageable pageable);
 
     void deleteNotification(Long id);
 }

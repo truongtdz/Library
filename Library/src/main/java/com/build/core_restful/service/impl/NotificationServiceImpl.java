@@ -41,8 +41,8 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
-    public PageResponse<Object> getAllNotification(Long id, String active, Pageable pageable) {
-        Page<Notification> page = notificationRepository.findNotificationsWithOptionalFilters(id, active, pageable);
+    public PageResponse<Object> getAllNotification(String email, String active, Pageable pageable) {
+        Page<Notification> page = notificationRepository.findNotificationsWithOptionalFilters(email, active, pageable);
 
         Page<NotificationResponse> pageResponse = page.map(notification -> NotificationResponse.builder()
                                     .createAt(notification.getCreateAt())

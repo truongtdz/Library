@@ -18,25 +18,20 @@ import jakarta.persistence.PrePersist;
 @Component
 public class AuthorListener {
     private final NotificationService notificationService;
-    private final UserService userService;
     
     public AuthorListener(
-        @Lazy NotificationService notificationService,
-        @Lazy UserService userService
+        @Lazy NotificationService notificationService
     ) {
         this.notificationService = notificationService;
-        this.userService = userService;
     };
 
     @PrePersist
     public void afterCreate(Author author) {
         try {
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
-            
-            User user = userService.getUserByEmail(currentUsername);
 
             Notification notification = Notification.builder()
-                    .createByUser(user)
+                    .email(currentUsername)
                     .active(author.getTypeActive())
                     .description("Tác giả mới đã được thêm: " + author.getName() + 
                                " bởi " + currentUsername)
@@ -70,6 +65,7 @@ public class AuthorListener {
             }
             
             Notification notification = Notification.builder()
+                    .email(currentUsername)
                     .active(author.getTypeActive())
                     .description(description)
                     .build();

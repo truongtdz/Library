@@ -11,7 +11,7 @@ import lombok.*;
 public class NotificationResponse {
     private Long id;
     private String description;
-    private Long createByUserId;
+    private String email;
     private Instant createAt;
     private Instant updateAt;
 }

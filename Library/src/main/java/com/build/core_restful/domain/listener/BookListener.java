@@ -19,25 +19,20 @@ import jakarta.persistence.PrePersist;
 @Component
 public class BookListener {
     private final NotificationService notificationService;
-    private final UserService userService;
     
     public BookListener(
-        @Lazy NotificationService notificationService,
-        @Lazy UserService userService
+        @Lazy NotificationService notificationService
     ) {
         this.notificationService = notificationService;
-        this.userService = userService;
     };
 
     @PrePersist
     public void afterCreate(Book book) {
         try {
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
-            
-            User user = userService.getUserByEmail(currentUsername);
 
             Notification notification = Notification.builder()
-                    .createByUser(user)
+                    .email(currentUsername)
                     .active(book.getTypeActive())
                     .description("Sách mới đã được thêm: " + book.getName() + 
                                " bởi " + currentUsername)
@@ -59,8 +54,6 @@ public class BookListener {
                 return;
             }
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
-            
-            User user = userService.getUserByEmail(currentUsername);
 
             String description;
 
@@ -77,7 +70,7 @@ public class BookListener {
             
             Notification notification = Notification.builder()
                     .active(book.getTypeActive())
-                    .createByUser(user)
+                    .email(currentUsername)
                     .description(description)
                     .build();
             
