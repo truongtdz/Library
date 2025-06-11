@@ -80,8 +80,9 @@ public class BranchServiceImpl implements BranchService{
 
     @Override
     public BranchResponse createBranch(BranchRequest request) {
-        Branch branch = branchRepository.save(branchMapper.toBranch(request));
-        return branchMapper.toBranchResponse(branch);
+        Branch branch = branchMapper.toBranch(request);
+        branch.setStatus(EntityStatusEnum.Active.toString());
+        return branchMapper.toBranchResponse(branchRepository.save(branch));
     }
 
     @Override
