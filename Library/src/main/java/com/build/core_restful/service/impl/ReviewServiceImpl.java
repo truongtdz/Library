@@ -66,7 +66,7 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public PageResponse<Object> getReviewByParentId(Long id, Pageable pageable) {
-        Page<Review> page = reviewRepository.findByParentReviewId(id, pageable);
+        Page<Review> page = reviewRepository.findByParentId(id, pageable);
 
         Page<ReviewResponse> pageResponse = page.map(reviewMapper::toReviewResponse);
 
@@ -85,9 +85,7 @@ public class ReviewServiceImpl implements ReviewService{
             .image(request.getImage())
             .rate(request.getRate())
             .comment(request.getComment())
-            .parentReview(request.getParentId() == null ? null : reviewRepository.findById(request.getParentId())
-                .orElseThrow(() -> new NewException("Review with id = " + request.getParentId() + " not found"))
-            )
+            .parentId(request.getParentId())
             .book(bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new NewException("Book with id = " + request.getBookId() + " not found"))
             )

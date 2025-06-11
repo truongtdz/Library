@@ -5,7 +5,6 @@ import com.build.core_restful.domain.Review;
 import com.build.core_restful.domain.request.BookRequest;
 import com.build.core_restful.domain.response.BookResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mapstruct.*;
@@ -44,7 +43,7 @@ public interface BookMapper {
 
         if (book.getReviews() != null) {
             List<Review> parentReviews = book.getReviews().stream()
-                .filter(review -> review.getParentReview() == null)
+                .filter(review -> review.getParentId() == null)
                 .toList();
 
             double averageRate = 0.0;

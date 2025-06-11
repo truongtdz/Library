@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.List;
 
 import com.build.core_restful.system.JwtUtil;
 
@@ -22,16 +21,10 @@ public class Review {
 
     private Integer rate;
     private String image;
+    private Long parentId;
 
     @Column(columnDefinition = "TEXT")
     private String comment;
-
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    private Review parentReview;
-
-    @OneToMany(mappedBy = "parentReview", cascade = CascadeType.ALL)
-    private List<Review> replies;
 
     @ManyToOne
     @JoinColumn(name = "book_id")

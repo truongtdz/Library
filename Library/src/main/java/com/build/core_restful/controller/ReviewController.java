@@ -47,7 +47,7 @@ public class ReviewController {
         @RequestParam int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(reviewService.getReviewByParentId(id, pageable));
+        return ResponseEntity.ok(reviewService.getReviewByBookId(id, pageable));
     }
 
     @GetMapping("/by/parent/{id}")
