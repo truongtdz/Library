@@ -10,6 +10,8 @@ import org.mapstruct.*;
 public interface RentedOrderMapper {
     RentedOrder toEntity(RentedOrderRequest request);
 
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "branch.id", target = "branchId")
     @Mapping(source = "items", target = "items") 
     RentedOrderResponse toResponse(RentedOrder order);
 

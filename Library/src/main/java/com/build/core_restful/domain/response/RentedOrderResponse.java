@@ -30,6 +30,7 @@ public class RentedOrderResponse {
     private Instant returnDate;
 
     private Long userId;
+    private Long branchId;
 
     private List<RentalItemResponse> items;
 
