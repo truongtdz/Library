@@ -21,4 +21,8 @@ public interface RentedOrderService {
         String orderStatus,
         Pageable pageable
     );
+
+    boolean confirmOrder(Long id);
+
+    boolean cancelOrder(Long id);
 }

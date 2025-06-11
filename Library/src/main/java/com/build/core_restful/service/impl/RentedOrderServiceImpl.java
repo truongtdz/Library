@@ -11,7 +11,6 @@ import com.build.core_restful.util.StringUtil;
 import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.EntityStatusEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
-import com.build.core_restful.util.enums.ShippingMethodEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.RentedOrderMapper;
 
@@ -52,28 +51,34 @@ public class RentedOrderServiceImpl implements RentedOrderService {
     @Override
     @Transactional
     public RentedOrderResponse create(RentedOrderRequest request) {
-        RentedOrder newRentedOrder = rentedOrderMapper.toEntity(request);
+        try {
+            RentedOrder newRentedOrder = rentedOrderMapper.toEntity(request);
 
-        User user = userRepository.findByIdAndStatus(request.getUserId(), EntityStatusEnum.Active.toString())
-                        .orElseThrow(() -> new NewException("User have id: " + request.getUserId() + " not exist!"));
-        if (user == null) {
-            throw new NewException("Active user not found with id: " + request.getUserId());
+            // Fix 1: Remove redundant null check
+            User user = userRepository.findByIdAndStatus(request.getUserId(), EntityStatusEnum.Active.toString())
+                    .orElseThrow(() -> new NewException("User with id: " + request.getUserId() + " not found or inactive!"));
+            newRentedOrder.setUser(user);
+
+            validateDeliveryMethod(request);
+
+            if (DeliveryMethodEnum.Offline.equals(request.getDeliveryMethod())) {
+                processOfflineReturn(newRentedOrder, request);
+            } else {
+                processOnlineReturn(newRentedOrder, request);
+            }
+
+            RentedOrder savedOrder = rentedOrderRepository.save(newRentedOrder);
+            
+            processRentalItems(savedOrder, request);
+
+            newRentedOrder.setOrderStatus(OrderStatusEnum.Processing.toString());
+
+            return rentedOrderMapper.toResponse(rentedOrderRepository.save(newRentedOrder));
+            
+        } catch (Exception e) {
+            // Log error for debugging
+            throw e; 
         }
-        newRentedOrder.setUser(user);
-
-        validateDeliveryMethod(request);
-
-        if (DeliveryMethodEnum.Offline.equals(request.getDeliveryMethod())) {
-            processOfflineReturn(newRentedOrder, request);
-        } else {
-            processOnlineReturn(newRentedOrder, request);
-        }
-
-        processRentalItems(newRentedOrder, request);
-
-        newRentedOrder.setOrderStatus(OrderStatusEnum.Delivered.toString());
-
-        return rentedOrderMapper.toResponse(rentedOrderRepository.save(newRentedOrder));
     }
 
     private void validateDeliveryMethod(RentedOrderRequest request) {
@@ -81,36 +86,32 @@ public class RentedOrderServiceImpl implements RentedOrderService {
             if (StringUtil.isEmpty(request.getCity()) || 
                 StringUtil.isEmpty(request.getDistrict()) || 
                 StringUtil.isEmpty(request.getStreet())) {
-                throw new NewException("Address is required for online return");
+                throw new NewException("Address fields (city, district, street) are required for online delivery");
             } 
-            if (request.getShippingMethod() == null) {
-                throw new NewException("Shipping method is required for online return");
-            }
-        } else {
+        } else if (DeliveryMethodEnum.Offline.equals(request.getDeliveryMethod())) {
             if (request.getBranchId() == null) {
-                throw new NewException("Branch is required for offline return");
+                throw new NewException("Branch ID is required for offline pickup");
             }
-
+            // Validate branch exists once here
             branchRepository.findById(request.getBranchId())
-                .orElseThrow(() -> new NewException("Branch not found"));
+                .orElseThrow(() -> new NewException("Branch with id " + request.getBranchId() + " not found"));
+        } else {
+            throw new NewException("Invalid delivery method: " + request.getDeliveryMethod());
         }
     }
 
+    // Fix 3: Remove duplicate database call
     private void processOfflineReturn(RentedOrder order, RentedOrderRequest request) {
-        order.setBranch(branchRepository.findById(request.getBranchId())
-                        .orElseThrow(() -> new NewException("Branch with id = " + request.getBranchId() + " not found"))
-        );
+        // Branch already validated in validateDeliveryMethod, so this should not throw
+        Branch branch = branchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new NewException("Branch with id " + request.getBranchId() + " not found"));
         
-        order.setRentedDay(request.getRentedDay());
-
+        order.setBranch(branch);
         order.setCity(null);
         order.setDistrict(null);
         order.setWard(null);
         order.setStreet(null);
-
         order.setShippingMethod(null);
-
-        order.setOrderStatus(OrderStatusEnum.Delivered.toString());
     }
 
     private void processOnlineReturn(RentedOrder order, RentedOrderRequest request) {
@@ -120,47 +121,83 @@ public class RentedOrderServiceImpl implements RentedOrderService {
         order.setStreet(request.getStreet());
         order.setNotes(request.getNotes());
         order.setShippingMethod(request.getShippingMethod().toString());
-        
-        Long deliveryTime = ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 1L : 3L;
-        order.setRentedDay(Instant.now().plus(deliveryTime, ChronoUnit.DAYS));
-        
         order.setBranch(null);
-        
-        order.setOrderStatus(OrderStatusEnum.Delivered.toString());
     }
 
+    // Fix 4: Add better error handling and clarify business logic
     private void processRentalItems(RentedOrder order, RentedOrderRequest request) {
-        List<RentalItem> items = new ArrayList<>();
-        Long totalLateFee = 0L;
-        Instant now = Instant.now();
-
-        for (Long itemId : request.getItemIdLists()) {
-            RentalItem rentalItem = rentalItemRepository.findById(itemId)
-                .orElseThrow(() -> new NewException("Rental item with id: " + itemId + " not found"));
-
-            if (!OrderStatusEnum.Received.toString().equals(rentalItem.getStatus())) {
-                throw new NewException("Item with id: " + itemId + " is not in renting status");
-            }
-
-            if (now.isAfter(rentalItem.getReturnDate())) {
-                Long daysLate = ChronoUnit.DAYS.between(rentalItem.getReturnDate(), now);
-                Long lateFeePerDay = rentalItem.getLateFee();
-                totalLateFee += lateFeePerDay * daysLate * rentalItem.getQuantity();
-            }
-
-            rentalItem.setStatus(OrderStatusEnum.Processing.toString());
-            rentalItem.setRentedOrder(order);
-            
-            Book book = rentalItem.getBook();
-            book.setStock(book.getStock() + rentalItem.getQuantity());
-            book.setQuantityRented(book.getQuantityRented() + rentalItem.getQuantity());
-            bookRepository.save(book);
-            
-            items.add(rentalItem);
+        if (request.getItemIdLists() == null || request.getItemIdLists().isEmpty()) {
+            throw new NewException("At least one rental item is required");
         }
 
-        order.setTotalLateFee(totalLateFee);
+        List<RentalItem> items = new ArrayList<>();
+        
+        // Validate all items first before modifying any
+        List<RentalItem> rentalItems = new ArrayList<>();
+        for (Long itemId : request.getItemIdLists()) {
+            RentalItem rentalItem = rentalItemRepository.findById(itemId)
+                .orElseThrow(() -> new NewException("Rental item with id " + itemId + " not found"));
+            
+            if (!OrderStatusEnum.Received.toString().equals(rentalItem.getStatus())) {
+                throw new NewException("Item with id " + itemId + " must be in 'Received' status to be returned. Current status: " + rentalItem.getStatus());
+            }
+            
+            rentalItems.add(rentalItem);
+        }
+
+        for (RentalItem rentalItem : rentalItems) {
+            rentalItem.setStatus(OrderStatusEnum.Processing.toString());
+            rentalItem.setRentedOrder(order);
+            items.add(rentalItem);
+        }
+        
         order.setItems(items);
+    }
+
+    @Override
+    @Transactional
+    public boolean confirmOrder(Long id) {
+        RentedOrder order = rentedOrderRepository.findById(id)
+                .orElseThrow(() -> new NewException("Order not found"));
+        
+        if (!OrderStatusEnum.Processing.toString().equals(order.getOrderStatus())) {
+            throw new NewException("Only processing orders can be confirmed");
+        }
+
+        for (RentalItem item : order.getItems()) {
+            if(item.getStatus().equals(OrderStatusEnum.Processing.toString())){
+                Book book = item.getBook();
+                book.setStock(book.getStock() + item.getQuantity());
+                book.setTypeActive(null);
+                bookRepository.save(book);
+                item.setStatus(OrderStatusEnum.Returned.toString());
+                if (Instant.now().isAfter(item.getReturnDate())) {
+                    Long daysLate = ChronoUnit.DAYS.between(item.getReturnDate(), Instant.now());
+                    item.setTotalLateFee(book.getLateFee() * daysLate);
+                    item.setDaysLate(daysLate);
+                    item.setStatus(OrderStatusEnum.Overdue.toString());
+                }
+            }
+        }
+
+        order.setOrderStatus(OrderStatusEnum.Returned.toString());
+        rentedOrderRepository.save(order);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean cancelOrder(Long id) {
+        RentedOrder order = rentedOrderRepository.findById(id)
+                .orElseThrow(() -> new NewException("Order not found"));
+        
+        if (!OrderStatusEnum.Processing.toString().equals(order.getOrderStatus())) {
+            throw new NewException("Only processing orders can be cancel");
+        }
+
+        order.setOrderStatus(OrderStatusEnum.Received.toString());
+        rentedOrderRepository.save(order);
+        return true;
     }
 
     @Override

@@ -25,7 +25,8 @@ public class RentalItem {
 
     private Long timeRental;
 
-    private Long lateFee;
+    private Long totalLateFee;
+    private Long daysLate;
 
     private Long userId;
     private String bookName;

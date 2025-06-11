@@ -97,7 +97,6 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         );
         
         order.setReceiveDate(null); 
-
         order.setCity(null);
         order.setDistrict(null);
         order.setWard(null);
@@ -111,10 +110,8 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         order.setWard(request.getWard());
         order.setStreet(request.getStreet());
         order.setNotes(request.getNotes());
-        
         order.setReceiveDate(null);
         order.setShippingMethod(request.getShippingMethod().toString());
-        
         order.setBranch(null);
     }
 
@@ -134,7 +131,6 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                     .quantity(item.getQuantity())
                     .userId(order.getUser().getId())
                     .bookName(book.getName())
-                    .lateFee(book.getLateFee())
                     .imageUrl(
                         book.getImages().stream()
                             .filter(image -> "true".equals(image.getIsDefault()))
@@ -199,7 +195,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             item.setReceiveDate(order.getReceiveDate());
             item.setReturnDate(order.getReceiveDate().plus(item.getTimeRental(), ChronoUnit.DAYS));
             item.setTotalRental(totalRental);
-            item.setStatus(OrderStatusEnum.Renting.toString());
+            item.setStatus(OrderStatusEnum.Received.toString());
             
             book.setStock(book.getStock() - item.getQuantity());
             book.setQuantityRented(book.getQuantityRented() + item.getQuantity());
@@ -207,7 +203,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             bookRepository.save(book);
         }
         
-        order.setOrderStatus(OrderStatusEnum.Delivered.toString());
+        order.setOrderStatus(OrderStatusEnum.Received.toString());
         rentalOrderRepository.save(order);
         
         return true;

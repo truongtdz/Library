@@ -67,4 +67,15 @@ public class RentedOrderController {
     public ResponseEntity<RentedOrderResponse> updateOrderStatus(@PathVariable Long id,@RequestParam OrderStatusEnum newStatus) {
         return ResponseEntity.ok(rentedOrderService.update(id, newStatus));
     }
+
+    
+    @PutMapping("/update/confirm/{id}")
+    public ResponseEntity<Boolean> confirmRentalOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(rentedOrderService.confirmOrder(id));
+    }   
+
+    @PutMapping("/update/cancel/{id}")
+    public ResponseEntity<Boolean> cancelRentalOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(rentedOrderService.cancelOrder(id));
+    }
 }

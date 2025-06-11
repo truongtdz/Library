@@ -27,6 +27,7 @@ public class RentedOrderResponse {
     private String paymentMethod;
 
     private Instant receiveDay;
+    private Instant returnDate;
 
     private Long userId;
 

@@ -40,9 +40,9 @@ public class RentedOrder {
     private String paymentMethod;
     private String shippingMethod;
 
-    private Instant rentedDay;
+    private Instant returnDate;
 
-    @OneToMany(mappedBy = "rentedOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rentedOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RentalItem> items;
 
     @ManyToOne

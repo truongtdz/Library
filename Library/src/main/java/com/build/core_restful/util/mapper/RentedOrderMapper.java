@@ -6,10 +6,11 @@ import com.build.core_restful.domain.response.RentedOrderResponse;
 
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {UserMapper.class})
+@Mapper(componentModel = "spring", uses = {UserMapper.class, RentalItemMapper.class})
 public interface RentedOrderMapper {
     RentedOrder toEntity(RentedOrderRequest request);
 
+    @Mapping(source = "items", target = "items") 
     RentedOrderResponse toResponse(RentedOrder order);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

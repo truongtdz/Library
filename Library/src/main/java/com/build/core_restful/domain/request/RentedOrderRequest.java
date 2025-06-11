@@ -29,7 +29,7 @@ public class RentedOrderRequest {
     private String phone;
 
     private Long branchId;
-    private Instant rentedDay;
+    private Instant returnDate;
 
     private DeliveryMethodEnum deliveryMethod;
     private PaymentStatusEnum paymentStatus;
