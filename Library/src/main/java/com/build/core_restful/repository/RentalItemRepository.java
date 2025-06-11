@@ -1,6 +1,5 @@
 package com.build.core_restful.repository;
 
-import com.build.core_restful.domain.Notification;
 import com.build.core_restful.domain.RentalItem;
 
 import java.time.Instant;

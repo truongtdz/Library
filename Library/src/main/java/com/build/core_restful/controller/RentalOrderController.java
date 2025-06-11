@@ -62,13 +62,13 @@ public class RentalOrderController {
     }
 
     @PutMapping("/update/confirm/{id}")
-    public ResponseEntity<RentalOrderResponse> confirmRentalOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(rentalOrderService.updateOrderStatus(id, OrderStatusEnum.Confirmed));
+    public ResponseEntity<Boolean> confirmRentalOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(rentalOrderService.confirmOrder(id));
     }   
 
     @PutMapping("/update/cancel/{id}")
-    public ResponseEntity<RentalOrderResponse> cancelRentalOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(rentalOrderService.updateOrderStatus(id, OrderStatusEnum.Cancelled));
+    public ResponseEntity<Boolean> cancelRentalOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(rentalOrderService.cancelOrder(id));
     }
 
     @PutMapping("/update/status/order/{id}")

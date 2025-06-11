@@ -68,7 +68,8 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         }
 
         order.setOrderStatus(OrderStatusEnum.Processing.toString());
-        processRentalItems(order, request);
+        
+        createPendingRentalItems(order, request);
         
         return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));
     }
@@ -78,7 +79,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             if (StringUtil.isEmpty(request.getCity()) || 
                 StringUtil.isEmpty(request.getDistrict()) || 
                 StringUtil.isEmpty(request.getStreet())) {
-                throw new NewException("Address is required for online return");
+                throw new NewException("Address is required for online delivery");
             }
         } else {
             if (request.getBranchId() == null) {
@@ -95,13 +96,12 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                         .orElseThrow(() -> new NewException("Branch with id = " + request.getBranchId() + " not found"))
         );
         
-        order.setReceiveDay(request.getReceiveDay()); 
+        order.setReceiveDay(null); 
 
         order.setCity(null);
         order.setDistrict(null);
         order.setWard(null);
         order.setStreet(null);
-
         order.setShippingMethod(null);
     }
 
@@ -112,35 +112,23 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         order.setStreet(request.getStreet());
         order.setNotes(request.getNotes());
         
-        Long timeDelivery = ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 1L : 3L;
-        order.setReceiveDay(Instant.now().plus(timeDelivery, ChronoUnit.DAYS));
+        order.setReceiveDay(null);
         order.setShippingMethod(request.getShippingMethod().toString());
         
         order.setBranch(null);
     }
 
     @Transactional
-    private void processRentalItems(RentalOrder order, RentalOrderRequest request) {
-        Instant now = Instant.now();
+    private void createPendingRentalItems(RentalOrder order, RentalOrderRequest request) {
         List<RentalItem> items = new ArrayList<>();
-        
-        Long timeDelivery = getDeliveryTime(request);
         
         for (RentalItemRequest item : request.getItems()) {
             Book book = bookRepository.findById(item.getBookId())
                     .orElseThrow(() -> new NewException("Book id= " + item.getBookId() + " not found"));
 
             if (book.getStock() < item.getQuantity()) {
-                throw new NewException("Insufficient stock for book: " + book.getId() + " and stock: " + book.getStock());
+                throw new NewException("Insufficient stock for book: " + book.getId() + " available: " + book.getStock());
             }
-
-            Long actualRentalDays = item.getRentedDay() - timeDelivery;
-            if (actualRentalDays <= 0) {
-                throw new NewException("Rental days must be greater than delivery time");
-            }
-            
-            Long itemRental = book.getRentalPrice() * item.getQuantity() * actualRentalDays;
-            Long itemDeposit = book.getDepositPrice() * item.getQuantity();
 
             RentalItem rentalItem = RentalItem.builder()
                     .quantity(item.getQuantity())
@@ -154,21 +142,17 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                             .map(Image::getUrl)
                             .orElse(null)
                     )
-                    .rentalDate(now)
-                    .rentedDate(order.getReceiveDay().plus(item.getRentedDay(), ChronoUnit.DAYS))
+                    .rentalDate(null)
+                    .rentedDate(null) 
                     .rentalPrice(book.getRentalPrice())
                     .depositPrice(book.getDepositPrice())
-                    .totalRental(itemRental)
-                    .totalDeposit(itemDeposit)
+                    .timeRental(item.getRentedDay())
+                    .totalRental(book.getRentalPrice() * item.getQuantity()) 
+                    .totalDeposit(book.getDepositPrice() * item.getQuantity())
                     .status(order.getOrderStatus())
                     .rentalOrder(order)
                     .book(book)
                     .build();
-
-            book.setStock(book.getStock() - item.getQuantity());
-            book.setQuantityRented(book.getQuantityRented() + item.getQuantity());
-            book.setTypeActive(null);
-            bookRepository.save(book);
 
             items.add(rentalItem);
         }
@@ -176,12 +160,90 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         order.setItems(items);
     }
 
-    private Long getDeliveryTime(RentalOrderRequest request) {
-        if (DeliveryMethodEnum.Offline.equals(request.getDeliveryMethod())) {
+    @Override
+    @Transactional
+    public boolean confirmOrder(Long id) {
+        RentalOrder order = rentalOrderRepository.findById(id)
+                .orElseThrow(() -> new NewException("Order not found"));
+        
+        if (!OrderStatusEnum.Processing.toString().equals(order.getOrderStatus())) {
+            throw new NewException("Only processing orders can be confirmed");
+        }
+        
+        Instant now = Instant.now();
+
+        if (DeliveryMethodEnum.Offline.equals(DeliveryMethodEnum.valueOf(order.getDeliveryMethod()))) {
+            order.setReceiveDay(now);
+        } else {
+            Long deliveryTime = ShippingMethodEnum.Express.toString().equals(order.getShippingMethod()) ? 1L : 3L;
+            order.setReceiveDay(now.plus(deliveryTime, ChronoUnit.DAYS));
+        }
+        
+        Long deliveryTime = getDeliveryTime(order);
+        
+        for (RentalItem item : order.getItems()) {
+            Book book = item.getBook();
+            
+            if (book.getStock() < item.getQuantity()) {
+                throw new NewException("Insufficient stock for book: " + book.getId() + " available: " + book.getStock());
+            }
+            
+            Long actualRentalDays = item.getTimeRental() - deliveryTime;
+            if (actualRentalDays <= 0) {
+                throw new NewException("Rental days must be greater than delivery time");
+            }
+            
+            Long totalRental = item.getRentalPrice() * item.getQuantity() * actualRentalDays;
+            
+            item.setRentalDate(now);
+            item.setRentedDate(order.getReceiveDay().plus(item.getTimeRental(), ChronoUnit.DAYS));
+            item.setTotalRental(totalRental);
+            item.setStatus(OrderStatusEnum.Renting.toString());
+            
+            book.setStock(book.getStock() - item.getQuantity());
+            book.setQuantityRented(book.getQuantityRented() + item.getQuantity());
+            book.setTypeActive(null);
+            bookRepository.save(book);
+        }
+        
+        order.setOrderStatus(OrderStatusEnum.Delivered.toString());
+        rentalOrderRepository.save(order);
+        
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean cancelOrder(Long id) {
+        RentalOrder order = rentalOrderRepository.findById(id)
+                .orElseThrow(() -> new NewException("Order not found"));
+        
+        if (OrderStatusEnum.Processing.toString().equals(order.getOrderStatus())) {
+            // Nếu order đã được confirm, cần hoàn lại stock
+            for (RentalItem item : order.getItems()) {
+                Book book = item.getBook();
+                book.setStock(book.getStock() + item.getQuantity());
+                book.setQuantityRented(book.getQuantityRented() - item.getQuantity());
+                bookRepository.save(book);
+            }
+        }
+        
+        // Cập nhật trạng thái
+        order.setOrderStatus(OrderStatusEnum.Cancelled.toString());
+        for (RentalItem item : order.getItems()) {
+            item.setStatus(OrderStatusEnum.Cancelled.toString());
+        }
+        
+        rentalOrderRepository.save(order);
+        return true;
+    }
+
+    private Long getDeliveryTime(RentalOrder order) {
+        if (DeliveryMethodEnum.Offline.toString().equals(order.getDeliveryMethod())) {
             return 0L; 
         }
         
-        return ShippingMethodEnum.Express.equals(request.getShippingMethod()) ? 1L : 3L;
+        return ShippingMethodEnum.Express.toString().equals(order.getShippingMethod()) ? 1L : 3L;
     }
         
     @Override

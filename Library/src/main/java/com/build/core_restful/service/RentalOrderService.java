@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface RentalOrderService {
     RentalOrderResponse create(RentalOrderRequest request);
+
+    boolean confirmOrder(Long id);
+    boolean cancelOrder(Long id);
     
     RentalOrderResponse updateOrderStatus(Long id, OrderStatusEnum newStatus);
 
