@@ -7,8 +7,6 @@ import com.build.core_restful.service.RentedOrderService;
 import com.build.core_restful.util.annotation.AddMessage;
 import com.build.core_restful.util.enums.OrderStatusEnum;
 
-import jakarta.validation.Valid;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,7 +30,7 @@ public class RentedOrderController {
         @RequestParam int size,
         @RequestParam(required = false) String sortBy,
         @RequestParam(required = false, defaultValue = "asc") String sortDir,
-        @RequestParam(required = false) String orderStatus,
+        @RequestParam(required = false) OrderStatusEnum orderStatus,
         @RequestParam(required = false) Long fromLateFee,
         @RequestParam(required = false) Long toLateFee,
         @RequestParam(required = false) Long userId 
@@ -40,8 +38,16 @@ public class RentedOrderController {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy != null ? sortBy : "id");
         Pageable pageable = PageRequest.of(page, size, sort);
 
+        String status = null; Long id = null;
+        if(orderStatus != null){
+            status = orderStatus.toString();
+        }
+        if(userId != null){
+            id = userId;
+        }
+
         return ResponseEntity.ok(rentedOrderService.getAllRentedOrder(
-            fromLateFee, toLateFee, userId, orderStatus, pageable
+            fromLateFee, toLateFee, id, status, pageable
         ));
     }
 
@@ -58,7 +64,7 @@ public class RentedOrderController {
 
     @PutMapping("/update/{id}")
     @AddMessage("Update status order")
-    public ResponseEntity<RentedOrderResponse> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusEnum newStatus) {
+    public ResponseEntity<RentedOrderResponse> updateOrderStatus(@PathVariable Long id,@RequestParam OrderStatusEnum newStatus) {
         return ResponseEntity.ok(rentedOrderService.update(id, newStatus));
     }
 }

@@ -138,8 +138,8 @@ public class RentedOrderServiceImpl implements RentedOrderService {
             RentalItem rentalItem = rentalItemRepository.findById(itemId)
                 .orElseThrow(() -> new NewException("Rental item with id: " + itemId + " not found"));
 
-            if (!OrderStatusEnum.Renting.toString().equals(rentalItem.getStatus())) {
-                throw new NewException("Item " + itemId + " is not in renting status");
+            if (!OrderStatusEnum.Received.toString().equals(rentalItem.getStatus())) {
+                throw new NewException("Item with id: " + itemId + " is not in renting status");
             }
 
             if (now.isAfter(rentalItem.getReturnDate())) {
