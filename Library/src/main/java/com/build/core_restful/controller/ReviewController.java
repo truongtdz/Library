@@ -63,13 +63,13 @@ public class ReviewController {
 
     @PostMapping("/create")
     @AddMessage("Create review")
-    public ResponseEntity<Object> createAddress(@RequestBody ReviewRequest request) {
+    public ResponseEntity<Object> createReview(@RequestBody ReviewRequest request) {
         return ResponseEntity.ok(reviewService.createReview(request));
     }
 
     @DeleteMapping("/delete/{id}")
     @AddMessage("Delete review")
-    public ResponseEntity<Object> deleteAddress(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteReview(@PathVariable Long id) {
         return ResponseEntity.ok(reviewService.deleteReview(id));
     }
 }

@@ -1,5 +1,7 @@
 package com.build.core_restful.service.impl;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -100,6 +102,8 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public boolean deleteReview(Long id) {
         try {
+            List<Review> reviews = reviewRepository.findByParentId(id);
+            reviewRepository.deleteAll(reviews);
             reviewRepository.deleteById(id);
             return true;
         } catch (Exception e) {
