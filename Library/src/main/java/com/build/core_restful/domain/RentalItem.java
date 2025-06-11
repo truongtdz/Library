@@ -20,8 +20,10 @@ public class RentalItem {
     private Long id;
 
     private Instant rentalDate;
+    private Instant receiveDate;
+    private Instant returnDate;
+
     private Long timeRental;
-    private Instant rentedDate;
 
     private Long lateFee;
 

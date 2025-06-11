@@ -26,6 +26,7 @@ public class BookResponse {
     private String status;
 
     private Long quantityRented;
+    private Long quantityViewed;
 
     private CategoryRes category;
     private AuthorRes author;

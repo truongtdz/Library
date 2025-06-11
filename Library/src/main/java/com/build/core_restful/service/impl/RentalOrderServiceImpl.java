@@ -96,7 +96,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                         .orElseThrow(() -> new NewException("Branch with id = " + request.getBranchId() + " not found"))
         );
         
-        order.setReceiveDay(null); 
+        order.setReceiveDate(null); 
 
         order.setCity(null);
         order.setDistrict(null);
@@ -112,7 +112,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         order.setStreet(request.getStreet());
         order.setNotes(request.getNotes());
         
-        order.setReceiveDay(null);
+        order.setReceiveDate(null);
         order.setShippingMethod(request.getShippingMethod().toString());
         
         order.setBranch(null);
@@ -143,10 +143,10 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                             .orElse(null)
                     )
                     .rentalDate(null)
-                    .rentedDate(null) 
+                    .returnDate(null) 
                     .rentalPrice(book.getRentalPrice())
                     .depositPrice(book.getDepositPrice())
-                    .timeRental(item.getRentedDay())
+                    .timeRental(item.getTimeRental())
                     .totalRental(book.getRentalPrice() * item.getQuantity()) 
                     .totalDeposit(book.getDepositPrice() * item.getQuantity())
                     .status(order.getOrderStatus())
@@ -173,10 +173,10 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         Instant now = Instant.now();
 
         if (DeliveryMethodEnum.Offline.equals(DeliveryMethodEnum.valueOf(order.getDeliveryMethod()))) {
-            order.setReceiveDay(now);
+            order.setReceiveDate(now);
         } else {
             Long deliveryTime = ShippingMethodEnum.Express.toString().equals(order.getShippingMethod()) ? 1L : 3L;
-            order.setReceiveDay(now.plus(deliveryTime, ChronoUnit.DAYS));
+            order.setReceiveDate(now.plus(deliveryTime, ChronoUnit.DAYS));
         }
         
         Long deliveryTime = getDeliveryTime(order);
@@ -196,7 +196,8 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             Long totalRental = item.getRentalPrice() * item.getQuantity() * actualRentalDays;
             
             item.setRentalDate(now);
-            item.setRentedDate(order.getReceiveDay().plus(item.getTimeRental(), ChronoUnit.DAYS));
+            item.setReceiveDate(order.getReceiveDate());
+            item.setReturnDate(order.getReceiveDate().plus(item.getTimeRental(), ChronoUnit.DAYS));
             item.setTotalRental(totalRental);
             item.setStatus(OrderStatusEnum.Renting.toString());
             

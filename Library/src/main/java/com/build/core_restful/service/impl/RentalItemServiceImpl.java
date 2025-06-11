@@ -59,7 +59,7 @@ public class RentalItemServiceImpl implements RentalItemService{
                     .imageUrl(item.getImageUrl())
                     .rentalOrderId(item.getRentalOrder().getId().toString())
                     .rentalDate(item.getRentalDate())
-                    .rentedDate(item.getRentedDate())
+                    .returnDate(item.getReturnDate())
                     .build())
                 .collect(Collectors.toList());
 

@@ -41,7 +41,7 @@ public class RentalOrder {
     private String paymentMethod;
     private String shippingMethod;
     
-    private Instant receiveDay;
+    private Instant receiveDate;
 
     @OneToMany(mappedBy = "rentalOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore

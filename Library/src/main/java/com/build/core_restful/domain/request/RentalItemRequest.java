@@ -13,5 +13,5 @@ public class RentalItemRequest {
     private Long bookId;
 
     private Long quantity;
-    private Long rentedDay;    
+    private Long timeRental;    
 }

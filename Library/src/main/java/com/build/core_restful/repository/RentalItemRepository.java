@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 public interface RentalItemRepository extends JpaRepository<RentalItem, Long> {
     List<RentalItem> findAllByBookId(Long id);
     
-    @Query("SELECT ri FROM RentalItem ri WHERE ri.rentedDate BETWEEN :now AND :threeDaysLater AND ri.status = :status")
+    @Query("SELECT ri FROM RentalItem ri WHERE ri.returnDate BETWEEN :now AND :threeDaysLater AND ri.status = :status")
     List<RentalItem> findItemsDueWithinThreeDaysByStatus(
         @Param("now") Instant now, 
         @Param("threeDaysLater") Instant threeDaysLater, 

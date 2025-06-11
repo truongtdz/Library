@@ -142,8 +142,8 @@ public class RentedOrderServiceImpl implements RentedOrderService {
                 throw new NewException("Item " + itemId + " is not in renting status");
             }
 
-            if (now.isAfter(rentalItem.getRentedDate())) {
-                Long daysLate = ChronoUnit.DAYS.between(rentalItem.getRentedDate(), now);
+            if (now.isAfter(rentalItem.getReturnDate())) {
+                Long daysLate = ChronoUnit.DAYS.between(rentalItem.getReturnDate(), now);
                 Long lateFeePerDay = rentalItem.getLateFee();
                 totalLateFee += lateFeePerDay * daysLate * rentalItem.getQuantity();
             }

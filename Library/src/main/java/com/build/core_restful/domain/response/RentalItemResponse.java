@@ -12,9 +12,11 @@ import java.time.Instant;
 public class RentalItemResponse {
     private Long id;
     private Long rentalOrderId;
+    private Long timeRental;
 
     private Instant rentalDate;
-    private Instant rentedDate;
+    private Instant receiveDate;
+    private Instant returnDate;
 
     private String bookName;
     private String imageUrl;
