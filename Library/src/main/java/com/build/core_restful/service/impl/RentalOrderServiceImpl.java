@@ -219,7 +219,6 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 .orElseThrow(() -> new NewException("Order not found"));
         
         if (OrderStatusEnum.Processing.toString().equals(order.getOrderStatus())) {
-            // Nếu order đã được confirm, cần hoàn lại stock
             for (RentalItem item : order.getItems()) {
                 Book book = item.getBook();
                 book.setStock(book.getStock() + item.getQuantity());
@@ -228,7 +227,6 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             }
         }
         
-        // Cập nhật trạng thái
         order.setOrderStatus(OrderStatusEnum.Cancelled.toString());
         for (RentalItem item : order.getItems()) {
             item.setStatus(OrderStatusEnum.Cancelled.toString());
@@ -251,6 +249,11 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new NewException("Order not found"));
         order.setOrderStatus(newStatus.toString());
+        for (RentalItem item : order.getItems()) {
+            if(!item.getStatus().equals(OrderStatusEnum.Returned.toString())){
+                item.setStatus(order.getOrderStatus());
+            }
+        }
         return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));
     }
 
