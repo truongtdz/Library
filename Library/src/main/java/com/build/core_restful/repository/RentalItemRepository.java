@@ -1,5 +1,6 @@
 package com.build.core_restful.repository;
 
+import com.build.core_restful.domain.Notification;
 import com.build.core_restful.domain.RentalItem;
 
 import java.time.Instant;
@@ -23,6 +24,12 @@ public interface RentalItemRepository extends JpaRepository<RentalItem, Long> {
         @Param("status") String status
     );
 
-    Page<RentalItem> findByStatusAndUserId(String status, Long userId, Pageable pageable);
-    Page<RentalItem> findByStatus(String status, Pageable pageable);
+    @Query("SELECT n FROM RentalItem n WHERE " +
+           "(:userId IS NULL OR n.userId = :userId) AND " +
+           "(:status IS NULL OR n.status = :status)")
+    Page<RentalItem> findRentalItemsWithOptionalFilters(
+        @Param("status") String status, 
+        @Param("userId") Long userId, 
+        Pageable pageable
+    );
 }

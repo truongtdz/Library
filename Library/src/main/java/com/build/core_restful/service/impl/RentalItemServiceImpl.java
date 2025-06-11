@@ -73,7 +73,7 @@ public class RentalItemServiceImpl implements RentalItemService{
 
     @Override
     public PageResponse<Object> getItemByUser(String status, Long userId, Pageable pageable) {
-        Page<RentalItem> page = rentalItemRepository.findByStatusAndUserId(status, userId, pageable);
+        Page<RentalItem> page = rentalItemRepository.findRentalItemsWithOptionalFilters(status, userId, pageable);
 
         Page<RentalItemResponse> pageResponse = page.map(rentalItemMapper::toResponse);
         
