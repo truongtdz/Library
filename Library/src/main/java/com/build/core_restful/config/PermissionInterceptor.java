@@ -43,7 +43,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
         if (httpMethod.equalsIgnoreCase("GET")) {
             if (pathMatcher.match("/api/v1/book/**", requestURI) ||
                 pathMatcher.match("/api/v1/author/**", requestURI) ||
-                pathMatcher.match("/api/v1/category/**", requestURI)) {
+                pathMatcher.match("/api/v1/category/**", requestURI) ||
+                pathMatcher.match("/api/v1/branch/**", requestURI) ||
+                pathMatcher.match("/api/v1/review/**", requestURI)
+            ) {
                 return true;
             }
         }

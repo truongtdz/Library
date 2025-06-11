@@ -60,6 +60,8 @@ public class BookListener {
             }
             String currentUsername = JwtUtil.getCurrentUserLogin().orElse("System");
             
+            User user = userService.getUserByEmail(currentUsername);
+
             String description;
 
             if (book.getTypeActive().equals("DELETE")) {
@@ -75,6 +77,7 @@ public class BookListener {
             
             Notification notification = Notification.builder()
                     .active(book.getTypeActive())
+                    .createByUser(user)
                     .description(description)
                     .build();
             

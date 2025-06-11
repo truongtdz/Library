@@ -106,7 +106,10 @@ public class DatabaseLoader implements CommandLineRunner {
             
             // Module Notification
             arr.add(new Permission("NOTIFICATION", "/api/v1/notification/all", "GET", "Gel all"));
-                        
+                 
+            // Module RentalItem
+            arr.add(new Permission("RENTAL_ITEM", "/api/v1/item/rental/all", "GET", "Gel all"));
+                    
             // Module Payment
             arr.add(new Permission("PAYMENT", "/api/v1/payment/create", "POST", "Create payment"));
             arr.add(new Permission("PAYMENT", "/api/v1/payment/webhook", "POST", "Handle payment webhook"));
@@ -125,7 +128,8 @@ public class DatabaseLoader implements CommandLineRunner {
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/create", "POST", "Create rental order"));
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/confirm/{id}", "PUT", "Confirm rental order"));
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/cancel/{id}", "PUT", "Cancel rental order"));
-            arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/status/{id}", "PUT", "Update status order"));
+            arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/status/payment/{id}", "PUT", "Update status order"));
+            arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/status/order/{id}", "PUT", "Update status order"));           
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/total/quantity", "GET", "Get quantity by order status"));
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/total/revenue", "GET", "Get revenue rental order"));
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/total/deposit", "GET", "Get total deposit order"));
@@ -161,6 +165,7 @@ public class DatabaseLoader implements CommandLineRunner {
             arr.add(new Permission("ROLE", "/api/v1/role/delete/{id}", "DELETE", "Delete role"));
 
             // Module Subscribe
+            arr.add(new Permission("SUBSCRIBE", "/api/v1/subscribe/check", "GET", "Check user subscribe"));
             arr.add(new Permission("SUBSCRIBE", "/api/v1/subscribe/create", "POST", "Create subscribe"));
             arr.add(new Permission("SUBSCRIBE", "/api/v1/subscribe/delete", "DELETE", "Delete subscribe"));
 
@@ -194,6 +199,7 @@ public class DatabaseLoader implements CommandLineRunner {
             staffPermissions.addAll(this.permissionRepository.findByModule("NOTIFICATION"));
             staffPermissions.addAll(this.permissionRepository.findByModule("RENTAL_ORDER"));
             staffPermissions.addAll(this.permissionRepository.findByModule("RENTED_ORDER"));
+            staffPermissions.addAll(this.permissionRepository.findByModule("RENTAL_ITEM"));
             staffPermissions.addAll(this.permissionRepository.findByModule("REVENUE"));
             staffPermissions.addAll(this.permissionRepository.findByModule("ORDER"));
             Role staffRole = new Role("STAFF","STAFF can management product and order", staffPermissions);
@@ -219,7 +225,9 @@ public class DatabaseLoader implements CommandLineRunner {
             userPermissions.addAll(this.permissionRepository.findByApiPathEquals("/api/v1/user/by/{id}"));
             userPermissions.addAll(this.permissionRepository.findByApiPathEquals("/api/v1/user/update/{id}"));
             userPermissions.addAll(this.permissionRepository.findByApiPathEquals("/api/v1/user/update/password"));
-
+            userPermissions.addAll(this.permissionRepository.findByApiPathEquals("/api/v1/order/rental/update/status/payment/{id}"));
+            userPermissions.addAll(this.permissionRepository.findByApiPathEquals("/api/v1/subscribe/check"));
+            userPermissions.addAll(this.permissionRepository.findByApiPathEquals("/api/v1/item/rental/all"));
             Role userRole = new Role("USER","USER can rental book", userPermissions);
             this.roleRepository.save(userRole);
         }

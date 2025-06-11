@@ -16,10 +16,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         String[] publicUrl = {
-                "/",
-                "/api/v1/auth/login", "/api/v1/auth/register",
-                "/api/v1/auth/refresh", "/api/v1/auth/logout",
-                "/api/v1/auth/account",
+            "/",
+            "/api/v1/auth/**", "/api/v1/upload",
+            "/api/v1/order/rental/**", "/api/v1/cron/**",
         };
 
         registry.addInterceptor(getPermissionInterceptor())
@@ -28,7 +27,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Giả sử bạn lưu file vào thư mục D:/6-DoAn/BackEnd/uploads
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:D:/6-DoAn/BackEnd/uploads/");
     }

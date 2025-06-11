@@ -16,15 +16,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     private final String[] publicUrl = {
-            "/",
-            "/api/v1/auth/login", "/api/v1/auth/register",
-            "/api/v1/auth/refresh", "/api/v1/auth/logout",
-            "/api/v1/auth/account",
+            "/", "/v3/api-docs", 
+            "/api/v1/auth/**", "/api/v1/upload",
+            "/api/v1/order/rental/**", "/api/v1/cron/**",
     };
 
     private final String[] publicUrlMethodGet = {
             "/api/v1/book/**", "/api/v1/author/**",
-            "/api/v1/category/**",
+            "/api/v1/category/**", "/api/v1/branch/**", 
+            "/api/v1/review/**",
     };
 
     @Bean
