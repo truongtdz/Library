@@ -12,6 +12,7 @@ import com.build.core_restful.service.RentalOrderService;
 import com.build.core_restful.util.StringUtil;
 import com.build.core_restful.util.enums.DeliveryMethodEnum;
 import com.build.core_restful.util.enums.OrderStatusEnum;
+import com.build.core_restful.util.enums.PaymentStatusEnum;
 import com.build.core_restful.util.enums.ShippingMethodEnum;
 import com.build.core_restful.util.exception.NewException;
 import com.build.core_restful.util.mapper.RentalOrderMapper;
@@ -184,10 +185,18 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     }
         
     @Override
-    public RentalOrderResponse update(Long id, OrderStatusEnum newStatus) {
+    public RentalOrderResponse updateOrderStatus(Long id, OrderStatusEnum newStatus) {
         RentalOrder order = rentalOrderRepository.findById(id)
                 .orElseThrow(() -> new NewException("Order not found"));
         order.setOrderStatus(newStatus.toString());
+        return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));
+    }
+
+    @Override
+    public RentalOrderResponse updatePaymentStatus(Long id, PaymentStatusEnum newStatus) {
+        RentalOrder order = rentalOrderRepository.findById(id)
+                .orElseThrow(() -> new NewException("Order not found"));
+        order.setPaymentStatus(newStatus.toString());
         return rentalOrderMapper.toResponse(rentalOrderRepository.save(order));
     }
 

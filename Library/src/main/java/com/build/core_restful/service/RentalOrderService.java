@@ -5,6 +5,7 @@ import com.build.core_restful.domain.request.SaveRevenueEveryDay;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.util.enums.OrderStatusEnum;
+import com.build.core_restful.util.enums.PaymentStatusEnum;
 
 import java.time.Instant;
 
@@ -13,7 +14,9 @@ import org.springframework.data.domain.Pageable;
 public interface RentalOrderService {
     RentalOrderResponse create(RentalOrderRequest request);
     
-    RentalOrderResponse update(Long id, OrderStatusEnum newStatus);
+    RentalOrderResponse updateOrderStatus(Long id, OrderStatusEnum newStatus);
+
+    RentalOrderResponse updatePaymentStatus(Long id, PaymentStatusEnum newStatus);
     
     RentalOrderResponse getById(Long id);
     

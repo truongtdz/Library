@@ -38,8 +38,7 @@ public class RentalOrderListener {
             Notification notification = Notification.builder()
                     .createByUser(user)
                     .active("CREATE")
-                    .description("Đơn thuê sách mới đã được thêm: " + rentalOrder.getId() + 
-                               " bởi " + currentUsername)
+                    .description("Đơn thuê sách mới đã được thêm bởi " + currentUsername)
                     .build();
             
             notificationService.createNotification(notification);

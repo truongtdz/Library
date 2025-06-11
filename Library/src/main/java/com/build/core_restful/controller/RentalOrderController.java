@@ -6,6 +6,7 @@ import com.build.core_restful.domain.response.RentalOrderResponse;
 import com.build.core_restful.service.RentalOrderService;
 import com.build.core_restful.util.annotation.AddMessage;
 import com.build.core_restful.util.enums.OrderStatusEnum;
+import com.build.core_restful.util.enums.PaymentStatusEnum;
 
 import jakarta.validation.Valid;
 
@@ -62,18 +63,24 @@ public class RentalOrderController {
 
     @PutMapping("/update/confirm/{id}")
     public ResponseEntity<RentalOrderResponse> confirmRentalOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(rentalOrderService.update(id, OrderStatusEnum.Confirmed));
+        return ResponseEntity.ok(rentalOrderService.updateOrderStatus(id, OrderStatusEnum.Confirmed));
     }   
 
     @PutMapping("/update/cancel/{id}")
     public ResponseEntity<RentalOrderResponse> cancelRentalOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(rentalOrderService.update(id, OrderStatusEnum.Cancelled));
+        return ResponseEntity.ok(rentalOrderService.updateOrderStatus(id, OrderStatusEnum.Cancelled));
     }
 
-    @PutMapping("/update/status/{id}")
+    @PutMapping("/update/status/order/{id}")
     @AddMessage("Update status order")
-    public ResponseEntity<RentalOrderResponse> updateOrderStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusEnum newStatus) {
-        return ResponseEntity.ok(rentalOrderService.update(id, newStatus));
+    public ResponseEntity<RentalOrderResponse> updateOrderStatus(@PathVariable Long id, @Valid @RequestParam OrderStatusEnum newStatus) {
+        return ResponseEntity.ok(rentalOrderService.updateOrderStatus(id, newStatus));
+    }
+
+    @PutMapping("/update/status/payment/{id}")
+    @AddMessage("Update status order")
+    public ResponseEntity<RentalOrderResponse> updatePaymentStatus(@PathVariable Long id, @Valid @RequestParam PaymentStatusEnum newStatus) {
+        return ResponseEntity.ok(rentalOrderService.updatePaymentStatus(id, newStatus));
     }
 
     @GetMapping("/total/quantity")
