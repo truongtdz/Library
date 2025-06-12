@@ -129,7 +129,8 @@ public class DatabaseLoader implements CommandLineRunner {
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/confirm/{id}", "PUT", "Confirm rental order"));
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/cancel/{id}", "PUT", "Cancel rental order"));
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/status/payment/{id}", "PUT", "Update status order"));
-            arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/status/order/{id}", "PUT", "Update status order"));           
+            arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/status/order/{id}", "PUT", "Update status order"));
+            arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/update/note/{id}", "PUT", "Update note"));           
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/total/quantity", "GET", "Get quantity by order status"));
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/total/revenue", "GET", "Get revenue rental order"));
             arr.add(new Permission("RENTAL_ORDER", "/api/v1/order/rental/total/deposit", "GET", "Get total deposit order"));
