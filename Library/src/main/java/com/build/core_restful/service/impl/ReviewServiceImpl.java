@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.build.core_restful.domain.Review;
+import com.build.core_restful.domain.User;
 import com.build.core_restful.domain.request.ReviewRequest;
 import com.build.core_restful.domain.response.PageResponse;
 import com.build.core_restful.domain.response.ReviewResponse;
@@ -100,15 +101,21 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public boolean deleteReview(Long id) {
-        try {
-            List<Review> reviews = reviewRepository.findByParentId(id);
-            reviewRepository.deleteAll(reviews);
-            reviewRepository.deleteById(id);
-            return true;
-        } catch (Exception e) {
-            throw new NewException("Delete review fail");
+    public boolean deleteReview(Long userId, Long id) {
+        User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new NewException("User with id: " + id + " not found"));
+        
+        Review review = reviewRepository.findById(id)
+                            .orElseThrow(() -> new NewException("Review with id: " + id + " not found"));
+
+        if (user.getRole().getName().equals("USER") && user.getId() != review.getUser().getId()) {
+            throw new NewException("Not delete review of other people");
         }
+
+        List<Review> reviews = reviewRepository.findByParentId(id);
+        reviewRepository.deleteAll(reviews);
+        reviewRepository.deleteById(id);
+        return true;
     }
     
 }

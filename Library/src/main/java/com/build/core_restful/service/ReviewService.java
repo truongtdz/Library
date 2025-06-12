@@ -17,5 +17,5 @@ public interface ReviewService {
 
     ReviewResponse createReview(ReviewRequest request);
 
-    boolean deleteReview(Long id);
+    boolean deleteReview(Long userId, Long id);
 }
