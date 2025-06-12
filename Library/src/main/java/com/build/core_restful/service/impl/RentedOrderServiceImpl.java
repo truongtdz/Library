@@ -201,11 +201,21 @@ public class RentedOrderServiceImpl implements RentedOrderService {
     }
 
     @Override
-    public RentedOrderResponse update(Long id, OrderStatusEnum newStatus) {
+    public RentedOrderResponse updateStatus(Long id, OrderStatusEnum newStatus) {
         RentedOrder currentRentedOrder = rentedOrderRepository.findById(id)
             .orElseThrow(() -> new NewException("Rented order with id = " + id + " not found"));
 
         currentRentedOrder.setOrderStatus(newStatus.toString());
+
+        return rentedOrderMapper.toResponse(rentedOrderRepository.save(currentRentedOrder));
+    }
+
+    @Override
+    public RentedOrderResponse updateNote(Long id, String newNote) {
+        RentedOrder currentRentedOrder = rentedOrderRepository.findById(id)
+            .orElseThrow(() -> new NewException("Rented order with id = " + id + " not found"));
+
+        currentRentedOrder.setNotes(newNote);
 
         return rentedOrderMapper.toResponse(rentedOrderRepository.save(currentRentedOrder));
     }

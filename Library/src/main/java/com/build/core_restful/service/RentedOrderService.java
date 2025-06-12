@@ -10,7 +10,9 @@ import com.build.core_restful.util.enums.OrderStatusEnum;
 public interface RentedOrderService {
     RentedOrderResponse create(RentedOrderRequest request);
 
-    RentedOrderResponse update(Long id, OrderStatusEnum newStatus);
+    RentedOrderResponse updateStatus(Long id, OrderStatusEnum newStatus);
+
+    RentedOrderResponse updateNote(Long id, String newNote);
 
     RentedOrderResponse getById(Long id);
     

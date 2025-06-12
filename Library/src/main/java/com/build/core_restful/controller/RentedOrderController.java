@@ -65,9 +65,14 @@ public class RentedOrderController {
     @PutMapping("/update/{id}")
     @AddMessage("Update status order")
     public ResponseEntity<RentedOrderResponse> updateOrderStatus(@PathVariable Long id,@RequestParam OrderStatusEnum newStatus) {
-        return ResponseEntity.ok(rentedOrderService.update(id, newStatus));
+        return ResponseEntity.ok(rentedOrderService.updateStatus(id, newStatus));
     }
 
+    @PutMapping("/update/note/{id}")
+    @AddMessage("Update status order")
+    public ResponseEntity<RentedOrderResponse> updateNotes(@PathVariable Long id,@RequestParam String newNote) {
+        return ResponseEntity.ok(rentedOrderService.updateNote(id, newNote));
+    }
     
     @PutMapping("/update/confirm/{id}")
     public ResponseEntity<Boolean> confirmRentalOrder(@PathVariable Long id) {
