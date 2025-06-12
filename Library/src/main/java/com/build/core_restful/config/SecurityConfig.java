@@ -18,8 +18,16 @@ public class SecurityConfig {
     private final String[] publicUrl = {
             "/", "/v3/api-docs", 
             "/api/v1/auth/**", "/api/v1/upload",
-            "/api/v1/cart/**",
-            "/api/v1/order/rental/**", "/api/v1/cron/**",
+            "/api/v1/cart/**", "/api/v1/user/**",
+            "/api/v1/role/**", "/api/v1/permission/**",
+            "/api/v1/category/**", "/api/v1/branch/**",
+            "/api/v1/book/**", "/api/v1/author/**",
+            "/api/v1/item/rental/**", "/api/v1/address/**",
+            "/api/v1/upload/**", "/api/v1/subscribe/**",
+            "/api/v1/review/**", "/api/v1/payment/**",
+            "/api/v1/revenue/**", "/api/v1/notification/**",
+            "/api/v1/order/rental/**", "/api/v1/order/rented/**",
+            "/api/v1/cron/**",
     };
 
     private final String[] publicUrlMethodGet = {
